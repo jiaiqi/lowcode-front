@@ -5,6 +5,7 @@
   "description": "低代码渲染与编辑独立工程（Vite + Vue2.7）",
   "scripts": {
     "dev": "vite",
+    "dev:park": "vite --mode park",
     "build": "vite build",
     "preview": "vite preview",
     "deploy:dev": "vite build --mode dev"

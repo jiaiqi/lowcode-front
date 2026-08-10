@@ -57,8 +57,8 @@ function resolveEnv() {
     return envFromDotEnv;
   }
 
-  // 4. 默认
-  return "saas";
+  // 4. 默认（延安园区开发）
+  return "parkDev";
 }
 
 const ENV = resolveEnv();
