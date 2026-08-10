@@ -11,7 +11,7 @@
         :key="item.legend_label"
         class="legend-wrap"
       >
-        <img :src="getImagePath(item.icon)" class="legend-icon" />
+        <img loading="lazy" :src="getImagePath(item.icon)" class="legend-icon" />
         <span class="legend-text">{{ item.legend_label || "" }}</span>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="welcome-box flex items-center">
-    <img class="avatar" :src="avatar" alt="" />
+    <img loading="lazy" class="avatar" :src="avatar" alt="" />
     <div v-if="logined" class="flex-1">
       <div class="user-name">{{ loginUser.real_name || "" }}</div>
       <div class="flex items-center handler justify-between">

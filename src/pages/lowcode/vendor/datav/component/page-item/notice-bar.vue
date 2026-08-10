@@ -3,7 +3,7 @@
     class="notice-bar"
     v-if="pageItem.notice_bar_json && list && list.length"
   >
-    <img
+    <img loading="lazy"
       :src="getImagePath(pageItem.notice_bar_json.icon)"
       class="notice-icon"
       v-if="pageItem.notice_bar_json"

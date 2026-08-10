@@ -116,7 +116,7 @@
               v-for="(item, index) in setListSwiperImg"
               :key="index"
             >
-              <img
+              <img loading="lazy"
                 :src="getImagePath(item._img_url)"
                 alt=""
                 style="width: 100%; height: 100%"

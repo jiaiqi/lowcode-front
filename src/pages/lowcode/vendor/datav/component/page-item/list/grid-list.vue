@@ -17,7 +17,7 @@
       @mouseleave="item.isHovered = false"
       @click="openUrl(item[config.matrix_jump_url_col])"
     >
-      <img
+      <img loading="lazy"
         class="grid-item-img"
         :src="getImagePath(item[config.matrix_icon_col])"
         :style="[iconStyle]"

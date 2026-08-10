@@ -610,12 +610,12 @@ export default {
     resetTitleTipHtml() {
       if (this.pageItemData?.com_title_tip && typeof this.pageItemData.com_title_tip === 'string') {
         let str = this.pageItemData.com_title_tip.replace(/nowrap/ig, 'wrap');
-        if (str && str.indexOf('<img') > -1) {
+        if (str && str.indexOf('<img loading="lazy"') > -1) {
           let imgIndex = 0;
-          str = str.replace(/<img([^>]*)>/gi, (match, attributes) => {
+          str = str.replace(/<img loading="lazy"([^>]*)>/gi, (match, attributes) => {
             const srcMatch = attributes.match(/src=["']([^"']*)["']/i);
             const imgSrc = srcMatch ? srcMatch[1] : '';
-            return match.replace('<img', `<img style="display:block;width:100%;" data-preview-img="${imgSrc}" data-img-index="${imgIndex++}"`);
+            return match.replace('<img loading="lazy"', `<img style="display:block;width:100%;" data-preview-img="${imgSrc}" data-img-index="${imgIndex++}"`);
           });
         }
         if (str && str.indexOf('<video') > -1) {

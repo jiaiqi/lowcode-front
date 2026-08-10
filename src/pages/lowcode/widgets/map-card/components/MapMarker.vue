@@ -8,7 +8,7 @@
     :class="{ 'cursor-pointer': allowClick(item) }"
     @click.stop="handleMarkerClick(item, $event)"
   >
-    <img
+    <img loading="lazy"
       :src="getItemIcon(item)"
       class="marker-icon"
       :style="getIconStyle(item)"

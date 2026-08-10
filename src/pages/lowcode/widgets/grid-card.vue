@@ -2,7 +2,7 @@
   <div class="grid" :style="'--grid-cols:' + pageItem.grid_json.max_cols" v-if="cardStyle === '上图下文'">
     <div class="grid-item" :class="{ 'no-image': !baseListItem.image }" v-for="(baseListItem, baseListIndex) in buttons"
       :key="baseListIndex" @click="onGridItem(baseListItem)" :custom-style="{ padding: '15rpx 0' }">
-      <img :src="getImagePath(baseListItem.image)" style="width: 40px;height:40px;" alt="" srcset="">
+      <img loading="lazy" :src="getImagePath(baseListItem.image)" style="width: 40px;height:40px;" alt="" srcset="">
       <span class="grid-text" style="padding: 10upx 0;color: #323232;">{{ baseListItem.label || baseListItem.child_name
       }}</span>
     </div>
@@ -10,7 +10,7 @@
   <div class="grid" :style="'--grid-cols:' + pageItem.grid_json.max_cols" v-else-if="cardStyle === '仅图片'">
     <div class="grid-item" :class="{ 'no-image': !baseListItem.image }" v-for="(baseListItem, baseListIndex) in buttons"
       :key="baseListIndex" @click="onGridItem(baseListItem)">
-      <img :src="getImagePath(baseListItem.image)" alt="" srcset="">
+      <img loading="lazy" :src="getImagePath(baseListItem.image)" alt="" srcset="">
     </div>
   </div>
 </template>

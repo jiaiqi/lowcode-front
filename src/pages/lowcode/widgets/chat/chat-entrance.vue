@@ -27,7 +27,7 @@
     </div>
 
      <li v-for="(item,index) in chatList" class="chat_list" @click="handleChatClick(item, $event)" :style="[chatStyleJson]">
-       <span><img :src="chatBg" alt="" :class="{'chat_ds': true, 'blink': item.isOpen}"></span>
+       <span><img loading="lazy" :src="chatBg" alt="" :class="{'chat_ds': true, 'blink': item.isOpen}"></span>
        <span>{{item.chat_type}}</span>
      </li>
   </div>

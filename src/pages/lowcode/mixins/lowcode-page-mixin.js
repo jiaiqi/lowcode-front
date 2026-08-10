@@ -70,6 +70,7 @@ import { $selectOne, getHomePageNo, getImagePath } from "@/common/http";
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
 
 import { buildComponentsTree } from "../utils/common";
+import { getPageSnapshot, setPageSnapshot } from "../utils/snapshot-db";
 import { pageCompCols } from "../components/property/columns";
 
 /**
@@ -384,7 +385,23 @@ export default {
      * @throws {Error} 当请求失败时抛出错误
      */
     async getPageConfig() {
-      const prepared = await this.fetchPageData(this.pageNo);
+      // SWR：并行发起网络请求与本地快照读取（stale-while-revalidate），
+      // 快照先到先渲染（刷新秒开），网络结果回来后后台比对指纹
+      const netPromise = this.fetchPageData(this.pageNo);
+      const dbCached = await getPageSnapshot(this.pageNo);
+      if (dbCached?.data) {
+        try {
+          const prepared = await this.prepareFromData(dbCached.data, dbCached.appCfg);
+          this.applyPageData(prepared);
+          this.cacheSetPage(this.pageNo, prepared);
+          await this.applyPageRuntimeOptions(prepared.data);
+        } catch (e) {
+          console.warn("IndexedDB 快照应用失败，走网络", e);
+        }
+        this.revalidateFromNetwork(netPromise, this.pageNo, dbCached.fingerprint);
+        return;
+      }
+      const prepared = await netPromise;
       if (!prepared.ok) {
         if (prepared.msg) {
           this.$message.error(prepared.msg);
@@ -394,6 +411,7 @@ export default {
         return;
       }
       this.applyPageData(prepared);
+      this.cacheSetPage(this.pageNo, prepared);
       await this.applyPageRuntimeOptions(prepared.data);
     },
     /**
@@ -505,6 +523,27 @@ export default {
         return;
       }
 
+      // 未命中：并行发起网络请求与 IndexedDB 读取（stale-while-revalidate），
+      // 本地快照先到则先渲染（刷新秒开），网络结果回来后后台比对指纹
+      const netPromise = this.fetchPageData(targetNo);
+      const dbCached = await getPageSnapshot(targetNo);
+      if (dbCached?.data) {
+        if (this.$route.params.pageNo !== targetNo) return;
+        if (!anchorName) window.scrollTo(0, 0);
+        try {
+          // 从快照 data 重建组件树（组件配置为纯 JSON，直接可重建）
+          const prepared = await this.prepareFromData(dbCached.data, dbCached.appCfg);
+          this.applyPageData(prepared);
+          this.cacheSetPage(targetNo, prepared);
+          await this.applyPageRuntimeOptions(prepared.data);
+        } catch (e) {
+          console.warn("IndexedDB 快照应用失败，走网络", e);
+        }
+        // 后台等网络结果比对指纹，无变化则保持，有变化整帧更新
+        this.revalidateFromNetwork(netPromise, targetNo, dbCached.fingerprint);
+        return;
+      }
+
       // 未命中：两阶段提交，准备期间旧页保持原样，顶部进度条提示活动
       this.pageSwitching = true;
       const startedAt = Date.now();
@@ -518,7 +557,7 @@ export default {
         }, remain);
       };
       try {
-        const prepared = await this.fetchPageData(targetNo);
+        const prepared = await netPromise;
         // 请求期间路由又变化了，丢弃过期结果，以最后一次为准
         if (this.$route.params.pageNo !== targetNo) return finish();
         if (!prepared.ok) {
@@ -552,9 +591,16 @@ export default {
     cacheSetPage(pageNo, prepared) {
       if (!pageNo || !prepared) return;
       if (pageSnapshotCache.has(pageNo)) pageSnapshotCache.delete(pageNo);
+      const fingerprint = this.fingerprintPage(prepared);
       pageSnapshotCache.set(pageNo, {
-        fingerprint: this.fingerprintPage(prepared),
+        fingerprint,
         prepared
+      });
+      // 持久化到 IndexedDB（刷新秒开）；失败不影响内存缓存
+      setPageSnapshot(pageNo, {
+        fingerprint,
+        data: prepared.data,
+        appCfg: prepared.appCfg,
       });
       if (pageSnapshotCache.size > PAGE_CACHE_MAX) {
         const oldest = pageSnapshotCache.keys().next().value;
@@ -599,6 +645,41 @@ export default {
       } catch (e) {
         // 后台校验失败不影响当前展示
         console.warn("revalidatePage error", e);
+      }
+    },
+    /**
+     * 从页面配置 data 重建组件树（IndexedDB 快照应用路径）
+     * @param {Object} data - 解析后的页面配置
+     * @param {Object|null} appCfg - 应用配置
+     * @returns {Promise<Object>} 与 fetchPageData 同构的 prepared
+     */
+    async prepareFromData(data, appCfg) {
+      let list = data?.page_row_json_data?.component_json;
+      if (this.getPageComponents && typeof this.getPageComponents === "function") {
+        list = await this.getPageComponents(list);
+      }
+      const components = this.buildComponentList(list);
+      return { ok: true, data, components, appCfg: appCfg || null };
+    },
+    /**
+     * 网络请求结果回来后与快照指纹比对（SWR revalidate 变体）
+     * @async
+     * @param {Promise} netPromise - 已在途的 fetchPageData Promise
+     * @param {string} targetNo - 页面编号
+     * @param {string} oldFp - 快照指纹
+     */
+    async revalidateFromNetwork(netPromise, targetNo, oldFp) {
+      try {
+        const fresh = await netPromise;
+        if (this.pageNo !== targetNo) return;
+        if (!fresh?.ok) return;
+        const fp = this.fingerprintPage(fresh);
+        if (oldFp && oldFp === fp) return; // 配置无变化，保持快照内容
+        this.cacheSetPage(targetNo, fresh);
+        this.applyPageData(fresh);
+        await this.applyPageRuntimeOptions(fresh.data);
+      } catch (e) {
+        console.warn("revalidateFromNetwork error", e);
       }
     },
     /**

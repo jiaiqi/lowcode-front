@@ -5,8 +5,8 @@
 				:key="index"
 				v-if="(index + 1) <= Number(pageItem.video_card_json.card_layout_json.cols_num)">
 				<div class="video-item" @click="toVideoPlayer(col)">
-					<img class="video-bg" :src="col.url || defPic">
-					<img class="play-btn" v-if="col.showPlayImg" src="@/assets/img/video-play-btn.png">
+					<img loading="lazy" class="video-bg" :src="col.url || defPic">
+					<img loading="lazy" class="play-btn" v-if="col.showPlayImg" src="@/assets/img/video-play-btn.png">
 				<div class="video-title" :style="[titleStyle]">{{ col[pageItem.video_card_json.col_label] }}</div>
 
 				</div>

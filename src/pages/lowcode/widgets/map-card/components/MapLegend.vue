@@ -16,7 +16,7 @@
           v-if="legend.icon"
           class="legend-icon"
         >
-          <img
+          <img loading="lazy"
             :src="legend.icon"
             :alt="legend.name"
           />

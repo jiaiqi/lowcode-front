@@ -152,7 +152,7 @@
     >
       {{ setPartModelData || "" }}
     </div>
-    <img
+    <img loading="lazy"
       v-else-if="['图片', 'iconImg'].includes(item.parts_type)"
       @click.stop="onClickSubBlock()"
       :src="getImagePath(setPartModelData, item.img_dpi)"

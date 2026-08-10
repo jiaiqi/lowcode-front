@@ -2,7 +2,7 @@
   <div class="user-list">
     <div class="normal-images">
       <div v-for="(img, index) in arrImages" v-if="index < 5">
-        <img v-if="img" :src="img" :style="resImagesFn(index)" class="image" />
+        <img loading="lazy" v-if="img" :src="img" :style="resImagesFn(index)" class="image" />
       </div>
     </div>
     <span class="num-text" v-if="showUserNum"
