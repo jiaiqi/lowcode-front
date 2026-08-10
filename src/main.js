@@ -3,6 +3,9 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+// element-ui 全量注册：子路径按需导入经 commonjs 转换后反而膨胀
+// （1250kB > 全量 924kB，gzip 324kB > 262kB），全量 webpack bundle 更优；
+// 后续若迁移 element-plus 再做按需
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 // 渲染一致性:旧工程 app.css 含 tailwind preflight + modern-normalize(来自主工程 tailwind v2.2.17),
