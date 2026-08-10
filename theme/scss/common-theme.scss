@@ -1,0 +1,208 @@
+
+/* theme-Basic-variable
+--------------------------*/
+$input-input-timerange-max-width:200px;
+$input-input-number-max-width:220px;
+$input-datetimerange-max-width: 350px;
+$full-width:100%;
+$padding-basic:2px;
+$font-weight-basic:600;
+
+/*theme-Basic-color*/
+$border-color-basic:#d8e6f5;
+$basic-color-white: #fff;
+$basic-color-black: #000;
+$basic-color-primary: #409EFF;
+
+// $--color-primary-light-1: mix($--color-white, $--color-primary, 10%) !default; /* 53a8ff */
+$basic-color-primary-gray:#5c7a98;
+$basic-color-success: #67c23a;
+$basic-color-warning: #e6a23c;
+$basic-color-danger: #f56c6c;
+$basic-color-info: #909399;
+
+
+
+/* form
+--------------------------*/
+
+.el-input .el-input__count .el-input__count-inner {
+  background: transparent;
+}
+.el-form{
+  .el-form-item{
+    .el-form-item__label{
+      color: #3f65b1;
+    }
+    .el-form-item__content{
+      .el-input-number,.el-date-editor.el-input{
+        // width: $full-width;
+        max-width: $input-input-number-max-width;
+      }
+      .el-autocomplete{
+        display: block;
+      }
+      .el-date-editor--datetimerange.el-input__inner{
+        min-width: $input-datetimerange-max-width;
+        width: $full-width;
+      }
+      .el-date-editor--daterange.el-input__inner,.el-date-editor--timerange.el-input__inner{
+        min-width: $input-input-timerange-max-width;
+        width: $full-width;
+      }
+      .form-imgs{
+        display: flex;
+        list-style-type: none;
+        .img-item{
+          padding: $padding-basic * 2;
+        }
+      }
+    }
+    &.fix_height_form_item{
+      // 固定去除1像素
+      height: $padding-basic*24!important;
+    }
+  }
+  /*from分组标题样式section*/
+  span.section-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 10rem;
+    color: #409EFF;
+    font-weight: $font-weight-basic;
+    line-height: 1.5rem;
+    font-size: 13px;
+    padding: $padding-basic*2;
+    border-bottom: 1px solid $border-color-basic;
+    cursor: pointer;
+    user-select: none;
+
+    .section-arrow {
+      display: inline-block;
+      font-size: 12px;
+      transition: transform 0.3s ease-in-out;
+      transform: rotate(90deg);
+      &.is-collapse {
+        transform: rotate(0deg);
+      }
+    }
+  }
+  >.el-row {
+    border: 1px solid $border-color-basic;
+    border-bottom-width: 0;
+    padding: $padding-basic*4;
+    &:last-child{
+      border-bottom-width: 1px;
+    }
+  }
+}
+
+/* el-collapse-item
+--------------------------*/
+.el-collapse{
+  border-top:0;
+  border-bottom:0;
+}
+.el-collapse-item{
+  border: 1px solid $border-color-basic;
+  margin-top: $padding-basic*4;
+  border-radius: $padding-basic;
+  padding: $padding-basic*4;
+  .el-collapse-item__header{
+    width: 100%!important;
+    padding-left: 0.2rem;
+    color: $basic-color-primary-gray;
+    font-weight: $font-weight-basic;
+    border-bottom-width: 0;
+    height: 30px;
+    line-height: 30px;
+    &.is-active{
+      border-bottom-color: $border-color-basic;
+      color: $basic-color-primary;
+      border-bottom-width: 1px;
+    }
+  }
+  .el-collapse-item__wrap{
+    border-bottom-width: 0;
+    // min-height: 400px;
+  }
+  .el-collapse-item__content {
+    // min-height: 400px;
+  }
+}
+
+/* table-head-btns
+--------------------------*/
+.table-head-btns{
+  padding: $padding-basic * 3;
+}
+.el-table{
+  thead{
+    .cell{
+      padding-left:4px;
+      padding-right:4px;
+    }
+  }
+  .cell{
+    // padding-left:4px;
+    // padding-right:4px;
+    padding:8px;
+    line-height: 18px;
+    >*{
+      
+      // text-overflow: -o-ellipsis-lastline;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // display: -webkit-box;
+      // -webkit-line-clamp: 1;
+      // line-clamp: 1;
+      // -webkit-box-orient: vertical;
+    }
+    >div.group-table{
+      text-overflow: -o-ellipsis-lastline;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+  }
+  td{
+    padding:0 4px!important;
+  }
+  th{
+    // background-color: #06a0dd;
+    // color: #fff;
+    >.cell{
+        color: rgb(83, 103, 133);
+        padding-left:4px;
+        padding-right:4px;
+        white-space: nowrap;
+    }
+    div{
+      padding-left:4px;
+      padding-right:4px;
+    }
+  }
+}
+
+/**
+公共区块边框
+*/
+.padding-bottom{
+  padding-bottom:5px!important;
+}
+
+/**下拉框
+*/
+.el-scrollbar__bar.is-vertical{
+  width:13px!important;
+}
+
+
+.el-upload-list{
+  border-radius: 3px;
+  border: 1px solid #DCDFE6!important;
+}
