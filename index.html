@@ -8,6 +8,8 @@
   <link rel="icon" href="./favicon.ico">
   <!-- 全局环境配置（百度地图/视频/聊天等） -->
   <script src="./config/config_dev.js"></script>
+  <!-- 生产网关配置注入：服务器根目录公共 /js/server.js（部署根目录/子目录均解析到站点根/js/）；dev 由 vite proxy 代理 -->
+  <script src="../js/server.js"></script>
   <title>低代码页面</title>
   <style>
     /* ===== 首屏骨架屏（Vue 挂载后自动被替换） ===== */
