@@ -62,10 +62,9 @@
       v-if="treeData.length"
       :title="isCollapsed ? '展开' : '收起'"
     >
-      <Icon
-        icon="material-symbols:arrow-menu-close"
-        class="icon"
-      ></Icon>
+      <span
+        class="i-material-symbols-arrow-menu-close icon"
+      ></span>
     </div>
   </div>
 </template>

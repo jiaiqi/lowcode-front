@@ -77,7 +77,7 @@
         :to="homePath"
         class="link"
       >
-        <Icon icon="ri-home-4-fill"></Icon>
+        <span class="i-ri-home-4-fill"></span>
       </router-link>
     </div>
     <div class="breadcrumb-list">

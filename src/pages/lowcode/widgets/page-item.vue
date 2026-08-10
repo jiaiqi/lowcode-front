@@ -48,12 +48,11 @@
             <!-- 标题栏 -->
             <div class="com-popup-header">
               <span class="com-popup-title">{{ pageItemData.com_label || pageItemData.component_label || '' }}</span>
-              <Icon
+              <span
                 v-if="!hideComPopupCloseBtn"
-                icon="ep:close"
-                class="com-popup-close-btn"
-                @click.native="onChildClosePopup"
-              />
+                class="i-ep-close com-popup-close-btn"
+                @click="onChildClosePopup"
+              ></span>
             </div>
             <!-- 内容区 -->
             <div class="com-popup-body">
@@ -160,10 +159,10 @@
               class="icon3"
               v-else-if="mixTitleIcon === '方块'"
             ></span>
-            <Icon
-              icon="ri-arrow-drop-right-fill"
+            <span
+              class="i-ri-arrow-drop-right-fill"
               v-else-if="mixTitleIcon === '三角形'"
-            ></Icon>
+            ></span>
             <Icon
               :icon="mixTitleIcon"
               v-else-if="mixTitleIcon && mixTitleIcon !== '下划线'"
@@ -183,7 +182,7 @@
           class="title-tip-icon"
           @click.stop="showTitleTipDialog = true"
         >
-          <Icon icon="ri-question-line" style="font-size: 16px; color: #999;" />
+          <span class="i-ri-question-line" style="font-size: 16px; color: #999;"></span>
         </span>
       </div>
 
@@ -201,9 +200,9 @@
         v-if="showExpandBtn"
         @click="toggleExpand"
       >
-        <Icon
-          :icon="isExpanded ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"
-        />
+        <span
+          :class="isExpanded ? 'i-ri-arrow-up-s-line' : 'i-ri-arrow-down-s-line'"
+        ></span>
       </div>
     </div>
     <transition

@@ -10,6 +10,8 @@ import "element-ui/lib/theme-chalk/index.css";
 // 引入顺序与旧工程一致:element-ui → preflight → 业务主题,后者可覆盖前者。
 import "../theme/scss/preflight.scss";
 import "../theme/scss/common-theme.scss";
+// unocss 图标样式（静态图标内联 CSS；需在业务样式之后引入以覆盖）
+import "virtual:uno.css";
 
 import Fragment from "vue-fragment";
 Vue.use(Fragment.Plugin);

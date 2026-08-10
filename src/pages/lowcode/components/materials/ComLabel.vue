@@ -14,10 +14,10 @@
           <span class="icon1" v-if="titleIcon === '竖线'"></span>
           <span class="icon2" v-else-if="titleIcon === '圆形'"></span>
           <span class="icon3" v-else-if="titleIcon === '方块'"></span>
-          <Icon
-            icon="ri-arrow-drop-right-fill"
+          <span
+            class="i-ri-arrow-drop-right-fill"
             v-else-if="titleIcon === '三角形'"
-          ></Icon>
+          ></span>
           <Icon
             :icon="titleIcon"
             v-else-if="titleIcon && titleIcon !== '下划线'"

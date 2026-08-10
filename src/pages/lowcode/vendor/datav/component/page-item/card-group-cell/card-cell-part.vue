@@ -30,7 +30,7 @@
           v-for="(file, fIdx) in attachmentList"
           :key="file.id || file.file_id || fIdx"
         >
-          <Icon icon="ep:document" class="bx-cell-file-icon" />
+          <span class="i-ep-document bx-cell-file-icon"></span>
           <div class="bx-cell-file-info">
             <div class="bx-cell-file-name" :title="file.src_name">
               {{ file.src_name || "附件" + (fIdx + 1) }}
@@ -59,7 +59,7 @@
             circle
             @click.stop="onDownloadAttachmentItem(file)"
           >
-            <Icon icon="ep:download" />
+            <span class="i-ep-download"></span>
           </el-button>
         </div>
       </template>

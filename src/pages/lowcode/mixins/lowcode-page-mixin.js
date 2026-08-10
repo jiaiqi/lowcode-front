@@ -11,9 +11,60 @@ import cloneDeep from "lodash/cloneDeep";
 import "animate.css";
 
 import { addCollection } from "@iconify/vue2";
-// import carbon from "@iconify/json/json/carbon.json";
-// import mdiLight from "@iconify/json/json/mdi-light.json";
-// import ri from "@iconify/json/json/ri.json";
+
+/**
+ * iconify 单集合按需加载器（替代原 mounted 全量加载 3 个全集 JSON ≈2.3MB）。
+ * - 静态图标已由 unocss 内联（含 material-symbols，故不再运行时加载该集合）
+ * - 动态图标（页面配置里的 icon 字段）：?url 静态资源 + 运行时 fetch，
+ *   避免 Vite 对动态 import 注入 preload 导致首屏预取大 JSON
+ */
+import epIconsUrl from "@iconify-json/ep/icons.json?url";
+import riIconsUrl from "@iconify-json/ri/icons.json?url";
+import mdiLightIconsUrl from "@iconify-json/mdi-light/icons.json?url";
+
+const iconSetUrls = {
+  ep: epIconsUrl,
+  ri: riIconsUrl,
+  "mdi-light": mdiLightIconsUrl,
+};
+const loadedIconSets = new Set();
+
+async function ensureIconCollection(iconName) {
+  if (typeof iconName !== "string" || !iconName.includes(":")) return;
+  const prefix = iconName.split(":")[0];
+  const url = iconSetUrls[prefix];
+  if (!url || loadedIconSets.has(prefix)) return;
+  loadedIconSets.add(prefix);
+  try {
+    const json = await (await fetch(url)).json();
+    addCollection(json);
+  } catch (e) {
+    loadedIconSets.delete(prefix); // 失败允许重试
+    console.warn(`iconify 集合加载失败: ${prefix}`, e);
+  }
+}
+
+/**
+ * 从组件配置中收集动态图标名（com_icon / title_icon / icon_name 等字段），
+ * 逐个按需加载对应集合；addCollection 后已挂载的 Icon 组件会自动刷新。
+ * @param {Array|Object} components - 页面组件树
+ */
+function loadPageIcons(components) {
+  if (!components) return;
+  try {
+    const raw = JSON.stringify(components);
+    const re = /"(?:com_icon|title_icon|icon_name|icon)"\s*:\s*"([a-z0-9-]+:[a-z0-9-]+)"/gi;
+    const seen = new Set();
+    let m;
+    while ((m = re.exec(raw))) {
+      if (seen.has(m[1])) continue;
+      seen.add(m[1]);
+      ensureIconCollection(m[1]);
+    }
+  } catch (e) {
+    console.warn("收集页面图标失败", e);
+  }
+}
 
 import { $selectOne, getHomePageNo, getImagePath } from "@/common/http";
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
@@ -26,7 +77,6 @@ import { pageCompCols } from "../components/property/columns";
  * 模块级共享，避免多页面导航切换时重复请求相同的应用全局配置
  */
 const appConfigCache = new Map();
-let isIconifyLoaded = false;
 
 /**
  * 页面快照缓存：pageNo -> { fingerprint, prepared }
@@ -220,22 +270,11 @@ export default {
     }
   },
   async mounted() {
-    if (isIconifyLoaded) return;
-    // 异步加载并添加图标集合（仅单例加载一次）
-    const [
-      carbon,
-      mdiLight,
-      ri
-    ] = await Promise.all([
-      import(/* webpackChunkName: "iconify" */ "@iconify/json/json/carbon.json"),
-      import(/* webpackChunkName: "iconify" */ "@iconify/json/json/mdi-light.json"),
-      import(/* webpackChunkName: "iconify" */ "@iconify/json/json/ri.json")
-    ]);
-
-    addCollection(carbon.default || carbon);
-    addCollection(mdiLight.default || mdiLight);
-    addCollection(ri.default || ri);
-    isIconifyLoaded = true;
+    // 图标按需加载：收集本页组件配置中的动态图标并加载对应集合；
+    // 静态图标已由 unocss 内联，不再全量下载 iconify 全集（原 ≈2.3MB）
+    if (this.components && this.components.length) {
+      loadPageIcons(this.components);
+    }
   },
   beforeDestroy() {
     if (typeof document !== "undefined") {

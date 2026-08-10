@@ -10,7 +10,6 @@ import { useRoute, useStore } from '@/common/vueApi.js'
 import cloneDeep from "lodash/cloneDeep"
 import "animate.css"
 
-import { addCollection } from "@iconify/vue2"
 // import carbon from "@iconify/json/json/carbon.json"
 // import mdiLight from "@iconify/json/json/mdi-light.json"
 // import ri from "@iconify/json/json/ri.json"
@@ -264,21 +263,10 @@ export function useLowcodePage() {
   })
 
   // 组件挂载时的操作
-  onMounted(async () => {
-    // 异步加载并添加图标集合
-    const [
-      carbon,
-      mdiLight,
-      ri
-    ] = await Promise.all([
-      import(/* webpackChunkName: "iconify" */ "@iconify/json/json/carbon.json"),
-      import(/* webpackChunkName: "iconify" */ "@iconify/json/json/mdi-light.json"),
-      import(/* webpackChunkName: "iconify" */ "@iconify/json/json/ri.json")
-    ]);
-    
-    addCollection(carbon.default || carbon);
-    addCollection(mdiLight.default || mdiLight);
-    addCollection(ri.default || ri);
+  onMounted(() => {
+    // 图标按需加载：静态图标已由 unocss 内联；页面配置中的动态图标由
+    // lowcode-page-mixin 的 ensureIconCollection 按需 fetch 单集合包，
+    // 不再全量加载 @iconify/json 全集（原 ≈2.3MB）
     setThemeVariable()
   })
 

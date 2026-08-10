@@ -8,10 +8,9 @@
       class="title"
       v-if="data && data.name"
     >
-      <Icon
-        icon="ri-arrow-right-s-fill"
-        class="icon"
-      ></Icon>
+      <span
+        class="i-ri-arrow-right-s-fill icon"
+      ></span>
       <span class="ml-2 text">
         {{ data.name || "" }}
       </span>

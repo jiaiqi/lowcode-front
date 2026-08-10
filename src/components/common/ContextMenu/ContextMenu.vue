@@ -38,6 +38,9 @@
 
 <script>
 import { Icon, addCollection } from "@iconify/vue2";
+import carbonIconsUrl from "@iconify/json/json/carbon.json?url";
+import mdiLightIconsUrl from "@iconify/json/json/mdi-light.json?url";
+import riIconsUrl from "@iconify/json/json/ri.json?url";
 
 export default {
   name: "ContextMenu",
@@ -74,14 +77,15 @@ export default {
     },
         /** 初始化 Iconify 图标 */
     async initIconify() {
+      // ?url 静态资源 + fetch，避免全量 JSON 进入首屏 JS chunk
       const [carbon, mdiLight, ri] = await Promise.all([
-        import(/* webpackChunkName: "iconify" */ "@iconify/json/json/carbon.json"),
-        import(/* webpackChunkName: "iconify" */ "@iconify/json/json/mdi-light.json"),
-        import(/* webpackChunkName: "iconify" */ "@iconify/json/json/ri.json"),
+        fetch(carbonIconsUrl).then((r) => r.json()),
+        fetch(mdiLightIconsUrl).then((r) => r.json()),
+        fetch(riIconsUrl).then((r) => r.json()),
       ]);
-      addCollection(carbon.default || carbon);
-      addCollection(mdiLight.default || mdiLight);
-      addCollection(ri.default || ri);
+      addCollection(carbon);
+      addCollection(mdiLight);
+      addCollection(ri);
     },
 
   },

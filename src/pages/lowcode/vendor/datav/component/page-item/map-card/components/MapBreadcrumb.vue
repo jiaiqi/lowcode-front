@@ -12,17 +12,15 @@
           @click="handleBreadcrumbClick(item, index)"
           :key="index"
         >
-          <Icon
-            icon="material-symbols:home"
-            class="home-icon"
+          <span
+            class="i-material-symbols-home home-icon"
             v-if="index === 0"
-          />
+          ></span>
           <!-- 分隔符 -->
-          <Icon
-            icon="material-symbols:chevron-right"
-            class="breadcrumb-separator"
+          <span
+            class="i-material-symbols-chevron-right breadcrumb-separator"
             v-if="index > 0"
-          />
+          ></span>
           <!-- 面包屑项 -->
           <span
             class="breadcrumb-text"
