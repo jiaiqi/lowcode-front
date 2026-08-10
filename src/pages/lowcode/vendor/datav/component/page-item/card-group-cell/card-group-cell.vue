@@ -1009,10 +1009,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-/* 跑马灯模式样式 */
+<style lang="scss">
+/* 跑马灯公共样式：元素渲染于子组件 card-cell-part，scoped 选择器无法匹配，必须全局引入 */
 @import "./marquee.css";
+</style>
 
+<style lang="scss" scoped>
 .bx-text-cell {
   // overflow: hidden;
 

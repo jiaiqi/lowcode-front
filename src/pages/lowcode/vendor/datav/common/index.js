@@ -3,6 +3,8 @@ import { getImagePath } from "@/common/http";
 // 处理后端返回的样式数据
 const formatStyleData = (val) => {
   let json = val;
+  // 空值/空字符串直接返回（旧工程同款行为，避免 JSON.parse("") 抛错刷控制台）
+  if (!val || (typeof val === "string" && !val.trim())) return {};
   if (typeof json === 'string') {
     try {
       json = JSON.parse(json);

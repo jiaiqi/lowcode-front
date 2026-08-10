@@ -5,6 +5,10 @@ import store from "./store";
 
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+// 渲染一致性:旧工程 app.css 含 tailwind preflight + modern-normalize(来自主工程 tailwind v2.2.17),
+// 缺失会导致 box-sizing 回退 content-box、line-height 回退 normal,页面布局与旧工程不一致。
+// 引入顺序与旧工程一致:element-ui → preflight → 业务主题,后者可覆盖前者。
+import "../theme/scss/preflight.scss";
 import "../theme/scss/common-theme.scss";
 
 import Fragment from "vue-fragment";
