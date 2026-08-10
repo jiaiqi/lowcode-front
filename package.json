@@ -1,0 +1,50 @@
+{
+  "name": "lowcode-front",
+  "version": "0.1.0",
+  "private": true,
+  "description": "低代码渲染与编辑独立工程（Vite + Vue2.7）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy:dev": "vite build --mode dev"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@iconify/json": "^2.2.333",
+    "@iconify/vue2": "^2.1.0",
+    "animate.css": "^4.1.1",
+    "axios": "^1.3.4",
+    "dayjs": "^1.11.18",
+    "echarts": "^4.8.0",
+    "echarts-liquidfill": "^2.0.6",
+    "echarts-wordcloud": "^1.1.3",
+    "element-ui": "2.15.14",
+    "jquery": "^3.6.4",
+    "lodash": "^4.17.21",
+    "vue": "2.7.16",
+    "vue-drag-resize": "^1.5.4",
+    "vue-fragment": "^1.6.0",
+    "vue-grid-layout": "^2.4.0",
+    "vue-json-viewer": "2",
+    "vue-router": "3.0.3",
+    "vue-sketch-ruler": "^1.0.3",
+    "vue2-teleport": "^1.1.4",
+    "vuedraggable": "^2.24.3",
+    "vuex": "3"
+  },
+  "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@vitejs/plugin-vue2": "^2.3.1",
+    "sass": "1.80.0",
+    "vite": "^5.4.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
