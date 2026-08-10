@@ -292,7 +292,7 @@ export default {
         }
       };
       if (getRootWindow()?.layer) {
-        const login_page = "/main/login.html";
+        let login_page = "/main/login.html";
         if (getRootWindow()?.getLoginAddress) {
           login_page = `/${getRootWindow().getLoginAddress()}`;
         }

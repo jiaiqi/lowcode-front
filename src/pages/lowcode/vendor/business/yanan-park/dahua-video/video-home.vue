@@ -182,11 +182,9 @@ const loadVideoPlayerScript = () => {
 
     // 创建script标签动态加载
     const script = document.createElement('script');
-    // 使用 webpack4 兼容的内联 file-loader，生成静态 URL 到 assets
-    // 注意：需确保项目已包含 file-loader（Vue CLI 默认包含）
-    // 输出路径：assets/dhvideo/videoPlayer.js（不加 hash，便于稳定引用）
-    // eslint-disable-next-line
-    script.src = require('@/assets/dhvideo/videoPlayer.js');
+    // Vite 兼容：文件由部署方放置到站点根 assets/dhvideo/videoPlayer.js
+    // （webpack4 时代的 require('@/assets/dhvideo/videoPlayer.js') 在 Vite 下无法构建）
+    script.src = './assets/dhvideo/videoPlayer.js';
     script.async = true;
 
     script.onload = () => {
