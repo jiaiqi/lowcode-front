@@ -46,6 +46,7 @@
 
 <script>
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { normalizeJumpFilePath } from "@/common/common";
 
 export default {
   name: "NavMenuItem",
@@ -158,10 +159,9 @@ export default {
         let pageNo = this.data.page_no;
         let path = `/site/${pageNo}`;
         if (this.data.template_page_json?.file_path) {
-          path = this.data.template_page_json.file_path?.replace(
-            ":pageNo",
-            pageNo
-          );
+          path = normalizeJumpFilePath(
+            this.data.template_page_json.file_path
+          )?.replace(":pageNo", pageNo);
           if (path.includes("#")) {
             path = path.split("#")[1];
           }

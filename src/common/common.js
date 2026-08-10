@@ -8,6 +8,23 @@ export const getOutputDir = cfg.getOutputDir;
 export const getAssetsDir = cfg.getAssetsDir;
 
 /**
+ * 规范化页面跳转路径
+ * @description 页面配置里的 file_path 可能带旧工程部署前缀（如 /vpages/#/site/xxx），
+ *              新工程部署在根目录时该前缀不可访问，统一替换为 /#/site/xxx
+ * @param {string} filePath - 原始 file_path
+ * @returns {string} 规范化后的跳转路径
+ */
+export const normalizeJumpFilePath = (filePath) => {
+  if (
+    typeof filePath === "string" &&
+    filePath.startsWith("/vpages/#/site")
+  ) {
+    return filePath.replace("/vpages/#/site", "/#/site");
+  }
+  return filePath;
+};
+
+/**
  * 检查字符串是否为有效的JSON格式
  * @description 尝试解析字符串为JSON对象，判断是否为有效的JSON格式
  * @param {string} str - 需要检查的字符串

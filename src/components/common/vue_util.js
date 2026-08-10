@@ -2,7 +2,7 @@ import Vue from "vue";
 import { MessageBox } from "element-ui";
 import { backendIpAddr, getEnv } from "@/common/http";
 import { pathConfigMap } from "@/common/envList";
-import { getFullBaseUrl } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
 import {
   getImagePath,
   getServiceUrl,
@@ -287,7 +287,9 @@ function init_util() {
       let authJson = jumpJson.page_auth_json || null;
       if (pageNo) {
         if (jumpJson?.tmpl_page_json?.file_path) {
-          url = jumpJson?.tmpl_page_json?.file_path.replace(":pageNo", pageNo);
+          url = normalizeJumpFilePath(
+            jumpJson?.tmpl_page_json?.file_path
+          ).replace(":pageNo", pageNo);
         } else {
           url = `/site/${pageNo}`;
         }

@@ -46,7 +46,7 @@ export default {
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
-import { getFullBaseUrl } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
 const props = defineProps({
   config: Object,
   parentStyle: Object,
@@ -230,7 +230,9 @@ function navToPath(jump_json) {
     }
   }
   if (jump_json?.tmpl_page_json.file_path) {
-    path = jump_json?.tmpl_page_json.file_path.replace(":pageNo", pageNo);
+    path = normalizeJumpFilePath(
+      jump_json?.tmpl_page_json.file_path
+    ).replace(":pageNo", pageNo);
   } else {
     path = `${getFullBaseUrl()}/lowcode-grid/view/${pageNo}?srvApp=config`;
   }

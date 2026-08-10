@@ -218,7 +218,7 @@ import { $selectList } from "@/common/http";
 import catalogTabs from "./catalog/tabs.vue";
 import ContentWrap from "./catalog/content-wrap.vue";
 import catalogTree from "./catalog/tree.vue";
-import { getFullBaseUrl } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
 export default {
   name: "NavMenu",
   components: {
@@ -796,7 +796,9 @@ export default {
       }
       let path = "";
       if (jump_json?.tmpl_page_json.file_path) {
-        path = jump_json?.tmpl_page_json.file_path.replace(":pageNo", pageNo);
+        path = normalizeJumpFilePath(
+          jump_json?.tmpl_page_json.file_path
+        ).replace(":pageNo", pageNo);
       } else {
         path = `${getFullBaseUrl()}/${pageNo}?srvApp=config`;
       }

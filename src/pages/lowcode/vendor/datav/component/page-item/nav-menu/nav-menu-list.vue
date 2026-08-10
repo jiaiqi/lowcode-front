@@ -24,7 +24,7 @@ import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
 // import NavSubMenu from "./nav-menu-child.vue";
 // import NavMenu from "./nav-menu.vue";
 import clickoutside from "@/pages/lowcode/vendor/datav/common/clickoutside.js";
-import { getFullBaseUrl } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
 export default {
   name: "NavMenuChild",
   components: {
@@ -196,7 +196,9 @@ export default {
       let pageNo = jump_json?.dest_page_no;
       let path = "";
       if (jump_json?.tmpl_page_json.file_path) {
-        path = jump_json?.tmpl_page_json.file_path.replace(":pageNo", pageNo);
+        path = normalizeJumpFilePath(
+          jump_json?.tmpl_page_json.file_path
+        ).replace(":pageNo", pageNo);
       } else {
         path = `${getFullBaseUrl()}/${pageNo}?srvApp=config`;
       }

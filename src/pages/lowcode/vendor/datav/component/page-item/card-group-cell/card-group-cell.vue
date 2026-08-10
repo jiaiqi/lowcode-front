@@ -280,6 +280,7 @@ import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
 import cardCellPart from "./card-cell-part.vue";
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { normalizeJumpFilePath } from "@/common/common";
 import cardCellLayout from "./card-cell-layout.vue";
 import customDialog from "./custom-dialog.vue";
 import cloneDeep from "lodash/cloneDeep.js";
@@ -891,7 +892,7 @@ export default {
         const h = rect.height;
         console.log("弹框:", x, y, w, h);
         if (jumpJson.tmpl_page_json?.file_path) {
-          let pagePath = jumpJson.tmpl_page_json.file_path;
+          let pagePath = normalizeJumpFilePath(jumpJson.tmpl_page_json.file_path);
           if (jumpJson.dest_page_no) {
             pagePath = pagePath.replace(":pageNo", jumpJson.dest_page_no);
           }
