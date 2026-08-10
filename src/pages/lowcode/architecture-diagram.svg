@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景和标题 -->
+  <rect width="1000" height="800" fill="#f8f9fa" />
+  <text x="500" y="40" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold" fill="#333">低代码平台架构图</text>
+  
+  <!-- 主容器 -->
+  <rect x="50" y="70" width="900" height="700" rx="10" ry="10" fill="#fff" stroke="#ddd" stroke-width="2" />
+  
+  <!-- 主要模块容器 -->
+  <!-- 顶部导航栏 -->
+  <rect x="70" y="90" width="860" height="60" rx="5" ry="5" fill="#e9ecef" stroke="#ced4da" stroke-width="1" />
+  <text x="500" y="125" font-family="Arial" font-size="16" text-anchor="middle" fill="#495057">Header 组件 (components/header)</text>
+  
+  <!-- 左侧物料面板 -->
+  <rect x="70" y="170" width="200" height="580" rx="5" ry="5" fill="#e7f5ff" stroke="#4dabf7" stroke-width="1" />
+  <text x="170" y="195" font-family="Arial" font-size="16" text-anchor="middle" fill="#1971c2">物料面板</text>
+  <text x="170" y="215" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">(components/materials)</text>
+  
+  <!-- 物料面板内部组件 -->
+  <rect x="90" y="235" width="160" height="40" rx="3" ry="3" fill="#d0ebff" stroke="#74c0fc" stroke-width="1" />
+  <text x="170" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#1864ab">组件分类列表</text>
+  
+  <rect x="90" y="285" width="160" height="40" rx="3" ry="3" fill="#d0ebff" stroke="#74c0fc" stroke-width="1" />
+  <text x="170" y="310" font-family="Arial" font-size="12" text-anchor="middle" fill="#1864ab">组件项 (block.vue)</text>
+  
+  <rect x="90" y="335" width="160" height="40" rx="3" ry="3" fill="#d0ebff" stroke="#74c0fc" stroke-width="1" />
+  <text x="170" y="360" font-family="Arial" font-size="12" text-anchor="middle" fill="#1864ab">容器 (container.vue)</text>
+  
+  <rect x="90" y="385" width="160" height="40" rx="3" ry="3" fill="#d0ebff" stroke="#74c0fc" stroke-width="1" />
+  <text x="170" y="410" font-family="Arial" font-size="12" text-anchor="middle" fill="#1864ab">内容项 (content-item.vue)</text>
+  
+  <!-- 中间编辑区域 -->
+  <rect x="290" y="170" width="420" height="580" rx="5" ry="5" fill="#fff3bf" stroke="#fcc419" stroke-width="1" />
+  <text x="500" y="195" font-family="Arial" font-size="16" text-anchor="middle" fill="#e67700">编辑器</text>
+  <text x="500" y="215" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">(components/editor)</text>
+  
+  <!-- 编辑器内部组件 -->
+  <rect x="320" y="235" width="360" height="495" rx="3" ry="3" fill="#fff9db" stroke="#ffe066" stroke-width="1" />
+  <text x="500" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#e67700">画布区域</text>
+  
+  <!-- 组件实例 -->
+  <rect x="340" y="280" width="320" height="80" rx="3" ry="3" fill="#ffec99" stroke="#ffd43b" stroke-width="1" />
+  <text x="500" y="320" font-family="Arial" font-size="12" text-anchor="middle" fill="#e67700">组件实例 (materials/view.vue)</text>
+  
+  <rect x="340" y="370" width="320" height="80" rx="3" ry="3" fill="#ffec99" stroke="#ffd43b" stroke-width="1" />
+  <text x="500" y="410" font-family="Arial" font-size="12" text-anchor="middle" fill="#e67700">组件实例 (materials/view.vue)</text>
+  
+  <rect x="340" y="460" width="320" height="80" rx="3" ry="3" fill="#ffec99" stroke="#ffd43b" stroke-width="1" />
+  <text x="500" y="500" font-family="Arial" font-size="12" text-anchor="middle" fill="#e67700">组件实例 (materials/view.vue)</text>
+  
+  <!-- 右侧属性面板 -->
+  <rect x="730" y="170" width="200" height="580" rx="5" ry="5" fill="#f3f0ff" stroke="#b197fc" stroke-width="1" />
+  <text x="830" y="195" font-family="Arial" font-size="16" text-anchor="middle" fill="#6741d9">属性面板</text>
+  <text x="830" y="215" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">(components/property)</text>
+  
+  <!-- 属性面板内部组件 -->
+  <rect x="750" y="235" width="160" height="40" rx="3" ry="3" fill="#e5dbff" stroke="#9775fa" stroke-width="1" />
+  <text x="830" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#5f3dc4">页面属性</text>
+  
+  <rect x="750" y="285" width="160" height="40" rx="3" ry="3" fill="#e5dbff" stroke="#9775fa" stroke-width="1" />
+  <text x="830" y="310" font-family="Arial" font-size="12" text-anchor="middle" fill="#5f3dc4">组件属性</text>
+  
+  <rect x="750" y="335" width="160" height="40" rx="3" ry="3" fill="#e5dbff" stroke="#9775fa" stroke-width="1" />
+  <text x="830" y="360" font-family="Arial" font-size="12" text-anchor="middle" fill="#5f3dc4">组件配置</text>
+  
+  <!-- 底部状态栏 -->
+  <rect x="70" y="670" width="860" height="80" rx="5" ry="5" fill="#e9ecef" stroke="#ced4da" stroke-width="1" />
+  <text x="500" y="710" font-family="Arial" font-size="14" text-anchor="middle" fill="#495057">状态管理与数据流</text>
+  
+  <!-- 数据流向箭头 -->
+  <!-- 物料面板到编辑器 -->
+  <path d="M 270 350 L 290 350" stroke="#1c7ed6" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- 编辑器到属性面板 -->
+  <path d="M 710 350 L 730 350" stroke="#7048e8" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- 属性面板到编辑器 -->
+  <path d="M 730 400 L 710 400" stroke="#7048e8" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- 编辑器到状态管理 -->
+  <path d="M 500 580 L 500 670" stroke="#f08c00" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- 状态管理到物料面板 -->
+  <path d="M 400 670 L 170 580 L 170 450" stroke="#f08c00" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- 状态管理到属性面板 -->
+  <path d="M 600 670 L 830 580 L 830 450" stroke="#f08c00" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- 箭头定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#495057" />
+    </marker>
+  </defs>
+  
+  <!-- 状态管理模块 -->
+  <rect x="150" y="690" width="120" height="40" rx="3" ry="3" fill="#fff4e6" stroke="#ffa94d" stroke-width="1" />
+  <text x="210" y="715" font-family="Arial" font-size="12" text-anchor="middle" fill="#e8590c">拖拽状态 (dragStore)</text>
+  
+  <rect x="290" y="690" width="120" height="40" rx="3" ry="3" fill="#fff4e6" stroke="#ffa94d" stroke-width="1" />
+  <text x="350" y="715" font-family="Arial" font-size="12" text-anchor="middle" fill="#e8590c">组件状态</text>
+  
+  <rect x="430" y="690" width="120" height="40" rx="3" ry="3" fill="#fff4e6" stroke="#ffa94d" stroke-width="1" />
+  <text x="490" y="715" font-family="Arial" font-size="12" text-anchor="middle" fill="#e8590c">页面配置</text>
+  
+  <rect x="570" y="690" width="120" height="40" rx="3" ry="3" fill="#fff4e6" stroke="#ffa94d" stroke-width="1" />
+  <text x="630" y="715" font-family="Arial" font-size="12" text-anchor="middle" fill="#e8590c">主题配置</text>
+  
+  <rect x="710" y="690" width="120" height="40" rx="3" ry="3" fill="#fff4e6" stroke="#ffa94d" stroke-width="1" />
+  <text x="770" y="715" font-family="Arial" font-size="12" text-anchor="middle" fill="#e8590c">视图状态</text>
+  
+  <!-- 图例 -->
+  <rect x="800" y="50" width="15" height="15" fill="#e7f5ff" stroke="#4dabf7" stroke-width="1" />
+  <text x="820" y="63" font-family="Arial" font-size="12" text-anchor="start" fill="#495057">物料面板</text>
+  
+  <rect x="880" y="50" width="15" height="15" fill="#fff3bf" stroke="#fcc419" stroke-width="1" />
+  <text x="900" y="63" font-family="Arial" font-size="12" text-anchor="start" fill="#495057">编辑器</text>
+  
+  <rect x="800" y="70" width="15" height="15" fill="#f3f0ff" stroke="#b197fc" stroke-width="1" />
+  <text x="820" y="83" font-family="Arial" font-size="12" text-anchor="start" fill="#495057">属性面板</text>
+  
+  <rect x="880" y="70" width="15" height="15" fill="#fff4e6" stroke="#ffa94d" stroke-width="1" />
+  <text x="900" y="83" font-family="Arial" font-size="12" text-anchor="start" fill="#495057">状态管理</text>
+</svg>

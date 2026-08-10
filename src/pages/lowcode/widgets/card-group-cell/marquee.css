@@ -1,0 +1,53 @@
+/* 跑马灯公共样式 */
+.marquee-mode {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  /* display:flex; */
+  /* flex-wrap:nowarp; */
+  /* width:max-content; */
+  /* 使用 mask 实现自适应渐隐效果 */
+  --mask: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 2%,
+    rgba(0, 0, 0, 0.6) 4%,
+    rgba(0, 0, 0, 1) 6%,
+    rgba(0, 0, 0, 1) 94%,
+    rgba(0, 0, 0, 0.6) 96%,
+    rgba(0, 0, 0, 0.2) 98%,
+    transparent 100%
+  );
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+/* 基础跑马灯容器样式 */
+.marquee-content {
+  /* overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display:flex;
+  flex-wrap:nowarp;
+  width:100%; */
+  /* display:grid; */
+}
+.marquee-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+.marquee-item {
+  /* width: 100%; */
+}
+/* 跑马灯子元素样式 */
+.marquee-content > * {
+  /* display: inline-block; */
+  /* padding: 0 10px; */
+}
+
+/* 响应式支持 */
+@media (max-width: 768px) {
+  .marquee-content {
+    animation-duration: calc(var(--marquee-duration, 10s) * 0.8);
+  }
+}
