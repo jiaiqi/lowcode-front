@@ -23,7 +23,7 @@
       :style="[isHovered ? childPositionStyle : {}]"
       v-if="subMenu && subMenu.length"
     >
-      <nav-sub-menu
+      <nav-menu-child
         v-for="(item, index) in subMenu"
         :key="index"
         :config="item"
@@ -32,16 +32,20 @@
         :nav-icon-style="navIconStyle"
         :nav-icon-selected-style="navIconSelectedStyle"
         :parent-config="config"
-      ></nav-sub-menu>
+      ></nav-menu-child>
     </div>
   </div>
 </template>
 
+<script>
+export default {
+  name: "NavMenuChild",
+};
+</script>
+
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
-// import NavMenuChild from "./nav-menu-child.vue";
-import NavSubMenu from "./nav-menu-child.vue";
 import { getFullBaseUrl } from "@/common/common";
 const props = defineProps({
   config: Object,

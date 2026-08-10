@@ -211,7 +211,6 @@
 <script>
 import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
 import NavMenuChild from "./nav-menu-list.vue";
-import NavMenu from "./nav-menu.vue";
 import Teleport from "vue2-teleport";
 import NavMenuItem from "./nav-menu-item.vue";
 import { Icon } from "@iconify/vue2";
@@ -224,7 +223,6 @@ export default {
   name: "NavMenu",
   components: {
     NavMenuChild,
-    NavMenu,
     NavMenuItem,
     Teleport,
     Icon,
