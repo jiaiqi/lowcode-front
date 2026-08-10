@@ -18,6 +18,8 @@ export default defineConfig(({ mode }) => {
     define: {
       // 兼容旧代码中的 process.env.VUE_APP_*（Vue-cli 时代注入）
       "process.env.NODE_ENV": JSON.stringify(mode === "production" ? "production" : "development"),
+      "process.env.VUE_APP_BASE_URL": JSON.stringify(env.VUE_APP_BASE_URL || ""),
+      "process.env.VUE_APP_ROUTE_MODE": JSON.stringify(env.VUE_APP_ROUTE_MODE || "hash"),
       "process.env.VUE_APP_DEFAULT_ENV": JSON.stringify(env.VUE_APP_DEFAULT_ENV || "parkDev"),
     },
     css: {

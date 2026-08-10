@@ -13,6 +13,9 @@ Vue.use(Fragment.Plugin);
 import clickoutside from "@/directives/clickoutside.js";
 Vue.directive("clickoutside", clickoutside);
 
+import VueInit from "@/components/common/vue_init.js";
+Vue.use(VueInit);
+
 import VueUtil from "@/components/common/vue_util.js";
 Vue.use(VueUtil);
 

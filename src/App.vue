@@ -43,9 +43,29 @@ export default {
 };
 </script>
 
-<style>
-body {
+<style lang="scss">
+html {
+  height: 100%;
   margin: 0;
   padding: 0;
+  scrollbar-gutter: stable;
+}
+
+html body {
+  height: 100%;
+  margin: 0 !important;
+  padding: 0;
+}
+
+#app {
+  height: 100%;
+  color: #2c3e50;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.el-date-table td.in-range div {
+  background-color: #d2e2f9 !important;
 }
 </style>
