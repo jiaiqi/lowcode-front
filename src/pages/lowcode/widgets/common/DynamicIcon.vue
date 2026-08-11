@@ -52,7 +52,14 @@ export default {
       return "i-" + name;
     },
     style() {
-      const s = {};
+      // 默认 1.2em（与 unocss presetIcons scale 对齐）：图标尺寸跟随字体大小，
+      // 同字体图标方式；size prop 显式指定时覆盖
+      const s = {
+        width: "1.2em",
+        height: "1.2em",
+        "flex-shrink": 0,
+        "vertical-align": "middle",
+      };
       if (this.size) {
         const px = /^\d+$/.test(String(this.size)) ? this.size + "px" : this.size;
         s.fontSize = px;
