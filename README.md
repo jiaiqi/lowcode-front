@@ -22,6 +22,31 @@ pnpm build          # 生产构建（输出 dist/）
 pnpm preview        # 预览构建产物
 ```
 
+## 版本与变更日志
+
+基于 Conventional Commits 提交规范（commitlint 强制 `type(scope): subject`，见 `CONTRIBUTING.md`），
+自动生成 + 手动编辑双通道：
+
+```bash
+pnpm changelog          # 将「上次 tag → HEAD」的提交更新到 [Unreleased] 区（按 type 分组 + scope 标注 + 文件清单），并同步 public/changelog.json
+# 可选：手动编辑 CHANGELOG.md 的 [Unreleased] 区，补充发布说明 / 升级注意事项（下次发布时自动固化）
+pnpm release            # 一键发布：自动推断版本 → 固化 changelog → 提交 → git tag
+git push origin master --tags   # 推送代码与版本标签
+```
+
+版本自动推断规则（也可 `pnpm release --version 0.4.0` 手动指定，`--major` 强制大版本，`pnpm release:dry` 只预览不执行）：
+
+| 提交类型 | 版本变化 |
+|---|---|
+| `feat`（新功能） | minor：0.2.0 → 0.3.0 |
+| `fix` / `perf`（修复/性能） | patch：0.2.0 → 0.2.1 |
+| 其他 | patch（保底） |
+
+日志展示位置：
+
+- **仓库根 `CHANGELOG.md`** — 完整历史，每条变更带 `files:` 文件清单（文件 → 功能映射）
+- **应用内升级日志页 `/changelog`** — 读 `public/changelog.json`，门户风格展示（路由：`src/router/modules/lowcode.js`）
+
 ## 路由
 
 | 路由 | 说明 |
