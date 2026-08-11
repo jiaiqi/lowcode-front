@@ -283,7 +283,8 @@ export default {
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick, set, getCurrentInstance } from "vue";
-import { Icon, addCollection } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
+import { addCollection } from "@iconify/vue2";
 import carbonIconsUrl from "@iconify/json/json/carbon.json?url";
 import mdiLightIconsUrl from "@iconify/json/json/mdi-light.json?url";
 import riIconsUrl from "@iconify/json/json/ri.json?url";

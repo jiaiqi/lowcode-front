@@ -272,7 +272,7 @@
 // import bxform from '@/views/custom/components/bx-form/bx-form.vue'
 var self = null;
 import Teleport from "vue2-teleport";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import cardGroupCellMxin from "./card-group-cell-mixin.js"; // 新的确实方法依赖 混入
 import marqueeMixin from "./marquee-mixin.js"; // 跑马灯混入
 import verticalScrollMixin from "@/components/mixin/vertical-scroll-mixin.js"; // 通用纵向滚动混入
@@ -290,7 +290,7 @@ let activeCardTimer = null;
 export default {
   components: {
     Teleport,
-    Icon,
+    Icon: DynamicIcon,
     cardCellPart,
     cardCellLayout,
     customDialog,

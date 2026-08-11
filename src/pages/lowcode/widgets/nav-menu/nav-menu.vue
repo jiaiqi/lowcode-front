@@ -213,7 +213,7 @@ import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import NavMenuChild from "./nav-menu-list.vue";
 import Teleport from "vue2-teleport";
 import NavMenuItem from "./nav-menu-item.vue";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import { $selectList } from "@/common/http";
 import catalogTabs from "./catalog/tabs.vue";
 import ContentWrap from "./catalog/content-wrap.vue";
@@ -225,7 +225,7 @@ export default {
     NavMenuChild,
     NavMenuItem,
     Teleport,
-    Icon,
+    Icon: DynamicIcon,
     catalogTabs,
     ContentWrap,
     catalogTree,

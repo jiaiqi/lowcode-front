@@ -298,7 +298,7 @@ import "vue-json-viewer/style.css";
 import cloneDeep from "lodash/cloneDeep";
 import debounce from "lodash/debounce";
 // 外部组件
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 
 // 内部js
 import { $http, $selectOne, $selectList, $delete } from "@/common/http";
@@ -328,7 +328,7 @@ export default {
     PropertyView,
     JsonViewer,
     lcView,
-    Icon,
+    Icon: DynamicIcon,
     OutlineTree,
   },
 

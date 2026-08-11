@@ -62,7 +62,7 @@ export default {
 
 <script setup>
 import { ref, computed, getCurrentInstance } from "vue";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import CardCellPartWithoutCardGroup from "@/pages/lowcode/widgets/card-group-cell/card-cell-part-without-card-group.vue";
 import { formatStyleData } from "@/pages/lowcode/common";
 

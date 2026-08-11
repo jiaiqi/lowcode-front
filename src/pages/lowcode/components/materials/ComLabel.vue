@@ -42,13 +42,13 @@
 </template>
 
 <script>
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import { formatStyleData } from "@/pages/lowcode/common/index.js";
 
 export default {
   name: "ComLabel",
   components: {
-    Icon,
+    Icon: DynamicIcon,
   },
   props: {
     label: {

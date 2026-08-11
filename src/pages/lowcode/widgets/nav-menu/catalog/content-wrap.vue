@@ -159,14 +159,14 @@
 <script>
 import dayjs from "dayjs";
 
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import catalogTabs from "./tabs.vue";
 
 import { $selectList, getImagePath } from "@/common/http";
 // import lowCodeView from "@/pages/lowcode/view.vue";
 export default {
   components: {
-    Icon,
+    Icon: DynamicIcon,
     catalogTabs,
     lowCodeView: () => import("@/pages/lowcode/view.vue")
   },

@@ -365,7 +365,7 @@
 import "animate.css";
 
 import { mapGetters } from "vuex";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import dayjs from "dayjs";
 // import LiquidFillChart from "../LiquidFillChart.vue";
 const datePicker = () => import("./parts/date-picker.vue");
@@ -412,7 +412,7 @@ export default {
   },
   components: {
     cardCellPart: () => import("./card-cell-part.vue"),
-    Icon,
+    Icon: DynamicIcon,
     LiquidFillChart: () =>
       import(/* webpackChunkName: "echarts-vendor" */ "../LiquidFillChart.vue"),
     ProgressRing: () => import("./parts/ProgressRing.vue"),

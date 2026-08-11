@@ -86,7 +86,7 @@
  */
 
 import { ref, computed } from 'vue'
-import { Icon } from '@iconify/vue2'
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue"
 import TreeDataItem from './TreeDataItem.vue'
 
 /**

@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import cloneDeep from "lodash/cloneDeep";
 
 const COMPONENT_ICONS = {
@@ -103,7 +103,7 @@ const COMPONENT_ICONS = {
 export default {
   name: "OutlineTree",
   components: {
-    Icon,
+    Icon: DynamicIcon,
   },
   props: {
     visible: {

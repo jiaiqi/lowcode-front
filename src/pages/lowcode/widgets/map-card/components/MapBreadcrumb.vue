@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 
 /**
  * Props定义

@@ -494,7 +494,7 @@ import pageItemParams from "@/pages/lowcode/common/params/page-item-params-mixin
 import pageItemVisible from "@/pages/lowcode/common/params/page-item-visible-mixin.js";
 import CanvasPage from "@/components/common/canvas-line/canvasPage.vue";
 import Teleport from "vue2-teleport";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import {
   setEnterAnimationClass,
   setEnterAnimationVariables,
@@ -521,7 +521,7 @@ export default {
     formAdd,
     NavMenu,
     Teleport,
-    Icon,
+    Icon: DynamicIcon,
     CardCellPart,
     InfoDetails,
     DhVideo,//大华视频监控

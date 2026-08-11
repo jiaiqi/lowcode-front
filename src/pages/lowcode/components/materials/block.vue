@@ -105,7 +105,7 @@ import {
   setEnterAnimationClass,
   setEnterAnimationVariables,
 } from "@/common/common";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import dragStore from "../../store/dragStore";
 import ComLabel from "./ComLabel.vue";
 // 页面组件级 显示隐藏控制
@@ -134,7 +134,7 @@ const layoutKeys = [
 export default {
   name: "lc-block",
   mixins: [pageItemVisible],
-  components: { Icon, ComLabel },
+  components: { Icon: DynamicIcon, ComLabel },
   props: {
     id: {
       type: [String, Number],

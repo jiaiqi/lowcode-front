@@ -104,7 +104,7 @@ import cloneDeep from "lodash/cloneDeep";
 import dragStore from "./store/dragStore"
 import { materialsTree } from "./materials";
 import { pageCompCols } from "./property/columns";
-import { Icon } from "@iconify/vue2";
+import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import {
   Card,
   Chart,
@@ -140,7 +140,7 @@ export default {
     ExtPage,
     Layout,
     Avatar,
-    Icon,
+    Icon: DynamicIcon,
   },
   data() {
     return {
