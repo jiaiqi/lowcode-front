@@ -34,7 +34,8 @@ export function ensureCollection(prefix) {
   const loader = collectionLoaders[prefix];
   if (!loader) return Promise.resolve();
   const p = loader()
-    .then((url) => fetch(url).then((r) => r.json()))
+    // 动态 import("...?url") 返回模块对象 { default: url }，需取 default
+    .then((mod) => fetch(mod.default || mod).then((r) => r.json()))
     .then((data) => {
       collections.set(prefix, data);
       loading.delete(prefix);

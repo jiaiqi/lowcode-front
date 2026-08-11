@@ -5,27 +5,27 @@
       :style="[
         titleStyle,
         {
-          flexDirection: titleIcon === '下划线' ? 'column' : 'row',
+          flexDirection: icon === '下划线' ? 'column' : 'row',
         },
       ]"
     >
-      <template v-if="titleIcon && titleIcon !== '无'">
-        <span :style="[titleIconStyle]">
-          <span class="icon1" v-if="titleIcon === '竖线'"></span>
-          <span class="icon2" v-else-if="titleIcon === '圆形'"></span>
-          <span class="icon3" v-else-if="titleIcon === '方块'"></span>
+      <template v-if="icon && icon !== '无'">
+        <span :style="[iconStyle]">
+          <span class="icon1" v-if="icon === '竖线'"></span>
+          <span class="icon2" v-else-if="icon === '圆形'"></span>
+          <span class="icon3" v-else-if="icon === '方块'"></span>
           <span
             class="i-ri-arrow-drop-right-fill"
-            v-else-if="titleIcon === '三角形'"
+            v-else-if="icon === '三角形'"
           ></span>
           <Icon
-            :icon="titleIcon"
-            v-else-if="titleIcon && titleIcon !== '下划线'"
+            :icon="icon"
+            v-else-if="icon && icon !== '下划线'"
           ></Icon>
         </span>
       </template>
       <span class="com-label__title">{{ label }}</span>
-      <span v-if="titleIcon === '下划线'" class="under-line"></span>
+      <span v-if="icon === '下划线'" class="under-line"></span>
     </div>
     <div
       class="more-btn"
@@ -63,7 +63,7 @@ export default {
       type: [Object, String],
       default: () => ({}),
     },
-    titleIconStyleJson: {
+    iconStyleJson: {
       type: [Object, String],
       default: () => ({}),
     },
@@ -107,23 +107,20 @@ export default {
       let style = { ...this.titleStyleJson };
       return formatStyleData(style);
     },
-    titleIconStyle() {
+    iconStyle() {
       let style = {};
-      if (this.titleIconStyleJson) {
-        if (typeof this.titleIconStyleJson === "string") {
+      if (this.iconStyleJson) {
+        if (typeof this.iconStyleJson === "string") {
           try {
-            style = JSON.parse(this.titleIconStyleJson);
+            style = JSON.parse(this.iconStyleJson);
           } catch (e) {
             style = {};
           }
         } else {
-          style = { ...this.titleIconStyleJson };
+          style = { ...this.iconStyleJson };
         }
       }
       return formatStyleData(style);
-    },
-    titleIcon() {
-      return this.icon;
     },
   },
   methods: {
