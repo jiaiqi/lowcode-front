@@ -1,7 +1,53 @@
 <template>
-  <div
+  <!-- 站内直达（无 jump_json 且配置 page_no）：router-link 渲染 a 标签（链接语义/中键新标签）；
+       其余场景（子菜单/友情链接/跳转配置）保持 div@click 原逻辑 -->
+  <router-link
+    v-if="directPath"
+    :to="directPath"
     class="nav-menu"
-    v-if="data"
+    :class="{ 'active-nav-menu': isActive }"
+  >
+    <div
+      class="nav-menu-label"
+      :style="[setNavStyle]"
+      ref="navMenuLabel"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+    >
+      <img
+        class="nav-icon-img"
+        :src="getImagePath(calcNavIcon)"
+        alt=""
+        :style="[setNavIconStyle]"
+        v-if="calcNavIcon"
+      />
+      <span class="nav-label">
+        {{ data.label || data._label || "" }}
+      </span>
+      <svg
+        class="arrow"
+        viewBox="0 0 160 160"
+        v-if="data.sub_json || data.child_source === '接口请求'"
+      >
+        <polyline class="arrow-polyline" points="20,50 80,110 140,50">
+          <animate
+            class="arrow-animate"
+            ref="arrowAnimate"
+            attributeName="points"
+            dur="0.2s"
+            fill="freeze"
+            restart="whenNotActive"
+            :from="isActive ? '20,50 80,110 140,50' : '20,110 80,50 140,110'"
+            :to="isActive ? '20,110 80,50 140,110' : '20,50 80,110 140,50'"
+          ></animate>
+        </polyline>
+      </svg>
+    </div>
+  </router-link>
+  <div
+    v-else
+    class="nav-menu"
+    v-show="data"
     @click="onTap"
     :class="{ 'active-nav-menu': isActive }"
   >
@@ -86,6 +132,26 @@ export default {
     },
   },
   computed: {
+    /**
+     * 站内直达路由目标（router-link 使用）
+     * @description 与 onTap 场景 A 一致：无 jump_json 且配置 page_no 的纯站内菜单
+     * @returns {string|null} router 路径（/site/xxx）
+     */
+    directPath() {
+      const item = this.data;
+      if (!item || item.jump_json || !item.page_no) return null;
+      let path = `/site/${item.page_no}`;
+      if (item.template_page_json?.file_path) {
+        path = normalizeJumpFilePath(item.template_page_json.file_path)?.replace(
+          ":pageNo",
+          item.page_no
+        );
+        if (path.includes("#")) {
+          path = path.split("#")[1];
+        }
+      }
+      return path || null;
+    },
     calcNavIcon(){
       if(this.isCurrentNav && this.data.nav_icon_selected){
         return this.data.nav_icon_selected
