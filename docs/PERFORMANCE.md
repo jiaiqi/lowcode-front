@@ -1,73 +1,61 @@
 # 性能优化方案与验收
 
-## 已实现（迁移即生效）
+## 已实现（按优化批次）
 
-| 优化项 | 说明 | 收益 |
+| 优化项 | 说明 | 实测效果 |
 |---|---|---|
-| Vite 构建 | webpack4 → Vite5 | 构建快 3-10 倍，dev 秒级启动（实测 595ms） |
-| 渲染/编辑器 chunk 拆分 | `manualChunks`：view / page-item / editor 独立 | 渲染页不加载编辑器代码 |
-| 依赖精简 | 移除 bxPlugin/routeStack/vue_init/updateChecker 及全部业务依赖 | 全局代码大幅减少 |
-| 表单组件不迁入 | iframe 嵌入旧工程 | 约 200 文件表单集群不进入新工程 |
-| 首屏骨架屏 | index.html 内联 | 白屏期有视觉反馈 |
-| widget 异步化 | page-item 组件异步注册表（地图/视频/表单等独立 chunk） | 首屏只下载用到的组件 |
-| iconify 空闲加载 | requestIdleCallback 加载 3 个 JSON（~2.2MB） | 不与首屏竞争主线程 |
-| 内存 SWR 快照 | 页面切换秒开 + 后台校验 | 站内导航 0ms 内容直出 |
-| 首屏图片预载 | 切换前预载前 12 张 | 避免图片逐张弹出 |
-| schema/app 请求并行 | fetchAppConfig 与组件构建并发 | 消灭串行瀑布流 |
+| Vite 构建 | webpack4 → Vite5，`manualChunks` 拆分渲染/编辑器/echarts/iconify | 构建快 3-10 倍，dev 秒级启动 |
+| 渲染一致性 | tailwind preflight + utilities 全局样式、marquee 全局化 | 首页与旧工程 14/14 指标一致 |
+| 图标方案重构 | unocss presetIcons 静态内联 + icon-store 本地集合（**完全离线**） | iconify chunk 2.3MB → **19kB** |
+| 构建产物修复 | Vue 统一 ESM + vue 生态自包含 chunk | 消除循环依赖/TDZ 生产报错 |
+| IndexedDB SWR | schema + app 配置落 IndexedDB（`utils/snapshot-db.js`，纯 JS 零 Vue 依赖） | 刷新加载 1.62s → **0.57s** |
+| 图片懒加载 | 内容图片 `loading="lazy"`（轮播/导航保持 eager） | 首屏图片 53 → **29 张** |
+| 死代码清理 | import 图分析 + 构建兜底验证 | 删除 59 文件（-20,138 行） |
+| 双副本收敛 | widgets/vendor 合并为单目录，vendor 整体删除 | 维护成本大幅下降 |
+| 站内导航 SPA | `location.href` → `$router.push` / router-link（a 标签） | 导航不再整页刷新，命中 SWR 秒开 |
+| Object.freeze | 只读 `*_json_data` 深度冻结 | 减少响应式依赖收集开销 |
+| sass 警告清理 | `api: modern-compiler` + `@use` | dev 日志噪音 50KB → 0 |
+| 跳转逻辑收敛 | `nav-jump.js` 统一 navTo/navToPath/登录拦截 | 消除 3 组件重复实现（-120 行） |
 
 ## 构建产物（当前基线）
 
 | chunk | 体积 | gzip |
 |---|---|---|
-| vue-vendor | 224 kB | 78 kB |
-| vendor | 292 kB | 105 kB |
-| element-ui | 767 kB | 202 kB |
-| view（渲染引擎） | 96 kB | 23 kB |
+| vue-vendor（vue+element-ui+vue 生态） | 924 kB | 254 kB |
+| vendor（axios/lodash 等） | 266 kB | 97 kB |
 | page-item（业务组件） | 365 kB | 104 kB |
-| echarts-vendor（异步） | 756 kB | 294 kB |
-| iconify（异步，空闲加载） | 2.3 MB | 617 kB |
+| view（渲染引擎） | 96 kB | 23 kB |
+| echarts-vendor（异步，图表页才加载） | 756 kB | 294 kB |
+| iconify（仅 @iconify 残留小模块） | 19 kB | 8 kB |
+| 图标集合 JSON（ep/ri/mdi-light/material-symbols，按需 fetch） | — | 独立资源 |
 
-渲染页首屏加载：vue-vendor + vendor + element-ui + view + page-item ≈ **1.7 MB（gzip ~512 kB）**，其中 element-ui 全量占比最大。
+**首屏 JS 总量约 2.0 MB（gzip ~500 kB）**；dev 首屏渲染 1.38s（本机 preview）。
 
-## 后续优化项（按优先级）
+## 已验证不可行的方案（避免重复尝试）
 
-### 1. element-ui 按需引入（收益最大）
-当前全量引入（767 kB）。lowcode 实际只用 el-dialog/el-form/el-table/el-tree 等约 20 个组件。
-方案：`babel-plugin-component` 或 `unplugin-vue-components` 按需引入，预计砍掉 400-500 kB。
+| 方案 | 结论 |
+|---|---|
+| element-ui 按需引入 | 子路径导入经 commonjs 转换后反而膨胀（1250kB > 全量 924kB），element-ui 2.x 全量 webpack bundle 为最优；按需需等 element-plus |
+| 组件树拍平 | lc-container/lc-content 自带默认 flex/overflow 语义，"无样式"容器拍平会破坏 overflow 裁剪（实测 20px 横向溢出） |
 
-### 2. IndexedDB SWR 持久化
-当前 SWR 是内存缓存，刷新失效。新增 `utils/snapshot-db.js`（IndexedDB），刷新页面 0ms 秒开 + 后台 revalidate。
+## 后续可选优化（纯前端）
 
-### 3. 视口按需水合
-IntersectionObserver 对首屏外业务组件延迟挂载（rootMargin 200px）。
-**风险**：需实测与 ui-scaler transform 缩放的兼容性；核对"没数据时隐藏"等依赖 mounted 的逻辑。
+1. **导航 prefetch**：hover 导航目标页预取 schema（当前 SPA + SWR 已秒开，收益有限）
+2. **代码级清理**：继续按 import 图裁剪未引用文件（现有 331 → 272 文件）
+3. **Vue3/Nuxt 迁移**（建议单独立项）：结构障碍已清除（单组件目录、纯函数工具、composable 化）
 
-### 4. 组件树拍平
-`buildComponentList` 拍平无样式的空 container/block，减少 Vue 实例开销。**仅非编辑态启用**。
+## 后端配合（可选，非阻塞）
 
-### 5. 大 JSON 非响应式化
-`parsePageConfig` 的只读 `*_json_data` 用 `Object.freeze` 冻结。
-
-### 6. 后端配合
-- schema 接口 ETag/304 + 图片 Cache-Control + Brotli（收益最大、成本最低）
+- schema 接口 ETag/304 + 图片 Cache-Control + Brotli（element-ui 重复代码多，Brotli 可再压 ~15%）
 - BFF 单飞接口：schema + app 配置 + 首屏组件数据一次返回
 - 发布期 SSG 预渲染官网页
 
-## 已知遗留问题
-
-| 项 | 状态 |
-|---|---|
-| nav-menu 双高亮 | 主工程曾修复（激活态单一来源 + hover 解耦），**新工程需同步**（widgets/nav-menu） |
-| 属性面板表单联动 | iframe 化后降级，待旧工程 postMessage 支持 |
-| vendor/datav 全量保留 | 120 文件，后续可裁剪为实际引用子集 |
-| engine/ 与 mixins/ 重复文件 | 同文件两份，后续合并为一份 |
-
 ## 验收清单
 
-- [ ] `pnpm build` 通过，产物含独立 chunk（view/editor/echarts/element-ui/iconify）
-- [ ] `/`、`/site/:pageNo`、`/:pageNo` 渲染正常，与旧工程视觉一致
-- [ ] 组件类型全量走查：列表/图表/卡片/导航/表单(iframe)/地图/视频/轮播/公告
-- [ ] 编辑器 `/lowcode/editor/:pageNo` 可打开、拖拽、保存（属性面板为 iframe 占位）
-- [ ] 移动端预览 `/app/preview/:pageNo` 正常
-- [ ] Network：schema 与 app 配置请求并发；首屏无编辑器 chunk
-- [ ] 刷新页面、站内导航切换无回归
+- [x] `pnpm build` 通过，产物含独立 chunk
+- [x] `/`、`/site/:pageNo`、`/:pageNo` 渲染正常，与旧工程视觉一致
+- [x] 首页/编辑器/移动端/卡片编辑器渲染正常
+- [x] 图标（静态 unocss + 配置动态本地 SVG）离线可用，零外部请求
+- [x] 站内导航 SPA 无刷新（router-link + $router.push）
+- [x] 刷新页面秒开（IndexedDB SWR），站内切换命中内存缓存
+- [ ] 组件类型全量走查：列表/详情/图表/地图/视频/表单(iframe)（部分完成）

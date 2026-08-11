@@ -6,10 +6,11 @@
 
 | 项 | 版本 | 说明 |
 |---|---|---|
-| Vite | 5.x | 构建工具（Node 18+） |
+| Vite | 5.x | 构建工具（Node 18+），`vite.config.mjs`（ESM） |
 | Vue | 2.7.16 | `@vitejs/plugin-vue2` |
 | vue-router / vuex | 3.x | Vue 2 生态 |
-| element-ui | 2.15.14 | 全量引入 |
+| element-ui | 2.15.14 | 全量引入（按需验证不可行，见 docs/PERFORMANCE.md） |
+| unocss | 66.x | presetIcons 图标内联（静态图标零 JS 下载） |
 | 包管理 | pnpm 10.x | `pnpm install` |
 
 ## 快速开始
@@ -37,42 +38,40 @@ pnpm preview        # 预览构建产物
 
 ```
 ├── index.html                 # 入口（含首屏骨架屏）
-├── vite.config.js             # Vite 配置（proxy/manualChunks/alias）
+├── vite.config.mjs            # Vite 配置（ESM，proxy/manualChunks/alias/unocss）
+├── unocss.config.js           # unocss 图标预设（safelist 与运行时共享 icon-safelist.js）
 ├── public/
 │   └── config/config_dev.js   # 环境配置（APP_CONFIG：地图/视频/登录白名单/旧工程地址）
-├── theme/scss/                # 全局主题样式
+├── theme/scss/                # preflight（tailwind，渲染一致性关键）+ 全局主题
 └── src/
-    ├── main.js                # 精简入口（无主工程 bxPlugin/routeStack 等）
+    ├── main.js                # 精简入口（ElementUI/unocss/全局方法）
     ├── App.vue
     ├── router/                # 渲染 + 编辑器路由
     ├── store/                 # theme / pageEvent / loginInfo / chatInfo
-    ├── common/                # http.js（跨域适配）/ envList / vueApi 等
+    ├── common/                # http.js（跨域适配）/ envList / vueApi / config
     ├── components/            # 依赖的最小组件集 + legacy-form（表单 iframe 包装）
     ├── directives/            # clickoutside
-    ├── util/                  # UnitUtil / DataUtil 等
-    ├── assets/
-    └── pages/
-        ├── lowcode/           # 低代码引擎全部代码
-        │   ├── engine/        # 渲染引擎入口 view.vue
-        │   ├── widgets/       # 业务组件（列表/图表/卡片/导航等）
-        │   ├── mixins/        # 页面/组件混入
-        │   ├── components/    # materials(组件树) / property(属性面板) / editor
-        │   ├── index.vue      # 编辑器入口
-        │   ├── card-cell-editor/  map-editor/  get-page-address/
-        │   ├── preview/       # 移动端预览
-        │   ├── editor/mobile/ # 移动端编辑器
-        │   ├── store/         # dragStore（编辑器拖拽）
-        │   └── vendor/        # 依赖内聚：datav 旧实现 / 大华视频组件
-        └── low-app/           # 移动端预览壳（不维护）
+    └── pages/lowcode/         # 低代码引擎全部代码
+        ├── engine/            # 渲染引擎入口 view.vue
+        ├── widgets/           # 业务组件唯一源（含 common: 图标方案 / nav-menu: 导航族 / dahua-video）
+        ├── common/            # 引擎公共工具（formatStyleData 等）
+        ├── mixins/            # 页面/组件混入
+        ├── components/        # materials(组件树) / property(属性面板) / editor
+        ├── index.vue          # 编辑器入口
+        ├── card-cell-editor/  map-editor/  get-page-address/  property-form/
+        ├── preview/           # 移动端预览
+        ├── editor/mobile/     # 移动端编辑器
+        ├── store/             # dragStore（编辑器拖拽）
+        └── utils/             # snapshot-db（IndexedDB SWR）/ common（组件树构建）
 ```
 
 ## 与主工程的差异（拆分要点）
 
 1. **构建栈**：webpack4 → Vite5，chunk 自动按需拆分（渲染/编辑器/echarts/element-ui/iconify）
 2. **全局注册精简**：仅 ElementUI + fragment + clickoutside + `$http` + vue_util 全局方法；移除 bxPlugin / routeStack / vue_init / updateChecker
-3. **依赖内聚**：datav 依赖收敛至 `src/pages/lowcode/vendor/datav`；表单组件（simple-add/update 等）**不迁入**，用 iframe 嵌入旧工程（见 `components/common/legacy-form.vue` 与 docs/LEGACY_FORM.md）
+3. **依赖内聚**：datav/大华视频收敛至 `widgets/`（vendor 目录已移除）；表单组件（simple-add/update 等）**不迁入**，用 iframe 嵌入旧工程（见 `components/common/legacy-form.vue` 与 docs/LEGACY_FORM.md）
 4. **登录跨域适配**：静态网关 + iframe postMessage 注入 + SSO 兜底（见 docs/LOGIN.md）
-5. **样式统一 sass**：less 全部转为 scss
+5. **样式统一 sass**：less 全部转为 scss；图标用 unocss + 本地集合（离线可用）
 
 ## 文档
 
