@@ -2,7 +2,7 @@
 
 > 状态：已确认方向，待执行
 > 日期：2026-08-11
-> 决策：渲染层重写 + 编辑器收敛重建；map-editor / card-cell-editor 按新架构重写但优先级最后；CI 用 Gitee Go（兼容 GitHub Actions）；渲染层表现（外观+交互）为最高优先验收金标准
+> 决策：渲染层重写 + 编辑器收敛重建；map-editor / card-cell-editor 按新架构重写但优先级最后；CI 用 Gitee Go（兼容 GitHub Actions）；渲染层表现（外观+交互）为最高优先验收金标准；渲染模式：低代码页 ISR + 官网 SSG + 编辑器 SPA（Node 混合部署，ADR 0002）
 
 ---
 
@@ -14,21 +14,22 @@
 
 ## 2. 原则（约束分级）
 
-| 级别      | 约束                                                    | 说明                                                                                                        |
-| --------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 🔒 硬约束 | 低代码渲染页面外观 + 交互功能与旧工程**一模一样**       | 验收金标准，靠 golden 视觉回归机器保障                                                                      |
-| 🔒 硬约束 | 页面 JSON schema 兼容                                   | 存量页面数据资产在后端，新工程必须能渲染旧数据（协议版本化，必要时加转换层）                                |
-| 🔒 硬约束 | 后端 API 协议兼容                                       | `/config/select/*` 等数据接口契约不变（可在 shared 中重新建模）                                             |
-| 🔒 硬约束 | 部署链路兼容                                            | nginx 静态托管、网关注入 `/js/server.js`、`config_dev.js`（window.APP_CONFIG）、二级目录、hash 路由初始保留 |
-| 自由      | 实现逻辑、UI 框架、代码结构、状态管理、构建、测试、规范 | 全部按最佳实践重新设计                                                                                      |
+| 级别      | 约束                                                    | 说明                                                                                                                                     |
+| --------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 🔒 硬约束 | 低代码渲染页面外观 + 交互功能与旧工程**一模一样**       | 验收金标准，靠 golden 视觉回归机器保障                                                                                                   |
+| 🔒 硬约束 | 页面 JSON schema 兼容                                   | 存量页面数据资产在后端，新工程必须能渲染旧数据（协议版本化，必要时加转换层）                                                             |
+| 🔒 硬约束 | 后端 API 协议兼容                                       | `/config/select/*` 等数据接口契约不变（可在 shared 中重新建模）                                                                          |
+| 🔒 硬约束 | 运行时兼容                                              | 网关注入 `/js/server.js`、`config_dev.js`（window.APP_CONFIG）在客户端继续兼容（经配置提供者抽象，见 §4.1）；二级目录、hash 路由初始保留 |
+| 自由      | 实现逻辑、UI 框架、代码结构、状态管理、构建、测试、规范 | 全部按最佳实践重新设计                                                                                                                   |
 
 ## 3. 目标架构：pnpm monorepo + Nuxt 4 宿主
 
 ```
 lowcode-front/
 ├── apps/
-│   └── web/                       # Nuxt 4 宿主（SPA 模式，Nitro 静态输出）
+│   └── web/                       # Nuxt 4 宿主（混合渲染：页面 ISR + 官网 SSG + 编辑器 SPA）
 │       ├── app/                   # Nuxt 4 目录约定：pages/ plugins/ layouts/ app.vue
+│       ├── server/                # Nitro server routes（页面配置代理 /api/page/[pageNo] 等）
 │       ├── public/                # config_dev.js / favicon（静态复制）
 │       └── nuxt.config.ts
 ├── packages/
@@ -59,7 +60,7 @@ lowcode-front/
 
 | 维度         | 选型                                         | 说明                                                                                      |
 | ------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| 框架         | Nuxt 4（`ssr: false` SPA 起步）              | 目录约定 `app/`；Node ≥ 20.19（建议 22 LTS，构建机需确认）                                |
+| 框架         | Nuxt 4（混合渲染模式）                       | 低代码页 ISR + 官网 SSG + 编辑器 SPA（routeRules，见 §4.1）；Node ≥ 20.19（建议 22 LTS）  |
 | 语言         | TypeScript strict 全量                       | 存量语义迁移过程中类型即文档                                                              |
 | 包管理       | pnpm workspace                               | 现状沿用                                                                                  |
 | UI（编辑器） | naive-ui                                     | 类型质量最佳（契合 TS strict）；天然 tree-shaking；见 §3.1 选型说明                       |
@@ -81,7 +82,7 @@ lowcode-front/
 | element-plus | 备选    | API 迁移最平滑（element 系惯性），但类型与视觉均为短板，仅作保守兜底                                                                                   |
 | shadcn-vue   | ❌ 否决 | 强制引入 Tailwind 与现有 unocss 双体系并存；树/日期/颜色等编辑器刚需控件缺失；上游更新需手动合并（3-5 人团队维护成本）；"代码可控"优势对内部工具价值低 |
 
-**Nuxt 集成说明**：naive-ui 有官方 Nuxt 模块 `nuxtjs-naive-ui`（维护者 07akioni 即 naive-ui 作者）。核实其源码：核心功能是 **SSR 场景**的 css-render 样式收集（`import.meta.server` 分支）+ 生产 `build.transpile`；依赖 `@nuxt/kit ^3.11.2`，2024-05 后未更新，**面向 Nuxt 3，未适配 Nuxt 4**。本工程为 **Nuxt 4 SPA 模式**：SSR 分支不生效，模块实际价值只剩一行 `build.transpile: ["naive-ui"]` 配置——手动配置即可，**不引入该模块**（避免 Nuxt 3 时代 kit 依赖混入）。若未来切 SSR，再评估官方模块对 Nuxt 4 的适配（ADR 0001 复盘条件）。
+**Nuxt 集成说明**：naive-ui 有官方 Nuxt 模块 `nuxtjs-naive-ui`（维护者 07akioni 即 naive-ui 作者）。核实其源码：核心功能是 **SSR 场景**的 css-render 样式收集（`import.meta.server` 分支）+ 生产 `build.transpile`；依赖 `@nuxt/kit ^3.11.2`，2024-05 后未更新，**面向 Nuxt 3，未适配 Nuxt 4**。本工程编辑器路由为 **SPA 模式**（`ssr: false`）：SSR 分支不生效，模块实际价值只剩一行 `build.transpile: ["naive-ui"]` 配置——手动配置即可，**不引入该模块**（避免 Nuxt 3 时代 kit 依赖混入）。若编辑器未来切 SSR，再评估官方模块对 Nuxt 4 的适配（ADR 0001 复盘条件）。
 
 决策记录：`docs/ADR/0001-editor-ui-framework.md`
 
@@ -92,12 +93,13 @@ lowcode-front/
 新设计：
 
 ```
-页面 JSON (后端)
+页面 JSON (后端 API)
+  → Nitro 服务端代理 /api/page/[pageNo]（服务端可达内网 + 免 CORS）
   → shared 类型校验（协议版本号）
-  → runtime.parsePageConfig（纯函数：*_json 解析 → 规范化组件树 → com_type→loader 映射）
-  → 组件注册表调度（动态 import 懒加载）
+  → runtime.parsePageConfig（纯函数：*_json 解析 → 规范化组件树 → com_type→loader 映射，Node/浏览器双端可跑）
+  → 组件注册表调度（动态 import 懒加载；SSR 下输出结构骨架，数据内容由客户端 <ClientOnly> 水合填充）
   → widgets 渲染（数据流 srvReq → 渲染 → 事件）
-  → SWR 缓存层（IndexedDB 快照秒开 + 网络后台校验整帧替换，实现重写、缓存加版本号）
+  → 缓存分层：服务端 ISR（routeRules swr，TTL 自动更新）+ 客户端 IndexedDB SWR 秒开（实现重写、缓存加版本号）
 ```
 
 | 机制      | 旧工程                 | 新设计                                                                |
@@ -109,6 +111,25 @@ lowcode-front/
 | 表达式    | safeEval（近期已收敛） | 沙箱表达式解析器（静态 AST，安全从源头解决）                          |
 | 缓存      | IndexedDB SWR          | cache 层独立 + schema 版本号（顺带解决旧缓存结构兼容）                |
 | 大 JSON   | `Object.freeze` 优化   | 保留该优化（性能手段，非包袱）                                        |
+| 渲染模式  | 纯 CSR                 | 混合：页面 ISR / 官网 SSG / 编辑器 SPA（§4.1）；引擎 SSR 安全设计     |
+
+### 4.1 SSR/SSG 渲染策略（低代码页面）
+
+决策：**低代码页面 ISR + 官网 SSG + 编辑器 SPA**，经 `routeRules` 混合（ADR 0002）。
+
+| 路由                         | 模式                   | 说明                                                                                            |
+| ---------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `/:pageNo` 等低代码页        | `swr`（ISR，TTL 300s） | 首次请求服务端拉配置渲染真实 HTML（SEO 可抓），TTL 内直接返回缓存；页面配置变更自动更新，零运维 |
+| `/site/**` 官网类            | `prerender`（SSG）     | 构建时预渲染已发布页面为静态 HTML                                                               |
+| `/editor/**` `/changelog` 等 | `ssr: false`（SPA）    | 编辑器纯客户端（naive-ui 不受 SSR 影响）                                                        |
+
+**SSR 安全三原则**（引擎层统一保障，widgets 无需逐个操心）：
+
+1. **解析层纯函数**：runtime 解析逻辑 Node/浏览器双端可跑（已设计）
+2. **浏览器 API 隔离**：widgets 规范"setup 不碰 window/document，浏览器 API 进 onMounted"；引擎统一 `<ClientOnly>` 包装——SSR 输出页面结构/元信息，数据与交互客户端水合填充
+3. **配置提供者抽象**：渲染层经 `useRuntimeConfig()` 取配置（服务端读环境变量；客户端由 Nuxt payload 注入，`window.APP_CONFIG`/`server.js` 注入值客户端兼容覆盖）——顺手收敛散落的 window 全局
+
+**数据流**：页面配置请求改走 Nitro `server/api/page/[pageNo]` 代理（服务端可达内网后端 + 免 CORS + 可聚合）；浏览器端业务数据请求保持不变。
 
 ## 5. 渲染层视觉复刻与 golden 回归（最高优先级）
 
@@ -180,7 +201,7 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 
 ```
 [PR / dev 分支] → CI: install → lint → typecheck → unit → build → golden 视觉回归 → dev 自动部署预览
-[main 合并]     → CI 同上 → 产物归档 → CD: 推送 nginx 服务器（保留现有静态托管 + server.js 注入）
+[main 合并]     → CI 同上 → 产物归档 → CD: 部署 Nitro Node 服务（nginx 反代，server.js 注入兼容保留）
 [打 tag]        → 生产部署确认（可选人工闸门）
 ```
 
@@ -193,17 +214,18 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 
 ### 9.3 环境与发布
 
-| 环境     | 触发               | 说明                                       |
-| -------- | ------------------ | ------------------------------------------ |
-| dev 预览 | PR/合并 dev        | 自动部署，供联调与 golden 对比             |
-| prod     | tag（如 `v1.0.0`） | 产物推送 nginx，保留上一版产物 + 一键回切  |
-| 双跑期   | 手动               | 新旧工程并跑同一数据源，灰度流量对比（P7） |
+| 环境     | 触发               | 说明                                                          |
+| -------- | ------------------ | ------------------------------------------------------------- |
+| dev 预览 | PR/合并 dev        | 自动部署，供联调与 golden 对比                                |
+| prod     | tag（如 `v1.0.0`） | 部署 Nitro Node 服务（nginx 反代）；保留上一版产物 + 一键回切 |
+| 双跑期   | 手动               | 新旧工程并跑同一数据源，灰度流量对比（P7）                    |
 
 ### 9.4 运行保障
 
-- 错误上报：Sentry（前端）可选接入；nginx 日志
-- 回滚：保留上 N 版产物目录，nginx 软链一键切换
-- 健康检查：`/healthz` 静态探针（Nitro 或 nginx 直出）
+- 错误上报：Sentry（前端）可选接入；服务端日志（pm2/systemd 或 Docker 收集）
+- 进程管理：pm2 或 Docker 单容器 + 自动重启；nginx 反代（或直连）
+- 回滚：保留上 N 版产物目录/镜像，一键切换
+- 健康检查：`/healthz` 探针（Nitro 内置）；nginx 兜底静态页
 
 ### 9.5 版本与升级日志（Release Notes）
 
@@ -274,11 +296,11 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 | P0    | monorepo 骨架、TS/ESLint/commitlint/CI 骨架、shared 契约类型、git-cliff 升级日志骨架 | `pnpm lint/test/build` 全绿，Gitee Go 流水线跑通 | 1 周         |
 | P1    | runtime 引擎 + runtime-ui 基础组件（token 提取）                                     | 引擎纯函数单测 ≥90%；基础组件 Storybook 就绪     | 2-3 周       |
 | P2 ⭐ | **24+ widgets 重写 + golden 用例集与基线**（最高优先，可 2-3 人分组件并行）          | 黄金用例渲染像素对比通过                         | 4-6 周       |
-| P3    | 数据层：http/拦截器/登录、SWR 缓存、表达式沙箱、多环境配置                           | 真实后端数据渲染通过（新老双跑开始）             | 2 周         |
+| P3    | 数据层：http/拦截器/登录、SWR 缓存、表达式沙箱、多环境配置、Nitro 代理（/api/page）  | 真实后端数据渲染通过（新老双跑开始）             | 2 周         |
 | P4    | studio 编辑器重建（画布/材料/属性/图层树/历史/设备模拟）                             | 编辑器全功能可用（功能清单核销）                 | 4-6 周       |
 | P5    | 收尾业务：聊天/视频/地图组件回归、登录、工具页、legacy-form                          | 功能清单逐项核销                                 | 2-3 周       |
 | P6    | map-editor / card-cell-editor 按新架构重写（优先级最后）                             | 两编辑器功能等价                                 | 3-4 周       |
-| P7    | 部署切换、golden 全量回归、性能基线复测、线上双跑灰度、切换                          | 双跑对比通过后正式切换                           | 1-2 周       |
+| P7    | Node 服务部署（ISR/SSG/SPA 混合）、golden 全量回归、性能基线复测、线上双跑灰度、切换 | 双跑对比通过后正式切换                           | 1-2 周       |
 
 **总计约 5-6 个月（3 人）/ 4-5 个月（5 人）**。全程新旧并跑（同一数据源），P3 起即可灰度；**渲染层"一模一样"以 golden 全绿为准**，不切换不罢休。
 
@@ -294,6 +316,10 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 | SWR 缓存结构兼容                               | 中   | 缓存加 schema 版本号，旧缓存自动失效重建                           |
 | 双跑期数据一致（同一后端）                     | 低   | 读写分离天然无冲突；灰度流量观察                                   |
 | Node 版本（Nuxt 4 要求 ≥20.19）                | 低   | 构建机/CI 统一 22 LTS，文档明示                                    |
+| SSR 水合一致性（hydration mismatch）           | 中   | 引擎统一 ClientOnly 包装 + widgets setup 规范；golden 回归覆盖     |
+| 服务端可达后端 API（Nitro 代理）               | 中   | 代理走内网/网关；CI 预检连通性；降级为客户端直连                   |
+| ISR 缓存陈旧（页面变更后 TTL 内旧内容）        | 低   | TTL 默认 300s 可调；编辑器保存后主动失效（可选增强）               |
+| Node 服务运维（进程/日志/重启）                | 低   | pm2/Docker 单容器 + 自动重启 + 健康检查探针                        |
 
 ## 12. 附录
 
@@ -320,8 +346,9 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 | F17  | 首屏骨架屏（品牌文字+流光细线）                                           | index.html                           | P1          | ⬜   |
 | F18  | golden 视觉回归全绿                                                       | e2e                                  | P2 起持续   | ⬜   |
 | F19  | 性能基线达标                                                              | —                                    | P7          | ⬜   |
-| F20  | 部署链路（server.js/config_dev/二级目录）                                 | —                                    | P7          | ⬜   |
+| F20  | 部署链路（Node 服务 + nginx 反代、server.js/config_dev/二级目录兼容）     | —                                    | P7          | ⬜   |
 | F21  | 升级日志：git-cliff 自动生成 + 手动编辑（a）/ 应用内 `/changelog` 页（b） | —                                    | P0(a)/P4(b) | ⬜   |
+| F22  | 混合渲染：页面 ISR + 官网 SSG + 编辑器 SPA（SEO 内容可抓取）              | —                                    | P3 起       | ⬜   |
 
 ### 12.2 widgets 清单（P2 分工单元）
 
