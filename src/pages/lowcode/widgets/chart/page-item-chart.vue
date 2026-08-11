@@ -97,10 +97,10 @@ import { useUtils } from "@/common/vueApi.js";
 // 异步加载 LiquidFillChart 组件
 const LiquidFillChart = defineAsyncComponent(() =>
   import(
-    /* webpackChunkName: "echarts-vendor" */ "@/pages/lowcode/vendor/datav/component/page-item/LiquidFillChart.vue"
+    /* webpackChunkName: "echarts-vendor" */ "@/pages/lowcode/widgets/LiquidFillChart.vue"
   )
 );
-// import LiquidFillChart from "@/pages/lowcode/vendor/datav/component/page-item/LiquidFillChart.vue";
+// import LiquidFillChart from "@/pages/lowcode/widgets/LiquidFillChart.vue";
 import Chart from "./chart.vue";
 // import SankeyChart from "./SankeyChart.vue";
 const SankeyChart = defineAsyncComponent(() =>
@@ -114,7 +114,7 @@ import {
   useBuildOption,
   setDefaultChartOption,
 } from "../use-functions/buildOption.js";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common";
+import { formatStyleData } from "@/pages/lowcode/common";
 const { renderStr } = useUtils();
 
 const props = defineProps({

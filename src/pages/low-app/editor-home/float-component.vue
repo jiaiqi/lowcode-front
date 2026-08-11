@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import pageItem from "@/pages/lowcode/vendor/datav/component/page-item/page-item.vue";
+import pageItem from "@/pages/lowcode/widgets/page-item.vue";
 
 export default {
   components: {

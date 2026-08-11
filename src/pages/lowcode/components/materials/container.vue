@@ -58,14 +58,14 @@
 
 <script>
 import dragStore from "../../store/dragStore";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import ComLabel from "./ComLabel.vue";
 import {
   setEnterAnimationClass,
   setEnterAnimationVariables,
 } from "@/common/common";
 // 页面组件级 显示隐藏控制
-import pageItemVisible from "@/pages/lowcode/vendor/datav/common/params/page-item-visible-mixin.js";
+import pageItemVisible from "@/pages/lowcode/common/params/page-item-visible-mixin.js";
 export default {
   name: "lc-container",
   mixins: [pageItemVisible],

@@ -5,7 +5,7 @@
 import { ref, computed } from 'vue'
 import { getImagePath } from '@/common/http.js'
 import { $selectList } from '@/common/http'
-import { formatStyleData } from '@/pages/lowcode/vendor/datav/common'
+import { formatStyleData } from '@/pages/lowcode/common'
 
 export function useMarkers(props, mapJson) {
   // 标记点相关状态

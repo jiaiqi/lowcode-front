@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { formatStyleData, applyEncryptParam } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData, applyEncryptParam } from "@/pages/lowcode/common/index.js";
 import { getAlternateUnitData } from "@/util/UnitUtil";
 import {
   DEFAULT_MERGE_CELL,

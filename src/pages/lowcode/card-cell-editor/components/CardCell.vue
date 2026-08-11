@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import cardGroupCell from "@/pages/lowcode/vendor/datav/component/page-item/card-group-cell/card-group-cell.vue";
+import cardGroupCell from "@/pages/lowcode/widgets/card-group-cell/card-group-cell.vue";
 
 export default {
   props: {

@@ -373,7 +373,7 @@ const dropDown = () => import("./parts/drop-down.vue");
 const qrCode = () => import("../qr-code/qr-code.vue");
 const weather = () => import("../widgets/weather.vue");
 
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common";
+import { formatStyleData } from "@/pages/lowcode/common";
 import {
   getBaseUrl,
   setAnimationClass,
@@ -385,7 +385,7 @@ import {
   animateNumberWithFormat,
 } from "@/common/animations";
 import marqueeMixin from "./marquee-mixin.js"; // 跑马灯混入
-import { applyEncryptParam } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { applyEncryptParam } from "@/pages/lowcode/common/index.js";
 // import HlsplayerVideo from "@/components/common/hls-video/hlsplayer-video.vue";
 import cardPopup from "../card-group/card-popup.vue";
 

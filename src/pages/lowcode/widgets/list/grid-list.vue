@@ -33,7 +33,7 @@
 
 <script setup>
 import { computed, ref, watch } from "vue";
-import { formatStyleData, applyEncryptParam } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData, applyEncryptParam } from "@/pages/lowcode/common/index.js";
 import { MessageBox } from "element-ui";
 import { getFullBaseUrl } from "@/common/common";
 const props = defineProps({

@@ -63,8 +63,8 @@ export default {
 <script setup>
 import { ref, computed, getCurrentInstance } from "vue";
 import { Icon } from "@iconify/vue2";
-import CardCellPartWithoutCardGroup from "@/pages/lowcode/vendor/datav/component/page-item/card-group-cell/card-cell-part-without-card-group.vue";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common";
+import CardCellPartWithoutCardGroup from "@/pages/lowcode/widgets/card-group-cell/card-cell-part-without-card-group.vue";
+import { formatStyleData } from "@/pages/lowcode/common";
 
 const props = defineProps({
   part: {

@@ -60,15 +60,15 @@
 </template>
 
 <script>
-// import pageItem from "@/pages/lowcode/vendor/datav/component/page-item/page-item.vue";
+// import pageItem from "@/pages/lowcode/widgets/page-item.vue";
 import List from "../list/list.vue";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
-// import pageItem from "@/pages/lowcode/vendor/datav/component/page-item/page-item.vue";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
+// import pageItem from "@/pages/lowcode/widgets/page-item.vue";
 export default {
   components: {
-    pageItem: () => import("@/pages/lowcode/vendor/datav/component/page-item/page-item.vue"),
+    pageItem: () => import("@/pages/lowcode/widgets/page-item.vue"),
     pageItemGroup: () =>
-      import("@/pages/lowcode/vendor/datav/component/page-item-group/page-item-group.vue"),
+      import("@/pages/lowcode/widgets/page-item-group/page-item-group.vue"),
     List,
   },
   data() {

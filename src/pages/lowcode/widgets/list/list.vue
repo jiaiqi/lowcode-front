@@ -233,7 +233,7 @@
 <script>
 import { $http } from "@/common/http";
 import cardGroupCell from "@/pages/lowcode/widgets/card-group-cell/card-group-cell.vue";
-import { formatStyleData, applyEncryptParam } from "@/pages/lowcode/vendor/datav/common/index";
+import { formatStyleData, applyEncryptParam } from "@/pages/lowcode/common/index";
 import GridList from "./grid-list.vue";
 import LegacyForm from "@/components/common/legacy-form.vue";
 import MapCard from "../map-card/index.vue";

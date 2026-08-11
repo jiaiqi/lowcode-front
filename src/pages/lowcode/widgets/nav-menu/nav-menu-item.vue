@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import { normalizeJumpFilePath } from "@/common/common";
 
 export default {

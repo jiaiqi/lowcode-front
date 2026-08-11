@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import {
   setEnterAnimationClass,
   setEnterAnimationVariables,
@@ -109,7 +109,7 @@ import { Icon } from "@iconify/vue2";
 import dragStore from "../../store/dragStore";
 import ComLabel from "./ComLabel.vue";
 // 页面组件级 显示隐藏控制
-import pageItemVisible from "@/pages/lowcode/vendor/datav/common/params/page-item-visible-mixin.js";
+import pageItemVisible from "@/pages/lowcode/common/params/page-item-visible-mixin.js";
 const layoutKeys = [
   "grid-template-columns",
   "grid-template-rows",

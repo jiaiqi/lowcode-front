@@ -27,7 +27,7 @@
 
 <script setup>
 import { getImagePath } from '@/common/http.js'
-import { formatStyleData } from '@/pages/lowcode/vendor/datav/common/index.js'
+import { formatStyleData } from '@/pages/lowcode/common/index.js'
 import { computed } from 'vue';
 
 /**

@@ -29,7 +29,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { $http } from "@/common/http.js";
-import { applyEncryptParam } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { applyEncryptParam } from "@/pages/lowcode/common/index.js";
 
 const props = defineProps({
     pageItem: {

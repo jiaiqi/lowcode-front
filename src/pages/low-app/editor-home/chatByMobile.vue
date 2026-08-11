@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import {formatStyleData} from "@/pages/lowcode/vendor/datav/common";
+import {formatStyleData} from "@/pages/lowcode/common";
 import chaImg from "@/assets/img/chat.png";
 
 export default {

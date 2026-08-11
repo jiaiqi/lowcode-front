@@ -201,7 +201,7 @@
 
 <script>
 import dragStore from "../../store/dragStore";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import canvasPage from '../../../../components/common/canvas-line/canvasPage.vue'
 import ComLabel from "./ComLabel.vue";
 import {
@@ -210,7 +210,7 @@ import {
   setEnterAnimationVariables,
 } from "@/common/common";
 // 页面组件级 显示隐藏控制
-import pageItemVisible from "@/pages/lowcode/vendor/datav/common/params/page-item-visible-mixin.js";
+import pageItemVisible from "@/pages/lowcode/common/params/page-item-visible-mixin.js";
 
 const throttle = (fn, delay = 16) => {
   let lastTime = 0;

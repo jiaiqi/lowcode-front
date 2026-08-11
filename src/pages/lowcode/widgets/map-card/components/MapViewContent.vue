@@ -92,7 +92,7 @@
 
 <script setup>
 import { getImagePath } from '@/common/http.js'
-import { formatStyleData } from '@/pages/lowcode/vendor/datav/common'
+import { formatStyleData } from '@/pages/lowcode/common'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import MapMarker from './MapMarker.vue'
 import DraggableMarker from './DraggableMarker.vue'

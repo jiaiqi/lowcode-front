@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 // import NavSubMenu from "./nav-menu-child.vue";
 // import NavMenu from "./nav-menu.vue";
-import clickoutside from "@/pages/lowcode/vendor/datav/common/clickoutside.js";
+import clickoutside from "@/pages/lowcode/common/clickoutside.js";
 import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
 export default {
   name: "NavMenuChild",

@@ -45,7 +45,7 @@ export default {
 
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
 const props = defineProps({
   config: Object,

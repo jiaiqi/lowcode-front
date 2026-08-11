@@ -59,7 +59,7 @@
 
 import { ref, watch, nextTick } from 'vue';
 import Teleport from "vue2-teleport";
-import cardGroupCell from "@/pages/lowcode/vendor/datav/component/page-item/card-group-cell/card-group-cell.vue";
+import cardGroupCell from "@/pages/lowcode/widgets/card-group-cell/card-group-cell.vue";
 
 /**
  * 组件配置常量

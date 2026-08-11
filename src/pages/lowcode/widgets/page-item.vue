@@ -467,7 +467,7 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import videoCard from "./video-card.vue";
 import currentInfo from "./current-info.vue";
 import slideList from "./slide-list.vue";
@@ -486,12 +486,12 @@ import gridCard from "./grid-card.vue";
 import formAdd from "./form/add.vue";
 import NavMenu from "./nav-menu/nav-menu.vue";
 import CardCellPart from "./card-group-cell/card-cell-part-without-card-group.vue";
-import InfoDetails from "@/pages/lowcode/vendor/datav/component/page-item/info-details.vue";
+import InfoDetails from "@/pages/lowcode/widgets/info-details.vue";
 import DhVideo from "@/pages/lowcode/vendor/business/yanan-park/dahua-video/video-home.vue";
 // 页面组件级 参数交互处理
-import pageItemParams from "@/pages/lowcode/vendor/datav/common/params/page-item-params-mixin.js";
+import pageItemParams from "@/pages/lowcode/common/params/page-item-params-mixin.js";
 // 页面组件级 显示隐藏控制
-import pageItemVisible from "@/pages/lowcode/vendor/datav/common/params/page-item-visible-mixin.js";
+import pageItemVisible from "@/pages/lowcode/common/params/page-item-visible-mixin.js";
 import CanvasPage from "@/components/common/canvas-line/canvasPage.vue";
 import Teleport from "vue2-teleport";
 import { Icon } from "@iconify/vue2";

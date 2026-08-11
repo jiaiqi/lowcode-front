@@ -66,9 +66,9 @@
 </template>
 
 <script>
-import PageItemCom from '../page-item/page-item.vue';
+import PageItemCom from '../page-item.vue';
 import PageItemGroupMixin from '@/pages/lowcode/mixins/page-item-group.mixin.js';
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 
 export default {
   components: {

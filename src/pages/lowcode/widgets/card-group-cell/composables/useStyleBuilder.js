@@ -1,4 +1,4 @@
-import { formatStyleData } from '@/pages/lowcode/vendor/datav/common'
+import { formatStyleData } from '@/pages/lowcode/common'
 /**
  * 样式构建组合式函数
  * @returns {Object} 返回样式构建相关的方法

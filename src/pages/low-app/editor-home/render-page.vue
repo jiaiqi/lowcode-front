@@ -114,7 +114,7 @@
 
 <script>
 import dragStore from '../app-materials/store/dragStore'
-import pageItem from "@/pages/lowcode/vendor/datav/component/page-item/page-item.vue";
+import pageItem from "@/pages/lowcode/widgets/page-item.vue";
 import floatComponent from "./float-component.vue";
 import chatByMobile from "@/pages/low-app/editor-home/chatByMobile.vue";
 import { $delete } from "@/common/http";

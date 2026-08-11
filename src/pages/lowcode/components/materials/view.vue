@@ -250,7 +250,7 @@ import floatComponent from "./float-component.vue";
 import chatEntrance from "@/pages/lowcode/widgets/chat/chat-entrance.vue";
 import ChatBox from "@/pages/lowcode/widgets/chat/chat-box.vue";
 // 页面组件级 显示隐藏控制
-import pageItemVisible from "@/pages/lowcode/vendor/datav/common/params/page-item-visible-mixin.js";
+import pageItemVisible from "@/pages/lowcode/common/params/page-item-visible-mixin.js";
 
 export default {
   name: "lc-view",

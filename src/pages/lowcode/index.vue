@@ -302,7 +302,7 @@ import { Icon } from "@iconify/vue2";
 
 // 内部js
 import { $http, $selectOne, $selectList, $delete } from "@/common/http";
-import clickoutside from "@/pages/lowcode/vendor/datav/common/clickoutside.js";
+import clickoutside from "@/pages/lowcode/common/clickoutside.js";
 import dragStore from "./store/dragStore";
 
 // mixin

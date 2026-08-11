@@ -83,8 +83,8 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index";
-import dateTime from "@/pages/lowcode/vendor/datav/component/widgets/date-time.vue";
+import { formatStyleData } from "@/pages/lowcode/common/index";
+import dateTime from "@/pages/lowcode/widgets/widgets/date-time.vue";
 import { mapState, mapGetters, mapActions } from "vuex";
 import weather from "./widgets/weather.vue";
 export default {

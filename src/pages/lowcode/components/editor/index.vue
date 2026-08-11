@@ -53,7 +53,7 @@ import lcView from "../materials/view.vue";
 // import { VueDraggable } from "vue-draggable-plus";
 import dragStore from "../../store/dragStore";
 import cloneDeep from "lodash/cloneDeep";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 
 export default {
   name: "lowcode-editor",

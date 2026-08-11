@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import MapViewContent from '@/pages/lowcode/vendor/datav/component/page-item/map-card/components/MapViewContent.vue';
+import MapViewContent from '@/pages/lowcode/widgets/map-card/components/MapViewContent.vue';
 import { $http, $selectOne, $selectList, $delete } from "@/common/http";
 
 export default {

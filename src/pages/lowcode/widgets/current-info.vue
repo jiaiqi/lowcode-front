@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import { mapGetters, mapActions } from "vuex";
 import ChangePasswordDialog from "@/components/ui/change-password-dialog/change-password-dialog.vue";
 export default {

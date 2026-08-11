@@ -265,7 +265,7 @@
 </template>
 
 <script>
-import { formatStyleData, rpx2px } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData, rpx2px } from "@/pages/lowcode/common/index.js";
 import cardGroupCell from "./card-group-cell/card-group-cell.vue";
 import StackSwiper from "./stack-swiper/stack-swiper.vue";
 export default {

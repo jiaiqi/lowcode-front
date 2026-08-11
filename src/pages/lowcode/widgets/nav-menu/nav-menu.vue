@@ -209,7 +209,7 @@
 </template>
 
 <script>
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import NavMenuChild from "./nav-menu-list.vue";
 import Teleport from "vue2-teleport";
 import NavMenuItem from "./nav-menu-item.vue";

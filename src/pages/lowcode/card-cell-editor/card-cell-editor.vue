@@ -274,7 +274,7 @@
 </template>
 
 <script>
-import clickoutside from "@/pages/lowcode/vendor/datav/common/clickoutside.js";
+import clickoutside from "@/pages/lowcode/common/clickoutside.js";
 export default {
   name: "CardCellEditor",
   directives: { clickoutside },
@@ -290,7 +290,7 @@ import riIconsUrl from "@iconify/json/json/ri.json?url";
 import { materialsTree } from "../components/materials/materials";
 const materialsCardParts = materialsTree.find((item) => item.value === "cardPart");
 import { $selectOne, $selectList, $delete } from "@/common/http";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common";
+import { formatStyleData } from "@/pages/lowcode/common";
 import CardPart from "./components/CardPart.vue";
 import propertyEditor from "./components/propertyEditor.vue";
 import cloneDeep from "lodash/cloneDeep";

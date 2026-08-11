@@ -67,7 +67,7 @@ function loadPageIcons(components) {
 }
 
 import { $selectOne, getHomePageNo, getImagePath } from "@/common/http";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 
 import { buildComponentsTree } from "../utils/common";
 import { getPageSnapshot, setPageSnapshot } from "../utils/snapshot-db";

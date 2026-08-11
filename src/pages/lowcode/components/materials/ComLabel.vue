@@ -43,7 +43,7 @@
 
 <script>
 import { Icon } from "@iconify/vue2";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 
 export default {
   name: "ComLabel",

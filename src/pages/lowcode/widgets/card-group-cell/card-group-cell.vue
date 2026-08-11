@@ -279,7 +279,7 @@ import verticalScrollMixin from "@/components/mixin/vertical-scroll-mixin.js"; /
 import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
 import cardCellPart from "./card-cell-part.vue";
-import { formatStyleData } from "@/pages/lowcode/vendor/datav/common/index.js";
+import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import { normalizeJumpFilePath } from "@/common/common";
 import cardCellLayout from "./card-cell-layout.vue";
 import customDialog from "./custom-dialog.vue";

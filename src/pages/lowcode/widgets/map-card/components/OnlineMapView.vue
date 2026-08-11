@@ -46,7 +46,7 @@ import {
   initMapData,
   generateMapID,
   initMap,
-} from "@/pages/lowcode/vendor/datav/common/functions/mapUtils.js"; // 地图工具函数
+} from "@/pages/lowcode/common/functions/mapUtils.js"; // 地图工具函数
 
 /**
  * 组件 Props 定义
