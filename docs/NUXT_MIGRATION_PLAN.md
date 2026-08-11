@@ -36,7 +36,7 @@ lowcode-front/
 │   ├── runtime/                   # 渲染核心引擎：schema 解析、组件注册表、数据流、事件、SWR 缓存
 │   ├── runtime-ui/                # 渲染层基础组件库：视觉复刻 element-ui（token 驱动）
 │   ├── widgets/                   # 业务组件库（24+ 组件）：chart/map/list/card-group/video/chat/nav-menu…
-│   └── studio/                    # 低代码编辑器：画布/材料/属性/图层树/历史（element-plus 重建）
+│   └── studio/                    # 低代码编辑器：画布/材料/属性/图层树/历史（naive-ui 重建）
 ├── e2e/                           # Playwright：E2E + golden 视觉回归
 ├── docs/                          # 架构、规范、ADR、CONTRIBUTING、本方案
 ├── .gitee/workflows/              # Gitee Go 流水线（GitHub Actions 语法，双平台兼容）
@@ -62,7 +62,7 @@ lowcode-front/
 | 框架         | Nuxt 4（`ssr: false` SPA 起步）              | 目录约定 `app/`；Node ≥ 20.19（建议 22 LTS，构建机需确认）                                |
 | 语言         | TypeScript strict 全量                       | 存量语义迁移过程中类型即文档                                                              |
 | 包管理       | pnpm workspace                               | 现状沿用                                                                                  |
-| UI（编辑器） | element-plus（按需引入）                     | element-plus 原生 ESM，按需是正收益（不同于 element-ui 时代 CJS 坑）                      |
+| UI（编辑器） | naive-ui                                     | 类型质量最佳（契合 TS strict）；天然 tree-shaking；见 §3.1 选型说明                       |
 | UI（渲染层） | 自研 runtime-ui（复刻 element-ui 视觉）      | 见 §5，保证像素级一致的根本手段                                                           |
 | 状态         | Pinia                                        | 编辑器状态、主题、登录、聊天                                                              |
 | 图表         | echarts 5.x + liquidfill 3.x + wordcloud 2.x | 按需 `echarts/core`                                                                       |
@@ -70,6 +70,18 @@ lowcode-front/
 | 样式         | SCSS 变量 token + unocss                     | preflight 一致性依赖现有 `theme/scss/preflight.scss` 三层引入顺序，**原样保留并纳入回归** |
 | 测试         | Vitest + Playwright + Storybook              | 单测/视觉回归/组件文档                                                                    |
 | 路由         | Nuxt 文件路由，`[...slug].vue` 兜底          | 初始保留 hash，二期可切 history                                                           |
+
+### 3.1 UI 组件库选型说明（仅 studio 编辑器层）
+
+选型对象仅限 studio 编辑器外壳；渲染层为自研 runtime-ui（§5），**不受本选型影响**。
+
+| 候选         | 结论    | 理由                                                                                                                                                   |
+| ------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| naive-ui     | ✅ 采用 | TS 类型质量最佳（契合 TS strict 与 schema 驱动属性面板）；现代视觉契合新工程焕新；天然 tree-shaking；不引入额外样式体系                                |
+| element-plus | 备选    | API 迁移最平滑（element 系惯性），但类型与视觉均为短板，仅作保守兜底                                                                                   |
+| shadcn-vue   | ❌ 否决 | 强制引入 Tailwind 与现有 unocss 双体系并存；树/日期/颜色等编辑器刚需控件缺失；上游更新需手动合并（3-5 人团队维护成本）；"代码可控"优势对内部工具价值低 |
+
+决策记录：`docs/ADR/0001-editor-ui-framework.md`
 
 ## 4. 渲染引擎重设计
 
@@ -123,16 +135,16 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 
 旧工程 4 套编辑器（low-app 桌面/移动 + lowcode 桌面/移动）收敛为 **1 套 studio + 响应式画布**（桌面 ↔ 移动设备模拟切换）。
 
-| 编辑器能力 | 旧工程                              | 新 studio                                         |
-| ---------- | ----------------------------------- | ------------------------------------------------- |
-| 画布       | ui-scaler 缩放 + 拖拽 + 连线        | 重写（缩放/拖拽/参考线/吸附）                     |
-| 材料面板   | materials 组件树                    | element-plus 重建，数据源来自 widgets 注册表 meta |
-| 属性面板   | columns.js 驱动动态表单             | 沿用"配置驱动"思路重写（声明式表单 schema）       |
-| 图层树     | OutlineTree                         | 重建                                              |
-| 历史/撤销  | useHistory + snapshot-db(IndexedDB) | 重写（命令模式 + 快照）                           |
-| 移动端     | 独立 app-materials 全套             | studio 设备模拟（删掉双套）                       |
+| 编辑器能力 | 旧工程                              | 新 studio                                     |
+| ---------- | ----------------------------------- | --------------------------------------------- |
+| 画布       | ui-scaler 缩放 + 拖拽 + 连线        | 重写（缩放/拖拽/参考线/吸附）                 |
+| 材料面板   | materials 组件树                    | naive-ui 重建，数据源来自 widgets 注册表 meta |
+| 属性面板   | columns.js 驱动动态表单             | 沿用"配置驱动"思路重写（声明式表单 schema）   |
+| 图层树     | OutlineTree                         | 重建                                          |
+| 历史/撤销  | useHistory + snapshot-db(IndexedDB) | 重写（命令模式 + 快照）                       |
+| 移动端     | 独立 app-materials 全套             | studio 设备模拟（删掉双套）                   |
 
-编辑器 UI 外观**不要求**与旧工程一致（只要求功能等价），可自由采用 element-plus 现代设计。
+编辑器 UI 外观**不要求**与旧工程一致（只要求功能等价），可自由采用 naive-ui 现代设计。
 
 ## 7. 深业务模块重写（优先级最后）
 
@@ -270,16 +282,16 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 
 ## 11. 风险与对策
 
-| 风险                                           | 影响 | 对策                                                                   |
-| ---------------------------------------------- | ---- | ---------------------------------------------------------------------- |
-| 视觉还原细节（动效/滚动/悬浮态）               | 高   | golden 覆盖静态+交互基线；动效列人工对照清单逐项核销                   |
-| runtime-ui 复刻工作量（表格合并/表单校验细节） | 高   | 独立优先级最高的 P1 子任务；先做高曝光组件（table/dialog/form）        |
-| 存量页面 schema 兼容                           | 高   | 协议版本号 + 转换层；用真实线上页面 JSON 建回归用例                    |
-| element-plus 仅用于编辑器，避免渲染层引入      | 中   | lint 规则：packages/runtime、runtime-ui、widgets 禁止依赖 element-plus |
-| 性能基线（首屏 gzip 500kB / 1.38s）            | 中   | widgets 动态 import 懒加载；P7 复测，目标不低于现基线                  |
-| SWR 缓存结构兼容                               | 中   | 缓存加 schema 版本号，旧缓存自动失效重建                               |
-| 双跑期数据一致（同一后端）                     | 低   | 读写分离天然无冲突；灰度流量观察                                       |
-| Node 版本（Nuxt 4 要求 ≥20.19）                | 低   | 构建机/CI 统一 22 LTS，文档明示                                        |
+| 风险                                           | 影响 | 对策                                                               |
+| ---------------------------------------------- | ---- | ------------------------------------------------------------------ |
+| 视觉还原细节（动效/滚动/悬浮态）               | 高   | golden 覆盖静态+交互基线；动效列人工对照清单逐项核销               |
+| runtime-ui 复刻工作量（表格合并/表单校验细节） | 高   | 独立优先级最高的 P1 子任务；先做高曝光组件（table/dialog/form）    |
+| 存量页面 schema 兼容                           | 高   | 协议版本号 + 转换层；用真实线上页面 JSON 建回归用例                |
+| naive-ui 仅用于编辑器，避免渲染层引入          | 中   | lint 规则：packages/runtime、runtime-ui、widgets 禁止依赖 naive-ui |
+| 性能基线（首屏 gzip 500kB / 1.38s）            | 中   | widgets 动态 import 懒加载；P7 复测，目标不低于现基线              |
+| SWR 缓存结构兼容                               | 中   | 缓存加 schema 版本号，旧缓存自动失效重建                           |
+| 双跑期数据一致（同一后端）                     | 低   | 读写分离天然无冲突；灰度流量观察                                   |
+| Node 版本（Nuxt 4 要求 ≥20.19）                | 低   | 构建机/CI 统一 22 LTS，文档明示                                    |
 
 ## 12. 附录
 
@@ -317,7 +329,7 @@ chart（含 Sankey/DateFilter）、chart-basic、LiquidFillChart、list（BxTabl
 
 | 现有                                                          | 目标                                               | 说明                                                               |
 | ------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
-| element-ui 2.15                                               | runtime-ui 自研（渲染层）+ element-plus（编辑器）  | 核心决策，见 §5                                                    |
+| element-ui 2.15                                               | runtime-ui 自研（渲染层）+ naive-ui（编辑器）      | 核心决策，见 §5、§3.1                                              |
 | vuex 3                                                        | Pinia                                              | store：theme/pageEvent/loginInfo/chatInfo + 编辑器 dragStore       |
 | vue-router 3                                                  | Nuxt 文件路由 + `[...slug].vue`                    | 初始 hash                                                          |
 | echarts 4.8                                                   | echarts 5 + liquidfill 3 + wordcloud 2             | `echarts/lib/*` → `echarts/core`                                   |
