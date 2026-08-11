@@ -24,13 +24,13 @@
       background: #fff;
       z-index: 9999;
     }
-    #app-loading .logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, #7ea6f2, #6fc6b4);
-      box-shadow: 0 0 22px rgba(126, 166, 242, 0.28);
-      animation: lc-pulse 1.6s ease-in-out infinite;
+    #app-loading .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(126, 166, 242, 0.16);
+      border-top-color: #7ea6f2;
+      border-radius: 50%;
+      animation: lc-spin 0.9s linear infinite;
     }
     #app-loading .text {
       margin-top: 14px;
@@ -39,9 +39,8 @@
       color: #b8bfc9;
       letter-spacing: 3px;
     }
-    @keyframes lc-pulse {
-      0%, 100% { opacity: 0.5; transform: scale(0.94); }
-      50% { opacity: 1; transform: scale(1); }
+    @keyframes lc-spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -52,7 +51,7 @@
   </noscript>
   <div id="app">
     <div id="app-loading">
-      <div class="logo"></div>
+      <div class="spinner"></div>
       <div class="text">页面加载中...</div>
     </div>
   </div>
