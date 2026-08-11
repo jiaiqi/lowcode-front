@@ -90,6 +90,11 @@ const lowCodePages = [
     },
     component: () => import("@/pages/lowcode/property-form/property-form.vue"),
   },
+  {
+    path: "/changelog",
+    name: "changelog",
+    component: () => import("@/pages/changelog/index.vue"),
+  },
 ];
 
 const env = getEnv();

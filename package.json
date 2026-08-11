@@ -1,6 +1,6 @@
 {
   "name": "lowcode-front",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "private": true,
   "description": "低代码渲染与编辑独立工程（Vite + Vue2.7）",
@@ -13,7 +13,10 @@
     "prepare": "husky",
     "lint": "eslint src --ext .js,.vue --max-warnings=999",
     "lint:fix": "eslint src --ext .js,.vue --fix",
-    "format": "prettier --write \"src/**/*.{js,vue,scss,json}\""
+    "format": "prettier --write \"src/**/*.{js,vue,scss,json}\"",
+    "changelog": "node scripts/changelog.mjs --json",
+    "release": "node scripts/release.mjs",
+    "release:dry": "node scripts/release.mjs --dry-run"
   },
   "engines": {
     "node": ">=18"

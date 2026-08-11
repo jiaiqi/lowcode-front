@@ -1,0 +1,129 @@
+# Changelog
+
+本项目所有重要变更均记录于此。格式基于 [Conventional Commits](https://www.conventionalcommits.org/)，由 `scripts/changelog.mjs` 自动生成；`[Unreleased]` 区可手动补充发布说明。
+
+## [Unreleased]
+
+## [0.2.0] - 2026-08-11
+
+### 手动补充
+（发布前在此补充说明、升级注意事项）
+
+### 新功能
+
+- **ux**: 数据组件空状态与错误提示 + safeEval 统一执行器（files: bx-util.js, index.vue, get-page-address.vue, chart-basic.vue, descriptions-list.vue, grid-card.vue 等 11 个文件）
+- **nav**: nav-menu-item 站内菜单项 router-link 化（files: nav-menu-item.vue）
+- **nav**: 站内菜单项改用 router-link（a 标签），站外保持原逻辑（files: common.js, nav-menu-child.vue）
+- **icons**: 完全离线图标方案 - 移除 @iconify/vue2，本地集合 + SVG 渲染（files: package.json, pnpm-lock.yaml, ContextMenu.vue, card-cell-editor.vue, lowcode-page-mixin.js, DynamicIcon.vue 等 8 个文件）
+- **env**: 默认环境切换为 parkDev（延安园区开发）（files: .env, .env.park, .gitignore, package.json, http.js, vite.config.js）
+- 迁移低代码引擎代码与依赖内聚（files: App.vue, wj_login.jpg, user-img-default.png, chat.png, video-play-btn.png, animations.js 等 347 个文件）
+
+### 修复
+
+- **quality**: 全面修复审计发现的问题（4 线程并行）（files: animations.js, bx-util.js, common.js, http.js, httpUtil.js, ContextMenuManager.js 等 78 个文件）
+- **card-group-cell**: 嵌套 v-for key 冲突（Duplicate keys 警告消除）（files: card-group-cell.vue）
+- **icons**: 图标尺寸统一为 1em（跟随字体，去 1.2em）（files: DynamicIcon.vue, unocss.config.js）
+- **icons**: 兜底 SVG 图标尺寸跟随字体（1.2em 字体图标方式）（files: DynamicIcon.vue）
+- **icons**: 兜底 SVG 渲染改用 v-html（iconify body 为完整标签串）（files: DynamicIcon.vue）
+- **icons**: 修复配置标题图标不显示（ComLabel prop 名不匹配 + 自引用 computed）（files: ComLabel.vue, icon-store.js）
+- **build**: Vite ESM 配置与编译期错误修复（files: package.json, pnpm-lock.yaml, login-dialog.vue, video-home.vue, vite.config.js => vite.config.mjs）
+- **jump**: 跳转路径兼容新工程根目录部署（去掉 /vpages 前缀）（files: common.js, vue_util.js, card-group-cell.vue, nav-menu-child.vue, nav-menu-item.vue, nav-menu-list.vue 等 12 个文件）
+- **build**: 修复生产构建运行时报错并接入 server.js 配置（files: index.html, vite.config.js）
+- **render**: 渲染与旧工程对齐（tailwind preflight/utilities、marquee 全局样式）（files: .gitignore, main.js, index.js, card-group-cell.vue, card-group-cell.vue, preflight.scss）
+- **nav-menu**: 消除自引用循环依赖（Vite 严格模式报 TDZ 错误）（files: nav-menu-child.vue, nav-menu.vue, nav-menu-child.vue, nav-menu.vue）
+- 补齐渲染一致性所需全局挂载（files: vue_init.js, vue_util.js, main.js, common-theme.scss）
+
+### 性能
+
+- **nav**: 站内导航 location.href 改为 $router.push（SPA 无刷新跳转）（files: common.js, vue_util.js, nav-menu-child.vue, nav-menu-list.vue）
+- **render**: 只读配置 JSON 深度冻结（Object.freeze）（files: lowcode-page-mixin.js, common.js）
+- **swr**: IndexedDB 页面快照持久化 + 内容图片懒加载（files: lowcode-page-mixin.js, lowcode-page-mixin.js, snapshot-db.js, card-cell-part.vue, chat-entrance.vue, current-info.vue 等 28 个文件）
+- **icons**: 图标方案重构 - unocss 静态内联 + iconify 按需加载（files: ContextMenu.vue, main.js, card-cell-editor.vue, ComLabel.vue, lowcode-page-mixin-setup.js, lowcode-page-mixin.js 等 20 个文件）
+
+### 重构
+
+- **nav**: 跳转逻辑收敛到 nav-jump.js + catalog 子组件清理（files: content-wrap.vue, tabs.vue, tree.vue, nav-jump.js, nav-menu-child.vue, nav-menu-list.vue 等 7 个文件）
+- **icons**: @iconify/vue2 Icon 组件全面切换为 unocss presetIcons（files: ContextMenu.vue, index.vue, card-cell-editor.vue, CardPart.vue, ComLabel.vue, block.vue 等 19 个文件）
+- **widgets**: 大华视频组件迁入 widgets，彻底移除 vendor 目录（files: video-home.vue, video.js, page-item.vue）
+- **vendor**: 收敛 widgets/vendor 双副本，删除 vendor/datav 目录（files: chatByMobile.vue, float-component.vue, render-page.vue, card-cell-editor.vue, CardCell.vue, CardPart.vue 等 135 个文件）
+- **util**: Vue.prototype 方法纯函数化与公共 js 精简（files: inspect-current.py, App.vue, bx-util.js, eventBus.js, updateChecker.js, vue_init.js 等 9 个文件）
+
+### 样式
+
+- **skeleton**: 门户风格首屏动画（品牌文字渐显 + 流光细线）（files: index.html）
+- **skeleton**: 首屏加载动画改为细圆环 spinner（去 logo）（files: index.html）
+- **skeleton**: 首屏加载骨架屏精致化（低调柔和）（files: index.html）
+
+### 文档
+
+- **plan**: 迁移重建方案文档：nuxt4 金标准重建（monorepo + Gitee Go）（files: NUXT_MIGRATION_PLAN.md）
+- 同步 README/PERFORMANCE/ARCHITECTURE 与当前实现（files: README.md, ARCHITECTURE.md, PERFORMANCE.md）
+- **perf**: 记录 element-ui 按需引入验证结论（子路径方案不可行）（files: package.json, main.js）
+- 新工程文档（README/架构/部署/登录/表单 iframe/性能）（files: README.md, ARCHITECTURE.md, DEPLOYMENT.md, LEGACY_FORM.md, LOGIN.md, PERFORMANCE.md）
+
+### 工程
+
+- **devops**: husky 钩子设置可执行权限（Linux/Mac 协作者兼容）（files: commit-msg, pre-commit）
+- **devops**: 多人协作规范体系（eslint/prettier/husky/commitlint/CI）（files: .editorconfig, .eslintrc.cjs, ci.yml, commit-msg, pre-commit, .prettierrc.json 等 10 个文件）
+- **env**: 添加全局左上角搜索框配置（默认关闭）（files: .env）
+- **sass**: 消除 sass 弃用警告（modern-compiler API + @use）（files: app-home.vue, vite.config.mjs）
+- **cleanup**: 删除 59 个未引用文件（死代码清理）（files: ContextMenuExample.vue, dhflv.min.js, index.js, app-home.vue, preview-page.vue, index.vue 等 58 个文件）
+- **scripts**: 新增新旧工程渲染对比与巡检脚本（Playwright）（files: compare-pageconfig.py, compare-pages.py, compare-styles.py, listen-config-api.py, test-preflight-full.py, test-preflight.py）
+- 低代码独立工程脚手架 - Vite5 + Vue2.7 + pnpm 配置（files: .gitignore, .npmrc, PERFORMANCE_OPTIMIZATION_IMPL_PLAN.md, PERFORMANCE_OPTIMIZATION_PLAN.md, README.md, TEST_CASES.md 等 13 个文件）
+
+### 新功能
+- **ux**: 数据组件空状态与错误提示 + safeEval 统一执行器（files: bx-util.js, index.vue, get-page-address.vue, chart-basic.vue, descriptions-list.vue, grid-card.vue 等 11 个文件）
+- **nav**: nav-menu-item 站内菜单项 router-link 化（files: nav-menu-item.vue）
+- **nav**: 站内菜单项改用 router-link（a 标签），站外保持原逻辑（files: common.js, nav-menu-child.vue）
+- **icons**: 完全离线图标方案 - 移除 @iconify/vue2，本地集合 + SVG 渲染（files: package.json, pnpm-lock.yaml, ContextMenu.vue, card-cell-editor.vue, lowcode-page-mixin.js, DynamicIcon.vue 等 8 个文件）
+- **env**: 默认环境切换为 parkDev（延安园区开发）（files: .env, .env.park, .gitignore, package.json, http.js, vite.config.js）
+- 迁移低代码引擎代码与依赖内聚（files: App.vue, wj_login.jpg, user-img-default.png, chat.png, video-play-btn.png, animations.js 等 347 个文件）
+
+### 修复
+- **quality**: 全面修复审计发现的问题（4 线程并行）（files: animations.js, bx-util.js, common.js, http.js, httpUtil.js, ContextMenuManager.js 等 78 个文件）
+- **card-group-cell**: 嵌套 v-for key 冲突（Duplicate keys 警告消除）（files: card-group-cell.vue）
+- **icons**: 图标尺寸统一为 1em（跟随字体，去 1.2em）（files: DynamicIcon.vue, unocss.config.js）
+- **icons**: 兜底 SVG 图标尺寸跟随字体（1.2em 字体图标方式）（files: DynamicIcon.vue）
+- **icons**: 兜底 SVG 渲染改用 v-html（iconify body 为完整标签串）（files: DynamicIcon.vue）
+- **icons**: 修复配置标题图标不显示（ComLabel prop 名不匹配 + 自引用 computed）（files: ComLabel.vue, icon-store.js）
+- **build**: Vite ESM 配置与编译期错误修复（files: package.json, pnpm-lock.yaml, login-dialog.vue, video-home.vue, vite.config.js => vite.config.mjs）
+- **jump**: 跳转路径兼容新工程根目录部署（去掉 /vpages 前缀）（files: common.js, vue_util.js, card-group-cell.vue, nav-menu-child.vue, nav-menu-item.vue, nav-menu-list.vue 等 12 个文件）
+- **build**: 修复生产构建运行时报错并接入 server.js 配置（files: index.html, vite.config.js）
+- **render**: 渲染与旧工程对齐（tailwind preflight/utilities、marquee 全局样式）（files: .gitignore, main.js, index.js, card-group-cell.vue, card-group-cell.vue, preflight.scss）
+- **nav-menu**: 消除自引用循环依赖（Vite 严格模式报 TDZ 错误）（files: nav-menu-child.vue, nav-menu.vue, nav-menu-child.vue, nav-menu.vue）
+- 补齐渲染一致性所需全局挂载（files: vue_init.js, vue_util.js, main.js, common-theme.scss）
+
+### 性能
+- **nav**: 站内导航 location.href 改为 $router.push（SPA 无刷新跳转）（files: common.js, vue_util.js, nav-menu-child.vue, nav-menu-list.vue）
+- **render**: 只读配置 JSON 深度冻结（Object.freeze）（files: lowcode-page-mixin.js, common.js）
+- **swr**: IndexedDB 页面快照持久化 + 内容图片懒加载（files: lowcode-page-mixin.js, lowcode-page-mixin.js, snapshot-db.js, card-cell-part.vue, chat-entrance.vue, current-info.vue 等 28 个文件）
+- **icons**: 图标方案重构 - unocss 静态内联 + iconify 按需加载（files: ContextMenu.vue, main.js, card-cell-editor.vue, ComLabel.vue, lowcode-page-mixin-setup.js, lowcode-page-mixin.js 等 20 个文件）
+
+### 重构
+- **nav**: 跳转逻辑收敛到 nav-jump.js + catalog 子组件清理（files: content-wrap.vue, tabs.vue, tree.vue, nav-jump.js, nav-menu-child.vue, nav-menu-list.vue 等 7 个文件）
+- **icons**: @iconify/vue2 Icon 组件全面切换为 unocss presetIcons（files: ContextMenu.vue, index.vue, card-cell-editor.vue, CardPart.vue, ComLabel.vue, block.vue 等 19 个文件）
+- **widgets**: 大华视频组件迁入 widgets，彻底移除 vendor 目录（files: video-home.vue, video.js, page-item.vue）
+- **vendor**: 收敛 widgets/vendor 双副本，删除 vendor/datav 目录（files: chatByMobile.vue, float-component.vue, render-page.vue, card-cell-editor.vue, CardCell.vue, CardPart.vue 等 135 个文件）
+- **util**: Vue.prototype 方法纯函数化与公共 js 精简（files: inspect-current.py, App.vue, bx-util.js, eventBus.js, updateChecker.js, vue_init.js 等 9 个文件）
+
+### 样式
+- **skeleton**: 门户风格首屏动画（品牌文字渐显 + 流光细线）（files: index.html）
+- **skeleton**: 首屏加载动画改为细圆环 spinner（去 logo）（files: index.html）
+- **skeleton**: 首屏加载骨架屏精致化（低调柔和）（files: index.html）
+
+### 文档
+- **plan**: 补充版本升级日志方案（git-cliff 自动+手动、应用内 changelog 页、release 同步）（files: NUXT_MIGRATION_PLAN.md）
+- **plan**: 迁移重建方案文档：nuxt4 金标准重建（monorepo + Gitee Go）（files: NUXT_MIGRATION_PLAN.md）
+- 同步 README/PERFORMANCE/ARCHITECTURE 与当前实现（files: README.md, ARCHITECTURE.md, PERFORMANCE.md）
+- **perf**: 记录 element-ui 按需引入验证结论（子路径方案不可行）（files: package.json, main.js）
+- 新工程文档（README/架构/部署/登录/表单 iframe/性能）（files: README.md, ARCHITECTURE.md, DEPLOYMENT.md, LEGACY_FORM.md, LOGIN.md, PERFORMANCE.md）
+
+### 工程
+- **release**: v0.2.0（42 个变更）（files: CHANGELOG.md, package.json, changelog.json）
+- **devops**: husky 钩子设置可执行权限（Linux/Mac 协作者兼容）（files: commit-msg, pre-commit）
+- **devops**: 多人协作规范体系（eslint/prettier/husky/commitlint/CI）（files: .editorconfig, .eslintrc.cjs, ci.yml, commit-msg, pre-commit, .prettierrc.json 等 10 个文件）
+- **env**: 添加全局左上角搜索框配置（默认关闭）（files: .env）
+- **sass**: 消除 sass 弃用警告（modern-compiler API + @use）（files: app-home.vue, vite.config.mjs）
+- **cleanup**: 删除 59 个未引用文件（死代码清理）（files: ContextMenuExample.vue, dhflv.min.js, index.js, app-home.vue, preview-page.vue, index.vue 等 58 个文件）
+- **scripts**: 新增新旧工程渲染对比与巡检脚本（Playwright）（files: compare-pageconfig.py, compare-pages.py, compare-styles.py, listen-config-api.py, test-preflight-full.py, test-preflight.py）
+- 低代码独立工程脚手架 - Vite5 + Vue2.7 + pnpm 配置（files: .gitignore, .npmrc, PERFORMANCE_OPTIMIZATION_IMPL_PLAN.md, PERFORMANCE_OPTIMIZATION_PLAN.md, README.md, TEST_CASES.md 等 13 个文件）  
