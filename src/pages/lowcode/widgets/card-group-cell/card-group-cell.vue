@@ -110,7 +110,7 @@
           :page-params-model="pageParamsModel"
           :showActiveCard="showActiveCard"
           :inList="inList"
-          :key="i"
+          :key="index + '-' + i"
           @mouse-enter="setActiveCardIndex(index)"
           @mouse-leave="activeCardAutoplay"
           @on-click-cell="onClickCell"
