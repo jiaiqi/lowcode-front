@@ -10,7 +10,7 @@ import { ICON_SAFELIST } from "./src/pages/lowcode/widgets/common/icon-safelist.
 export default defineConfig({
   presets: [
     presetIcons({
-      scale: 1.2,
+      scale: 1,
       warn: true,
       extraProperties: {
         display: "inline-block",
