@@ -24,23 +24,30 @@
       background: #fff;
       z-index: 9999;
     }
-    #app-loading .spinner {
-      width: 24px;
-      height: 24px;
-      border: 2px solid rgba(126, 166, 242, 0.16);
-      border-top-color: #7ea6f2;
-      border-radius: 50%;
-      animation: lc-spin 0.9s linear infinite;
-    }
-    #app-loading .text {
-      margin-top: 14px;
-      font-size: 12px;
+    #app-loading .brand {
+      font-size: 15px;
       font-weight: 300;
-      color: #b8bfc9;
-      letter-spacing: 3px;
+      letter-spacing: 8px;
+      text-indent: 8px; /* 抵消末字间距，保持视觉居中 */
+      color: #7a8aa0;
+      animation: lc-fade-up 1s ease-out both;
     }
-    @keyframes lc-spin {
-      to { transform: rotate(360deg); }
+    #app-loading .bar {
+      width: 60px;
+      height: 2px;
+      margin-top: 18px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, transparent, #7ea6f2, transparent);
+      background-size: 200% 100%;
+      animation: lc-sweep 1.8s ease-in-out infinite;
+    }
+    @keyframes lc-fade-up {
+      from { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes lc-sweep {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
   </style>
 </head>
@@ -51,8 +58,8 @@
   </noscript>
   <div id="app">
     <div id="app-loading">
-      <div class="spinner"></div>
-      <div class="text">页面加载中...</div>
+      <div class="brand">智慧园区</div>
+      <div class="bar"></div>
     </div>
   </div>
   <script type="module" src="/src/main.js"></script>
