@@ -42,7 +42,7 @@ API 迁移最平滑（element 系惯性），但类型与视觉均为短板；�
 
 **消极/注意**：
 
-- naive-ui 无官方 Nuxt 模块 → SPA 模式下手动 plugin 注册（约 10 行），可接受
+- naive-ui 官方 Nuxt 模块（`nuxtjs-naive-ui`，作者 07akioni 维护）面向 **Nuxt 3 + SSR**：核心是 css-render SSR 样式收集，依赖 `@nuxt/kit ^3.11.2`，2024-05 后未更新、未适配 Nuxt 4。本工程为 Nuxt 4 SPA，SSR 分支不生效，模块实际只剩 `build.transpile: ["naive-ui"]` 的价值 → 手动配置 + plugin 注册即可（详见方案 §3.1）
 - 团队 element 系经验不能平移，需学习 naive-ui API（中文文档 + TypeDoc 质量高，成本可控）
 - 渲染层（`runtime`/`runtime-ui`/`widgets`）禁止依赖 naive-ui，以 lint 规则强制（方案 §11 风险表）
 
@@ -51,5 +51,5 @@ API 迁移最平滑（element 系惯性），但类型与视觉均为短板；�
 当出现以下任一情况时重新评估本决策：
 
 - naive-ui 停止维护或发布破坏性大版本
-- studio 需要 SSR（当前 SPA 模式不涉及）
+- studio 需要 SSR（当前 SPA 模式不涉及；届时重新评估官方模块 `nuxtjs-naive-ui` 对 Nuxt 4 的适配情况）
 - 团队评估"组件源码可控"成为硬需求（内部工具暂不成立）

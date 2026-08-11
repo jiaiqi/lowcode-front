@@ -81,6 +81,8 @@ lowcode-front/
 | element-plus | 备选    | API 迁移最平滑（element 系惯性），但类型与视觉均为短板，仅作保守兜底                                                                                   |
 | shadcn-vue   | ❌ 否决 | 强制引入 Tailwind 与现有 unocss 双体系并存；树/日期/颜色等编辑器刚需控件缺失；上游更新需手动合并（3-5 人团队维护成本）；"代码可控"优势对内部工具价值低 |
 
+**Nuxt 集成说明**：naive-ui 有官方 Nuxt 模块 `nuxtjs-naive-ui`（维护者 07akioni 即 naive-ui 作者）。核实其源码：核心功能是 **SSR 场景**的 css-render 样式收集（`import.meta.server` 分支）+ 生产 `build.transpile`；依赖 `@nuxt/kit ^3.11.2`，2024-05 后未更新，**面向 Nuxt 3，未适配 Nuxt 4**。本工程为 **Nuxt 4 SPA 模式**：SSR 分支不生效，模块实际价值只剩一行 `build.transpile: ["naive-ui"]` 配置——手动配置即可，**不引入该模块**（避免 Nuxt 3 时代 kit 依赖混入）。若未来切 SSR，再评估官方模块对 Nuxt 4 的适配（ADR 0001 复盘条件）。
+
 决策记录：`docs/ADR/0001-editor-ui-framework.md`
 
 ## 4. 渲染引擎重设计
