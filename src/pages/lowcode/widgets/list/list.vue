@@ -186,8 +186,8 @@
           :list-config="listConfig"
           @row-button-click="onRowButtonClick"
         />
-           <div class="empty-data" v-if="loaded && tableData.length === 0">
-            暂无数据
+           <div class="empty-wrap" v-if="loaded && tableData.length === 0">
+            <el-empty description="暂无数据"></el-empty>
            </div>
       </div>
       <div
@@ -818,6 +818,7 @@ export default {
       } catch (error) {
         console.error("list getListData error:", error);
         if (this._isDestroyed) return;
+        this.$message.error("数据加载失败");
         this.loading = false;
         this.loaded = true;
         this.tableData = [];
@@ -1189,14 +1190,9 @@ export default {
         border-radius: 4px;
       }
 
-      .empty-data {
+      .empty-wrap {
         min-height: 60px;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #909399;
-        font-size: 14px;
+        padding: 20px 0;
       }
     }
   }

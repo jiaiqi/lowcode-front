@@ -11,7 +11,7 @@
       </div>
     </div>
     <div v-else class="del_des">
-       暂无数据详情
+       <el-empty description="暂无数据"></el-empty>
     </div>
   </div>
 </template>
@@ -81,6 +81,7 @@ export default {
       try {
         const res = await $http.post(url, params);
         if(res.data.state!=='SUCCESS') {
+          this.$message.error("数据加载失败");
           this.$emit('data-loaded', { count: 0 });
           return;
         }
@@ -92,6 +93,7 @@ export default {
         this.$emit('data-loaded', { count: ls && ls.length > 0 ? 1 : 0 });
       } catch (error) {
         console.error("info-details getInfoData error:", error);
+        this.$message.error("数据加载失败");
         this.$emit('data-loaded', { count: 0 });
       }
    },

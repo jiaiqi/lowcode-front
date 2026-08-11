@@ -25,6 +25,7 @@ import "echarts/lib/component/radar";
 import "echarts/lib/component/markLine";
 // import "echarts-gl"; //echarts-gl@1.1.2
 import { getImagePath } from "@/common/http";
+import { safeEval } from "@/common/bx-util";
 import dayjs from "dayjs";
 import chinaJson from "echarts/map/json/china.json";
 
@@ -899,7 +900,9 @@ export const useBuildOption = (type, pageItem, cellData = [], layout) => {
       } else if (chartJson.x_label_format === '字符串模板' && chartJson.x_label_temp_format) {
         ecOptions.xAxis.axisLabel.formatter = chartJson.x_label_temp_format
       } else if (chartJson.x_label_custom_format) {
-        ecOptions.xAxis.axisLabel.formatter = eval(`${chartJson.x_label_custom_format}`);
+        // 原实现 eval(...)：表达式为函数体字符串（如 function(value){...}），求值得到
+        // echarts axisLabel.formatter 函数，由 echarts 在渲染时以 (value, index) 多次调用
+        ecOptions.xAxis.axisLabel.formatter = safeEval(`${chartJson.x_label_custom_format}`);
       }
       // ecOptions["xAxis"]["data"] = [
       //   ...new Set(ecOptions["xAxis"]["data"] || []),

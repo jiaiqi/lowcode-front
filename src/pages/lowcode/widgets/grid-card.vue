@@ -1,17 +1,22 @@
 <template>
-  <div class="grid" :style="'--grid-cols:' + pageItem.grid_json.max_cols" v-if="cardStyle === '上图下文'">
-    <div class="grid-item" :class="{ 'no-image': !baseListItem.image }" v-for="(baseListItem, baseListIndex) in buttons"
-      :key="baseListIndex" @click="onGridItem(baseListItem)" :custom-style="{ padding: '15rpx 0' }">
-      <img loading="lazy" :src="getImagePath(baseListItem.image)" style="width: 40px;height:40px;" alt="" srcset="">
-      <span class="grid-text" style="padding: 10upx 0;color: #323232;">{{ baseListItem.label || baseListItem.child_name
-      }}</span>
+  <div v-if="buttons && buttons.length > 0">
+    <div class="grid" :style="'--grid-cols:' + pageItem.grid_json.max_cols" v-if="cardStyle === '上图下文'">
+      <div class="grid-item" :class="{ 'no-image': !baseListItem.image }" v-for="(baseListItem, baseListIndex) in buttons"
+        :key="baseListIndex" @click="onGridItem(baseListItem)" :custom-style="{ padding: '15rpx 0' }">
+        <img loading="lazy" :src="getImagePath(baseListItem.image)" style="width: 40px;height:40px;" alt="" srcset="">
+        <span class="grid-text" style="padding: 10upx 0;color: #323232;">{{ baseListItem.label || baseListItem.child_name
+        }}</span>
+      </div>
+    </div>
+    <div class="grid" :style="'--grid-cols:' + pageItem.grid_json.max_cols" v-else-if="cardStyle === '仅图片'">
+      <div class="grid-item" :class="{ 'no-image': !baseListItem.image }" v-for="(baseListItem, baseListIndex) in buttons"
+        :key="baseListIndex" @click="onGridItem(baseListItem)">
+        <img loading="lazy" :src="getImagePath(baseListItem.image)" alt="" srcset="">
+      </div>
     </div>
   </div>
-  <div class="grid" :style="'--grid-cols:' + pageItem.grid_json.max_cols" v-else-if="cardStyle === '仅图片'">
-    <div class="grid-item" :class="{ 'no-image': !baseListItem.image }" v-for="(baseListItem, baseListIndex) in buttons"
-      :key="baseListIndex" @click="onGridItem(baseListItem)">
-      <img loading="lazy" :src="getImagePath(baseListItem.image)" alt="" srcset="">
-    </div>
+  <div class="empty-wrap" v-else>
+    <el-empty description="暂无数据"></el-empty>
   </div>
 </template>
 
@@ -60,6 +65,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.empty-wrap {
+  padding: 20px 0;
+}
+
 .grid {
   height: 100%;
   display: grid;

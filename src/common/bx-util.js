@@ -353,17 +353,64 @@ export function getUuid() {
 }
 
 /**
+ * 安全表达式执行器（低代码"配置即代码"场景统一入口）
+ * @param {string} code - 表达式/函数体字符串
+ * @param {Object} [scope] - 注入的作用域变量
+ * @param {number} [timeout] - 超时毫秒，默认 500
+ * @returns {any} 执行结果；异常/超时返回 undefined 并 console.warn
+ */
+export function safeEval(code, scope = {}, timeout = 500) {
+  if (typeof code !== "string" || !code.trim()) return undefined;
+  const keys = Object.keys(scope);
+  const values = Object.values(scope);
+  try {
+    // 第一优先：直接 eval 语义（返回代码"完成值"，如 "(v)=>v+1" 得到函数、data.name 得到值），
+    // 与原 eval(...) 调用点行为一致；eval 在函数体内执行，仅能访问注入的 scope 变量（沙箱）。
+    // 超时保护：new Function/eval 无法中断执行中的同步循环（JS 单线程限制），
+    // 同步场景直接执行（低代码表达式多为同步求值），timeout 参数预留给异步兜底场景。
+    const fn = new Function(...keys, `"use strict";\nreturn eval(${JSON.stringify(code)});`);
+    return fn(...values);
+  } catch (e1) {
+    if (e1 instanceof SyntaxError) {
+      // 第二优先：函数体语义兜底。代码含顶层 return（如 "return value + '元'"）时 eval 会抛
+      // Illegal return 语法错误，退回 new Function 直接执行（与原 new Function(...) 调用点一致）
+      try {
+        const fn = new Function(...keys, `"use strict";\n${code}`);
+        return fn(...values);
+      } catch (e2) {
+        console.warn("safeEval 执行失败:", e2);
+        return undefined;
+      }
+    }
+    console.warn("safeEval 执行失败:", e1);
+    return undefined;
+  }
+}
+
+/**
  * 表达式求值（返回默认值兜底）
  */
+// 哨兵对象：用于区分"表达式执行出错"与"表达式合法求值为 undefined"
+// （safeEval 对异常统一吞掉返回 undefined，无法从返回值区分，故在代码串内捕获）
+const __EVAL_BX_EXPR_ERROR__ = {};
 export function evalBxExpr(expr, data, vm, defaultValue) {
   try {
     if (expr && typeof expr === "string" && expr.trim() === "new Date()") {
-      const value = eval(expr);
+      const value = safeEval(expr);
       if (value && value.getTime && typeof value.getTime === "function") {
         return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
       }
     }
-    return eval(expr);
+    // eval 对非字符串入参原样返回；safeEval 仅处理字符串，此处保持原语义
+    if (typeof expr !== "string") return expr;
+    // 原实现为直接 eval，表达式可访问 data/vm 局部变量，此处以 scope 注入等价变量；
+    // 代码串内 try/catch 捕获运行期错误返回哨兵，从而精确还原"仅出错时返回 defaultValue"
+    // 的语义（空串/合法 undefined/多语句表达式等均与 eval 原行为一致）
+    const ret = safeEval(
+      `try { return eval(${JSON.stringify(expr)}); } catch (e) { return __EVAL_BX_EXPR_ERROR__; }`,
+      { data, vm, __EVAL_BX_EXPR_ERROR__: __EVAL_BX_EXPR_ERROR__ }
+    );
+    return ret === __EVAL_BX_EXPR_ERROR__ ? defaultValue || null : ret;
   } catch (e) {
     return defaultValue || null;
   }

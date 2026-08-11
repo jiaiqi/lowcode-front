@@ -450,6 +450,12 @@ export default {
             })();
           `
 
+          // 说明：此处必须使用 iframe.contentWindow.eval 注入脚本，无法收敛到 safeEval——
+          // 1) 目标可能是跨域 iframe，父页面无法在其执行上下文内调用 new Function（同源策略限制），
+          //    只能通过 contentWindow.eval 在 iframe 自身上下文中执行；
+          // 2) 该脚本由前端开发者编写（URL 监听注入，见上方 script 常量），并非用户配置的表达式，
+          //    非"配置即代码"场景，风险可控；
+          // 3) 跨域情况下该调用会抛错，由下方 catch 捕获并提示"无法注入URL监听脚本，可能是跨域限制"。
           iframe.contentWindow.eval(script)
         }
       } catch (error) {

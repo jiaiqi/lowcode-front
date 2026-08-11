@@ -1,15 +1,20 @@
 <template>
-  <div class="user-list">
-    <div class="normal-images">
-      <template v-for="(img, index) in arrImages">
-        <div v-if="index < 5" :key="index">
-          <img loading="lazy" v-if="img" :src="img" :style="resImagesFn(index)" class="image" />
-        </div>
-      </template>
+  <div class="user-list" :class="{ 'is-empty': isEmpty }">
+    <template v-if="!isEmpty">
+      <div class="normal-images">
+        <template v-for="(img, index) in arrImages">
+          <div v-if="index < 5" :key="index">
+            <img loading="lazy" v-if="img" :src="img" :style="resImagesFn(index)" class="image" />
+          </div>
+        </template>
+      </div>
+      <span class="num-text" v-if="showUserNum"
+        >{{ userNum }}+{{ pageItem.user_list_json.usercount_label }}</span
+      >
+    </template>
+    <div class="empty-wrap" v-else>
+      <el-empty description="暂无数据" :image-size="60"></el-empty>
     </div>
-    <span class="num-text" v-if="showUserNum"
-      >{{ userNum }}+{{ pageItem.user_list_json.usercount_label }}</span
-    >
     <span class="button" v-if="showButton" @click="toLogin">{{
       pageItem.user_list_json.button_type
     }}</span>
@@ -30,6 +35,7 @@ export default {
       listData: [],
       arrImages: [],
       userNum: 0,
+      loaded: false,
     };
   },
   mounted() {
@@ -56,6 +62,9 @@ export default {
       // 	return (arr.indexOf('登陆按钮') > -1) && (!uni.getStorageSync('isLogin')) ? true : false
       // }
     },
+    isEmpty() {
+      return this.loaded && (!this.listData || this.listData.length === 0);
+    },
   },
   methods: {
     tagStylefn(style) {
@@ -77,22 +86,29 @@ export default {
         serviceName: p.serviceName,
         colNames: p.colNames,
       };
-      const res = await this.$axios.post(url, req);
-      if (
-        res?.data?.state === "SUCCESS" &&
-        Array.isArray(res?.data?.data) &&
-        res?.data?.data.length > 0
-      ) {
-        this.listData = res.data.data;
-        const key = this.pageItem.user_list_json.usercount_col;
-        this.userNum = this.listData[0][key];
-        this.arrImages = [];
-        this.listData.forEach((item) => {
-          if (item.title_lmage) {
-            let str = this.getImagePath(item.title_lmage);
-            this.arrImages.push(str);
-          }
-        });
+      try {
+        const res = await this.$axios.post(url, req);
+        if (
+          res?.data?.state === "SUCCESS" &&
+          Array.isArray(res?.data?.data) &&
+          res?.data?.data.length > 0
+        ) {
+          this.listData = res.data.data;
+          const key = this.pageItem.user_list_json.usercount_col;
+          this.userNum = this.listData[0][key];
+          this.arrImages = [];
+          this.listData.forEach((item) => {
+            if (item.title_lmage) {
+              let str = this.getImagePath(item.title_lmage);
+              this.arrImages.push(str);
+            }
+          });
+        }
+      } catch (error) {
+        console.error("user-list getUserListData error:", error);
+        this.$message.error("数据加载失败");
+      } finally {
+        this.loaded = true;
       }
     },
     toLogin() {
@@ -111,6 +127,11 @@ export default {
   border-radius: 10px;
   background: #fff;
   padding: 0 16px 0 16px;
+
+  &.is-empty {
+    height: auto;
+    padding-bottom: 16px;
+  }
 
   .normal-images {
     position: relative;
@@ -148,6 +169,10 @@ export default {
     text-align: center;
     margin-top: 15px;
     background: #395bce;
+  }
+
+  .empty-wrap {
+    padding: 20px 0;
   }
 }
 </style>

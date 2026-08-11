@@ -10,9 +10,9 @@
     </div>
     <div
       v-else-if="!currentData || Object.keys(currentData).length === 0"
-      class="empty-data"
+      class="empty-wrap"
     >
-      暂无数据
+      <el-empty description="暂无数据"></el-empty>
     </div>
     <div
       v-else
@@ -79,6 +79,7 @@ import { formatStyleData } from "@/pages/lowcode/common/index.js";
 import { $http } from "@/common/http";
 import pageItemComponentMixin from "@/pages/lowcode/mixins/pageItemComponentMixin.js";
 import { getDateByKey, getDateKeys } from "@/common/date_util";
+import { safeEval } from "@/common/bx-util";
 
 export default {
   name: "DescriptionsList",
@@ -334,8 +335,10 @@ export default {
       }
       if (col.formatter) {
         try {
-          const fn = new Function("value", "row", col.formatter);
-          return fn(value, this.currentData);
+          // 原实现 new Function("value","row", col.formatter)(value, this.currentData)
+          // safeEval 同步执行返回函数体结果；出错时原实现兜底返回原始 value，此处保持一致
+          const ret = safeEval(col.formatter, { value, row: this.currentData });
+          return ret === undefined ? value : ret;
         } catch (e) {
           return value;
         }
@@ -481,6 +484,7 @@ export default {
       } catch (error) {
         this.loading = false;
         console.error("描述列表数据加载失败:", error);
+        this.$message.error("数据加载失败");
       }
     },
   },
@@ -547,14 +551,10 @@ export default {
     word-break: break-all;
   }
 }
-.empty-data {
+.empty-wrap {
   width: 100%;
   min-height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 14px;
+  padding: 20px 0;
 }
 
 .descriptions-list {

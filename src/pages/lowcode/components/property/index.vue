@@ -116,6 +116,7 @@ import dayjs from "dayjs";
 import cloneDeep from "lodash/cloneDeep";
 import { pageCompCols } from "./columns";
 import cssEditor from "../cssEditor/index.vue";
+import { safeEval } from "@/common/bx-util";
 export default {
   components: {
     LegacyForm,
@@ -447,8 +448,12 @@ export default {
           if (pageAllFields[key].vif === true) {
             if (pageAllFields[key]?.info?.xIf) {
               let row = formModel;
-              let ret = eval(
-                "var zz=" + pageAllFields[key]?.info?.xIf + "(row); zz"
+              // 原实现 eval("var zz=" + xIf + "(row); zz")，xIf 为函数表达式字符串（如
+              // function(row){...} / (row)=>...），以 row 入参调用求值；此处经 safeEval
+              // 注入 row 作用域执行，出错时返回 undefined（!!undefined=false，等价过滤掉该列）
+              let ret = safeEval(
+                "var zz=" + pageAllFields[key]?.info?.xIf + "(row); zz",
+                { row }
               );
               return !!ret;
             }

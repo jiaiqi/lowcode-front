@@ -9,7 +9,7 @@
                 </div>
             </div>
         </div>
-        <div class="bx-table">
+        <div class="bx-table" v-if="!isEmpty">
             <div class="table-head">
                 <div class="table-column" v-for="(col, index) in tableColumn" :key="index">
                     {{ col.label }}
@@ -21,6 +21,9 @@
                 </div>
             </div>
         </div>
+        <div class="empty-wrap" v-else>
+            <el-empty description="暂无数据"></el-empty>
+        </div>
 
         <!-- <dv-scroll-board :config="config" style="width:500px;height:220px" /> -->
     </div>
@@ -28,6 +31,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
+import { Message } from "element-ui";
 import { $http } from "@/common/http.js";
 import { applyEncryptParam } from "@/pages/lowcode/common/index.js";
 
@@ -89,6 +93,9 @@ const formatValue = (row, col) => {
     return applyEncryptParam(row, [colName, col?.columns, col?.column], res);
 }
 const tableData = ref(null);
+const loaded = ref(false);
+// 已加载且无数据时显示空状态
+const isEmpty = computed(() => loaded.value && (!tableData.value || tableData.value.length === 0));
 const tableColumn = computed(() => {
     let cols = v2Data.value?.srv_cols || [];
     cols = cols.filter((item) => item.in_list === 1);
@@ -110,7 +117,7 @@ const statisticList = computed(() => {
 const stasticData = ref([])
 const getStatisticData = async (req) => {
     const colName = v2Data.value?.cfgJson?.statistics_card_col
-    const col = v2Data.value?.srv_cols.find(item => item.columns === colName)
+    const col = v2Data.value?.srv_cols?.find(item => item.columns === colName)
     if (col && col.col_type==='Enum') {
         const group = [
             {
@@ -150,9 +157,16 @@ const v2Data = ref(null);
 
 const getListData = async (req) => {
     const url = `/${req.mapp}/select/${req.serviceName}`;
-    const res = await $http.post(url, req);
-    if (res.data.state === "SUCCESS") {
-        tableData.value = res.data.data;
+    try {
+        const res = await $http.post(url, req);
+        if (res.data.state === "SUCCESS") {
+            tableData.value = Array.isArray(res.data.data) ? res.data.data : [];
+        }
+    } catch (error) {
+        console.error("mix-list getListData error:", error);
+        Message.error("数据加载失败");
+    } finally {
+        loaded.value = true;
     }
 };
 const getV2Data = async (srvCfg) => {
@@ -170,10 +184,14 @@ const getV2Data = async (srvCfg) => {
         ],
         order: [{ colName: "seq", orderType: "asc" }],
     };
-    const res = await $http.post(url, req);
-    if (res?.data?.state === "SUCCESS") {
-        parseCfgJson(res.data.data)
-        v2Data.value = res.data.data;
+    try {
+        const res = await $http.post(url, req);
+        if (res?.data?.state === "SUCCESS") {
+            parseCfgJson(res.data.data)
+            v2Data.value = res.data.data;
+        }
+    } catch (error) {
+        console.error("mix-list getV2Data error:", error);
     }
 };
 onMounted(() => {
@@ -189,6 +207,10 @@ onMounted(() => {
 
 
 <style lang="scss" scoped>
+.empty-wrap {
+    padding: 20px 0;
+}
+
 .bx-table {
     .table-head {
         background-color: rgba($color: #fff, $alpha: 0.1);
