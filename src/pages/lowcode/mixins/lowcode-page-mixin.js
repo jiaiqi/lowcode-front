@@ -10,43 +10,11 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import cloneDeep from "lodash/cloneDeep";
 import "animate.css";
 
-import { addCollection } from "@iconify/vue2";
-
-/**
- * iconify 单集合按需加载器（替代原 mounted 全量加载 3 个全集 JSON ≈2.3MB）。
- * - 静态图标已由 unocss 内联（含 material-symbols，故不再运行时加载该集合）
- * - 动态图标（页面配置里的 icon 字段）：?url 静态资源 + 运行时 fetch，
- *   避免 Vite 对动态 import 注入 preload 导致首屏预取大 JSON
- */
-import epIconsUrl from "@iconify-json/ep/icons.json?url";
-import riIconsUrl from "@iconify-json/ri/icons.json?url";
-import mdiLightIconsUrl from "@iconify-json/mdi-light/icons.json?url";
-
-const iconSetUrls = {
-  ep: epIconsUrl,
-  ri: riIconsUrl,
-  "mdi-light": mdiLightIconsUrl,
-};
-const loadedIconSets = new Set();
-
-async function ensureIconCollection(iconName) {
-  if (typeof iconName !== "string" || !iconName.includes(":")) return;
-  const prefix = iconName.split(":")[0];
-  const url = iconSetUrls[prefix];
-  if (!url || loadedIconSets.has(prefix)) return;
-  loadedIconSets.add(prefix);
-  try {
-    const json = await (await fetch(url)).json();
-    addCollection(json);
-  } catch (e) {
-    loadedIconSets.delete(prefix); // 失败允许重试
-    console.warn(`iconify 集合加载失败: ${prefix}`, e);
-  }
-}
+import { ensureCollection, parseIconName } from "@/pages/lowcode/widgets/common/icon-store";
 
 /**
  * 从组件配置中收集动态图标名（com_icon / title_icon / icon_name 等字段），
- * 逐个按需加载对应集合；addCollection 后已挂载的 Icon 组件会自动刷新。
+ * 逐个按需加载对应本地集合（icon-store：构建产物静态资源，零网络请求）。
  * @param {Array|Object} components - 页面组件树
  */
 function loadPageIcons(components) {
@@ -59,7 +27,8 @@ function loadPageIcons(components) {
     while ((m = re.exec(raw))) {
       if (seen.has(m[1])) continue;
       seen.add(m[1]);
-      ensureIconCollection(m[1]);
+      const parsed = parseIconName(m[1]);
+      if (parsed) ensureCollection(parsed.prefix);
     }
   } catch (e) {
     console.warn("收集页面图标失败", e);

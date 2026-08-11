@@ -284,10 +284,7 @@ export default {
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick, set, getCurrentInstance } from "vue";
 import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
-import { addCollection } from "@iconify/vue2";
-import carbonIconsUrl from "@iconify/json/json/carbon.json?url";
-import mdiLightIconsUrl from "@iconify/json/json/mdi-light.json?url";
-import riIconsUrl from "@iconify/json/json/ri.json?url";
+import { ensureCollection } from "@/pages/lowcode/widgets/common/icon-store";
 import { materialsTree } from "../components/materials/materials";
 const materialsCardParts = materialsTree.find((item) => item.value === "cardPart");
 import { $selectOne, $selectList, $delete } from "@/common/http";
@@ -1096,15 +1093,12 @@ initExpandedGroups();
 onMounted(async () => {
   editorContainer.value?.addEventListener("keydown", handleKeyDown);
 
-  // 图标集合按需加载（?url 静态资源 + fetch，避免全量 JSON 进入首屏 JS chunk）
-  const [carbon, mdiLight, ri] = await Promise.all([
-    fetch(carbonIconsUrl).then((r) => r.json()),
-    fetch(mdiLightIconsUrl).then((r) => r.json()),
-    fetch(riIconsUrl).then((r) => r.json()),
+  // 图标集合本地加载（icon-store：构建产物静态资源，零网络请求，离线可用）
+  await Promise.all([
+    ensureCollection("carbon"),
+    ensureCollection("mdi-light"),
+    ensureCollection("ri"),
   ]);
-  addCollection(carbon);
-  addCollection(mdiLight);
-  addCollection(ri);
 });
 
 onBeforeUnmount(() => {

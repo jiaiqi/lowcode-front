@@ -38,10 +38,7 @@
 
 <script>
 import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
-import { addCollection } from "@iconify/vue2";
-import carbonIconsUrl from "@iconify/json/json/carbon.json?url";
-import mdiLightIconsUrl from "@iconify/json/json/mdi-light.json?url";
-import riIconsUrl from "@iconify/json/json/ri.json?url";
+import { ensureCollection } from "@/pages/lowcode/widgets/common/icon-store";
 
 export default {
   name: "ContextMenu",
@@ -78,15 +75,12 @@ export default {
     },
         /** 初始化 Iconify 图标 */
     async initIconify() {
-      // ?url 静态资源 + fetch，避免全量 JSON 进入首屏 JS chunk
-      const [carbon, mdiLight, ri] = await Promise.all([
-        fetch(carbonIconsUrl).then((r) => r.json()),
-        fetch(mdiLightIconsUrl).then((r) => r.json()),
-        fetch(riIconsUrl).then((r) => r.json()),
+      // 本地集合加载（icon-store：构建产物静态资源，零网络请求，离线可用）
+      await Promise.all([
+        ensureCollection("carbon"),
+        ensureCollection("mdi-light"),
+        ensureCollection("ri"),
       ]);
-      addCollection(carbon);
-      addCollection(mdiLight);
-      addCollection(ri);
     },
 
   },

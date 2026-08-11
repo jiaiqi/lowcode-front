@@ -23,9 +23,6 @@ importers:
       '@iconify/json':
         specifier: ^2.2.333
         version: 2.2.513
-      '@iconify/vue2':
-        specifier: ^2.1.0
-        version: 2.1.0(vue@2.7.16)
       animate.css:
         specifier: ^4.1.1
         version: 4.1.1
@@ -349,11 +346,6 @@ packages:
 
   '@iconify/utils@3.1.4':
     resolution: {integrity: sha512-b1S7B1k9ohZ+iNTi2ATxbRYG9fTrJmUT0rc46bvVnNxqNRGW7dyo/vRREwyniI5IRN2RSJHDcm+s3BjWrSAjHw==}
-
-  '@iconify/vue2@2.1.0':
-    resolution: {integrity: sha512-+R4T9EqrUecMKh/tdiscju/mJS+HCzHFFuJ9XnNcFLaIj3lBOdh8RJolPY9n4k7XRG5V/tY16Lzx+mv+vOmjhA==}
-    peerDependencies:
-      vue: 2.x
 
   '@interactjs/actions@1.10.2':
     resolution: {integrity: sha512-BHJcW84WCMf/LsKmha/1Yog7aH3+QBXbLvowvZvwYvgjdUIb3xCa1a7FUYXuWAeKNMyKPVjFun+WPce75B+1tA==}
@@ -1809,11 +1801,6 @@ snapshots:
       '@antfu/install-pkg': 1.1.0
       '@iconify/types': 2.0.0
       import-meta-resolve: 4.2.0
-
-  '@iconify/vue2@2.1.0(vue@2.7.16)':
-    dependencies:
-      '@iconify/types': 2.0.0
-      vue: 2.7.16
 
   '@interactjs/actions@1.10.2(@interactjs/core@1.10.2(@interactjs/utils@1.10.2))(@interactjs/utils@1.10.2)':
     dependencies:

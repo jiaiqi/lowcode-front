@@ -21,7 +21,6 @@
     "@iconify-json/mdi-light": "^1.2.0",
     "@iconify-json/ri": "^1.2.0",
     "@iconify/json": "^2.2.333",
-    "@iconify/vue2": "^2.1.0",
     "animate.css": "^4.1.1",
     "axios": "^1.3.4",
     "dayjs": "^1.11.18",

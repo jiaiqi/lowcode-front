@@ -2,7 +2,7 @@
  * unocss 图标 safelist 共享数据
  * @description 构建期（unocss.config.js）与运行时（DynamicIcon）共用：
  *  - unocss 据此生成 safelist 图标的 CSS
- *  - DynamicIcon 据此判断图标是否已内联（命中则渲染 class，未命中回退 @iconify/vue2）
+ *  - DynamicIcon 据此判断图标是否已内联（命中渲染 class，未命中走 icon-store 本地 SVG）
  * 新增页面配置/编辑器图标时在此补充（格式：无 i- 前缀的图标名，如 "ri-home-4-fill"）
  */
 export const ICON_SAFELIST = [
