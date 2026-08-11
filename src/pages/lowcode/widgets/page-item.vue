@@ -487,7 +487,7 @@ import formAdd from "./form/add.vue";
 import NavMenu from "./nav-menu/nav-menu.vue";
 import CardCellPart from "./card-group-cell/card-cell-part-without-card-group.vue";
 import InfoDetails from "@/pages/lowcode/widgets/info-details.vue";
-import DhVideo from "@/pages/lowcode/vendor/business/yanan-park/dahua-video/video-home.vue";
+import DhVideo from "@/pages/lowcode/widgets/dahua-video/video-home.vue";
 // 页面组件级 参数交互处理
 import pageItemParams from "@/pages/lowcode/common/params/page-item-params-mixin.js";
 // 页面组件级 显示隐藏控制
