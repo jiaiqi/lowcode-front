@@ -148,17 +148,17 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 
 ## 8. 工程质量与规范体系
 
-| 维度       | 方案                                                                               |
-| ---------- | ---------------------------------------------------------------------------------- |
-| 语言       | TypeScript strict；schema 类型即协议文档                                           |
-| Lint/格式  | ESLint（Vue3+TS）+ Prettier，全仓 `pnpm lint` 统一；禁止硬编码视觉值的 lint 规则   |
-| 提交       | Conventional Commits + commitlint + husky + lint-staged（提交前自动 lint + 单测）  |
-| 单测       | Vitest：引擎解析、数据管道、表达式沙箱、widgets 关键逻辑；覆盖率红线（引擎 ≥ 90%） |
-| 组件文档   | Storybook（runtime-ui + widgets 逐个 story，同时是分工清单）                       |
-| E2E        | Playwright：渲染→编辑→保存→预览→分享核心链路 + golden 回归                         |
-| 协作       | GitHub Flow（main + feature 分支 + PR 评审）；PR/Issue 模板；Changesets 版本       |
-| 文档       | docs/：本方案、ARCHITECTURE、CONTRIBUTING、组件开发指南、ADR 记录                  |
-| 代码所有权 | 每个 package 指定 owner（3-5 人团队按包认领，PR 自动分配 reviewer）                |
+| 维度       | 方案                                                                                                                                               |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 语言       | TypeScript strict；schema 类型即协议文档                                                                                                           |
+| Lint/格式  | ESLint（Vue3+TS）+ Prettier，全仓 `pnpm lint` 统一；禁止硬编码视觉值的 lint 规则                                                                   |
+| 提交       | Conventional Commits + commitlint + husky + lint-staged（提交前自动 lint + 单测）；commit body 按 `文件: 功能说明` 列变更（升级日志原料，见 §9.5） |
+| 单测       | Vitest：引擎解析、数据管道、表达式沙箱、widgets 关键逻辑；覆盖率红线（引擎 ≥ 90%）                                                                 |
+| 组件文档   | Storybook（runtime-ui + widgets 逐个 story，同时是分工清单）                                                                                       |
+| E2E        | Playwright：渲染→编辑→保存→预览→分享核心链路 + golden 回归                                                                                         |
+| 协作       | GitHub Flow（main + feature 分支 + PR 评审）；PR/Issue 模板；Changesets 版本                                                                       |
+| 文档       | docs/：本方案、ARCHITECTURE、CONTRIBUTING、组件开发指南、ADR 记录                                                                                  |
+| 代码所有权 | 每个 package 指定 owner（3-5 人团队按包认领，PR 自动分配 reviewer）                                                                                |
 
 ## 9. DevOps 工作流（Gitee Go 为主，兼容 GitHub Actions）
 
@@ -191,20 +191,80 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 - 回滚：保留上 N 版产物目录，nginx 软链一键切换
 - 健康检查：`/healthz` 静态探针（Nitro 或 nginx 直出）
 
+### 9.5 版本与升级日志（Release Notes）
+
+**目标**：每次升级后能在两个地方看到升级日志——仓库 `docs/CHANGELOG.md`（开发/评审视角）与应用内 `/changelog` 页（用户视角）；日志**自动化生成 + 手动编辑**双通道；内容列出变更文件与对应功能。
+
+**版本策略**
+
+- SemVer（新工程自 `v1.0.0` 起）：`major` = schema/API 不兼容，`minor` = 新功能，`patch` = 修复
+- 双轨版本：**平台版本**（应用 tag）与 **schema 协议版本**（`shared` 中 `schemaVersion`，页面数据兼容由它管）解耦——平台升级不影响存量页面
+- 一个 tag = 一次发布 = 一段 changelog
+
+**提交规范（日志原料，升级日志的地基）**
+
+- commit body 按 `文件: 功能说明` 逐行列出本提交的变更（§8 已约定 conventional commits，这里强化 body 格式）：
+
+  ```
+  feat(widgets): 图表组件升级 echarts 5
+
+  - widgets/chart/chart.vue: 按需引入 echarts/core
+  - widgets/chart/buildOption.ts: 重构配置构建
+  - widgets/chart/SankeyChart.vue: 升级 sankey 渲染
+  ```
+
+- "改了哪些文件、大概对应什么功能"从提交源头就是结构化的，后续所有日志产物都从它派生（lint 规则校验 body 文件路径真实存在）
+
+**自动化生成（git-cliff）**
+
+- **git-cliff** 从 conventional commits 增量生成 changelog：按 tag 分组、按 scope（feat/fix/refactor…）分类、**含每个 commit 的变更文件清单**（`--with-commit-file-changes`）
+- 双产物模板：
+  - `docs/CHANGELOG.md`：完整版（开发/评审视角）
+  - `apps/web/public/changelog.json`：精简版（版本/日期/分类/要点/文件清单，控制体积，应用内展示用）
+- `git-cliff --bump` 只处理未发布区间，**人工编辑过的段落不被覆盖**
+
+**手动编辑（发布人）**
+
+- 打 tag 前，发布人编辑 `CHANGELOG.md` 对应版本段落：补充产品化描述、使用说明、截图、已知问题
+- 自动生成（机械事实）+ 手动润色（产品叙事）两部分合入同一版本段落；CI 不覆盖已编辑内容
+
+**应用内升级日志页（用户视角）**
+
+- 新增 `/changelog` 页：读取 `changelog.json` 渲染版本列表，按「新功能 / 修复 / 优化 / 破坏性变更」分类展示
+- 构建注入 `__APP_VERSION__`（package 版本 + 构建时间 + commit sha），关于弹窗/登录页展示当前版本
+- 可选：新版本上线后首次访问弹"本次更新"提示（开关控制，默认关）
+
+**Gitee Releases 同步**
+
+- CI 打 tag 时自动创建 Gitee Release：标题 `vX.Y.Z`，body 取 changelog 该版本节选（自动 + 手动的融合产物）
+
+**闭环流程**
+
+```
+开发提交（body 写明 文件: 功能）
+  → 合并 main → 打 tag vX.Y.Z
+  → CI: git-cliff 增量生成 CHANGELOG.md + changelog.json（自动部分）
+  → 发布人编辑润色该版本段并提交（手动部分）
+  → 构建部署（产物内嵌版本号）
+  → 应用内 /changelog 升级日志页展示 + Gitee Releases 自动发布
+```
+
+**落地归属**：P0 落地提交 body 规范 + git-cliff 骨架（F21a）；P4 应用内 `/changelog` 页（F21b）；P7 发布闭环验证。
+
 ## 10. 执行路线与里程碑
 
 > 优先级说明：**P1-P3（渲染链路）为最高优先**，map-editor / card-cell-editor（P6）放最后。
 
-| 阶段  | 内容                                                                        | 里程碑出口                                       | 工作量(3 人) |
-| ----- | --------------------------------------------------------------------------- | ------------------------------------------------ | ------------ |
-| P0    | monorepo 骨架、TS/ESLint/commitlint/CI 骨架、shared 契约类型                | `pnpm lint/test/build` 全绿，Gitee Go 流水线跑通 | 1 周         |
-| P1    | runtime 引擎 + runtime-ui 基础组件（token 提取）                            | 引擎纯函数单测 ≥90%；基础组件 Storybook 就绪     | 2-3 周       |
-| P2 ⭐ | **24+ widgets 重写 + golden 用例集与基线**（最高优先，可 2-3 人分组件并行） | 黄金用例渲染像素对比通过                         | 4-6 周       |
-| P3    | 数据层：http/拦截器/登录、SWR 缓存、表达式沙箱、多环境配置                  | 真实后端数据渲染通过（新老双跑开始）             | 2 周         |
-| P4    | studio 编辑器重建（画布/材料/属性/图层树/历史/设备模拟）                    | 编辑器全功能可用（功能清单核销）                 | 4-6 周       |
-| P5    | 收尾业务：聊天/视频/地图组件回归、登录、工具页、legacy-form                 | 功能清单逐项核销                                 | 2-3 周       |
-| P6    | map-editor / card-cell-editor 按新架构重写（优先级最后）                    | 两编辑器功能等价                                 | 3-4 周       |
-| P7    | 部署切换、golden 全量回归、性能基线复测、线上双跑灰度、切换                 | 双跑对比通过后正式切换                           | 1-2 周       |
+| 阶段  | 内容                                                                                 | 里程碑出口                                       | 工作量(3 人) |
+| ----- | ------------------------------------------------------------------------------------ | ------------------------------------------------ | ------------ |
+| P0    | monorepo 骨架、TS/ESLint/commitlint/CI 骨架、shared 契约类型、git-cliff 升级日志骨架 | `pnpm lint/test/build` 全绿，Gitee Go 流水线跑通 | 1 周         |
+| P1    | runtime 引擎 + runtime-ui 基础组件（token 提取）                                     | 引擎纯函数单测 ≥90%；基础组件 Storybook 就绪     | 2-3 周       |
+| P2 ⭐ | **24+ widgets 重写 + golden 用例集与基线**（最高优先，可 2-3 人分组件并行）          | 黄金用例渲染像素对比通过                         | 4-6 周       |
+| P3    | 数据层：http/拦截器/登录、SWR 缓存、表达式沙箱、多环境配置                           | 真实后端数据渲染通过（新老双跑开始）             | 2 周         |
+| P4    | studio 编辑器重建（画布/材料/属性/图层树/历史/设备模拟）                             | 编辑器全功能可用（功能清单核销）                 | 4-6 周       |
+| P5    | 收尾业务：聊天/视频/地图组件回归、登录、工具页、legacy-form                          | 功能清单逐项核销                                 | 2-3 周       |
+| P6    | map-editor / card-cell-editor 按新架构重写（优先级最后）                             | 两编辑器功能等价                                 | 3-4 周       |
+| P7    | 部署切换、golden 全量回归、性能基线复测、线上双跑灰度、切换                          | 双跑对比通过后正式切换                           | 1-2 周       |
 
 **总计约 5-6 个月（3 人）/ 4-5 个月（5 人）**。全程新旧并跑（同一数据源），P3 起即可灰度；**渲染层"一模一样"以 golden 全绿为准**，不切换不罢休。
 
@@ -225,28 +285,29 @@ element-plus 视觉与 element-ui 差异大（圆角/间距/阴影/字体/表格
 
 ### 12.1 功能清单核销表（验收基线）
 
-| 编号 | 功能                                      | 旧入口                               | 阶段      | 状态 |
-| ---- | ----------------------------------------- | ------------------------------------ | --------- | ---- |
-| F01  | 低代码页面渲染（短路径）                  | `/:pageNo`                           | P2        | ⬜   |
-| F02  | 官网渲染（含锚点）                        | `/site/:pageNo(/:anchorName)`        | P2        | ⬜   |
-| F03  | 移动端页面渲染                            | 渲染链路同源                         | P2        | ⬜   |
-| F04  | 数据查询/参数映射/SWR 秒开                | 引擎                                 | P3        | ⬜   |
-| F05  | 表达式/事件（safeEval → 沙箱）            | 引擎                                 | P3        | ⬜   |
-| F06  | 页面编辑器（桌面）                        | `/lowcode/editor/:pageNo`            | P4        | ⬜   |
-| F07  | 移动端编辑/预览                           | `/app/edit` `/app/preview`           | P4        | ⬜   |
-| F08  | 卡片单元格编辑器                          | `/card-cell-editor/:cardNo`          | P6        | ⬜   |
-| F09  | 地图编辑器                                | `/map-editor/:mapNo`                 | P6        | ⬜   |
-| F10  | 登录/SSO/修改密码                         | login-dialog                         | P5        | ⬜   |
-| F11  | 聊天                                      | chat-box/entrance                    | P5        | ⬜   |
-| F12  | 视频（大华/通用/hls）                     | dahua-video/video-card               | P5        | ⬜   |
-| F13  | 地图组件（BMap/TMap/建筑树/多源标记）     | map-card                             | P2        | ⬜   |
-| F14  | 工具页（页面地址/属性表单）               | `/get-page-address` `/property-form` | P5        | ⬜   |
-| F15  | legacy-form 旧表单 iframe                 | legacy-form                          | P5        | ⬜   |
-| F16  | 图标三层离线架构                          | icon-store                           | P0        | ⬜   |
-| F17  | 首屏骨架屏（品牌文字+流光细线）           | index.html                           | P1        | ⬜   |
-| F18  | golden 视觉回归全绿                       | e2e                                  | P2 起持续 | ⬜   |
-| F19  | 性能基线达标                              | —                                    | P7        | ⬜   |
-| F20  | 部署链路（server.js/config_dev/二级目录） | —                                    | P7        | ⬜   |
+| 编号 | 功能                                                                      | 旧入口                               | 阶段        | 状态 |
+| ---- | ------------------------------------------------------------------------- | ------------------------------------ | ----------- | ---- |
+| F01  | 低代码页面渲染（短路径）                                                  | `/:pageNo`                           | P2          | ⬜   |
+| F02  | 官网渲染（含锚点）                                                        | `/site/:pageNo(/:anchorName)`        | P2          | ⬜   |
+| F03  | 移动端页面渲染                                                            | 渲染链路同源                         | P2          | ⬜   |
+| F04  | 数据查询/参数映射/SWR 秒开                                                | 引擎                                 | P3          | ⬜   |
+| F05  | 表达式/事件（safeEval → 沙箱）                                            | 引擎                                 | P3          | ⬜   |
+| F06  | 页面编辑器（桌面）                                                        | `/lowcode/editor/:pageNo`            | P4          | ⬜   |
+| F07  | 移动端编辑/预览                                                           | `/app/edit` `/app/preview`           | P4          | ⬜   |
+| F08  | 卡片单元格编辑器                                                          | `/card-cell-editor/:cardNo`          | P6          | ⬜   |
+| F09  | 地图编辑器                                                                | `/map-editor/:mapNo`                 | P6          | ⬜   |
+| F10  | 登录/SSO/修改密码                                                         | login-dialog                         | P5          | ⬜   |
+| F11  | 聊天                                                                      | chat-box/entrance                    | P5          | ⬜   |
+| F12  | 视频（大华/通用/hls）                                                     | dahua-video/video-card               | P5          | ⬜   |
+| F13  | 地图组件（BMap/TMap/建筑树/多源标记）                                     | map-card                             | P2          | ⬜   |
+| F14  | 工具页（页面地址/属性表单）                                               | `/get-page-address` `/property-form` | P5          | ⬜   |
+| F15  | legacy-form 旧表单 iframe                                                 | legacy-form                          | P5          | ⬜   |
+| F16  | 图标三层离线架构                                                          | icon-store                           | P0          | ⬜   |
+| F17  | 首屏骨架屏（品牌文字+流光细线）                                           | index.html                           | P1          | ⬜   |
+| F18  | golden 视觉回归全绿                                                       | e2e                                  | P2 起持续   | ⬜   |
+| F19  | 性能基线达标                                                              | —                                    | P7          | ⬜   |
+| F20  | 部署链路（server.js/config_dev/二级目录）                                 | —                                    | P7          | ⬜   |
+| F21  | 升级日志：git-cliff 自动生成 + 手动编辑（a）/ 应用内 `/changelog` 页（b） | —                                    | P0(a)/P4(b) | ⬜   |
 
 ### 12.2 widgets 清单（P2 分工单元）
 
@@ -254,17 +315,18 @@ chart（含 Sankey/DateFilter）、chart-basic、LiquidFillChart、list（BxTabl
 
 ### 12.3 依赖对照
 
-| 现有                                                          | 目标                                               | 说明                                                         |
-| ------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
-| element-ui 2.15                                               | runtime-ui 自研（渲染层）+ element-plus（编辑器）  | 核心决策，见 §5                                              |
-| vuex 3                                                        | Pinia                                              | store：theme/pageEvent/loginInfo/chatInfo + 编辑器 dragStore |
-| vue-router 3                                                  | Nuxt 文件路由 + `[...slug].vue`                    | 初始 hash                                                    |
-| echarts 4.8                                                   | echarts 5 + liquidfill 3 + wordcloud 2             | `echarts/lib/*` → `echarts/core`                             |
-| vue-fragment / vue2-teleport                                  | 删除（Vue3 原生）                                  | —                                                            |
-| vue-json-viewer 2                                             | vue3-json-viewer                                   | 编辑器内使用                                                 |
-| jquery / vue-grid-layout / vue-sketch-ruler / vue-drag-resize | 删除                                               | 0 引用                                                       |
-| vuedraggable 2                                                | 手写 HTML5 draggable（沿用）或 vue-draggable-plus  | —                                                            |
-| mixin 体系                                                    | composables（usePageConfig/useSrvReq/useHistory…） | 引擎层                                                       |
+| 现有                                                          | 目标                                               | 说明                                                               |
+| ------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| element-ui 2.15                                               | runtime-ui 自研（渲染层）+ element-plus（编辑器）  | 核心决策，见 §5                                                    |
+| vuex 3                                                        | Pinia                                              | store：theme/pageEvent/loginInfo/chatInfo + 编辑器 dragStore       |
+| vue-router 3                                                  | Nuxt 文件路由 + `[...slug].vue`                    | 初始 hash                                                          |
+| echarts 4.8                                                   | echarts 5 + liquidfill 3 + wordcloud 2             | `echarts/lib/*` → `echarts/core`                                   |
+| vue-fragment / vue2-teleport                                  | 删除（Vue3 原生）                                  | —                                                                  |
+| vue-json-viewer 2                                             | vue3-json-viewer                                   | 编辑器内使用                                                       |
+| jquery / vue-grid-layout / vue-sketch-ruler / vue-drag-resize | 删除                                               | 0 引用                                                             |
+| vuedraggable 2                                                | 手写 HTML5 draggable（沿用）或 vue-draggable-plus  | —                                                                  |
+| mixin 体系                                                    | composables（usePageConfig/useSrvReq/useHistory…） | 引擎层                                                             |
+| —（新增）                                                     | git-cliff（devDependencies）                       | 从 conventional commits 生成 CHANGELOG.md + changelog.json（§9.5） |
 
 ### 12.4 参考文档
 
