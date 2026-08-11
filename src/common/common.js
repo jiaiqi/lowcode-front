@@ -802,3 +802,20 @@ export function getFormServiceViewName(formVm) {
 export function isListServiceTitleForm(activeForm) {
   return LIST_SERVICE_TITLE_FORMS.includes(activeForm);
 }
+
+/**
+ * 站内路径判定：转换为 vue-router 可用的路径（hash 内路径），外部 URL 返回 null
+ * @param {string} path - 跳转路径（"#/site/xxx" / "/site/xxx" / "http://..."）
+ * @returns {string|null} router.push 可用的路径（无 # 前缀）；外部链接返回 null
+ */
+export const getRouterPath = (path) => {
+  if (typeof path !== "string" || !path.trim()) return null;
+  const p = path.trim();
+  // 外部 URL（http/https/协议相对）→ 保持原跳转
+  if (/^(https?:)?\/\//i.test(p)) return null;
+  // hash 路由内路径：#/site/xxx → /site/xxx（保留 query/hash）
+  if (p.startsWith("#/")) return p.slice(1);
+  // 站内绝对路径（/site/xxx 等）
+  if (p.startsWith("/")) return p;
+  return null;
+};

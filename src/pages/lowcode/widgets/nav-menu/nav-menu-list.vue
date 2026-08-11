@@ -24,7 +24,7 @@ import { formatStyleData } from "@/pages/lowcode/common/index.js";
 // import NavSubMenu from "./nav-menu-child.vue";
 // import NavMenu from "./nav-menu.vue";
 import clickoutside from "@/pages/lowcode/common/clickoutside.js";
-import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath, getRouterPath } from "@/common/common";
 export default {
   name: "NavMenuChild",
   components: {
@@ -204,7 +204,13 @@ export default {
       }
       if (pageNo) {
         if (jump_json.target_type == "原页面") {
-          window.location.href = path;
+          // 站内路径走 SPA 无刷新跳转（配合 SWR 内存缓存秒开）；外部链接保持整页跳转
+          const routerPath = getRouterPath(path);
+          if (routerPath) {
+            this.$router.push(routerPath);
+          } else {
+            window.location.href = path;
+          }
         } else {
           window.open(path);
         }

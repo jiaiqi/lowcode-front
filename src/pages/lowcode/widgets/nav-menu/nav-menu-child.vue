@@ -46,7 +46,8 @@ export default {
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { formatStyleData } from "@/pages/lowcode/common/index.js";
-import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath, getRouterPath } from "@/common/common";
+import router from "@/router";
 const props = defineProps({
   config: Object,
   parentStyle: Object,
@@ -237,9 +238,14 @@ function navToPath(jump_json) {
     path = `${getFullBaseUrl()}/lowcode-grid/view/${pageNo}?srvApp=config`;
   }
   if (pageNo) {
-    console.log(path);
     if (jump_json.target_type == "原页面") {
-      window.location.href = path;
+      // 站内路径走 SPA 无刷新跳转；外部链接保持整页跳转
+      const routerPath = getRouterPath(path);
+      if (routerPath) {
+        router.push(routerPath);
+      } else {
+        window.location.href = path;
+      }
     } else {
       window.open(path);
     }

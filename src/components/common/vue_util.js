@@ -2,7 +2,7 @@ import Vue from "vue";
 import { MessageBox } from "element-ui";
 import { backendIpAddr, getEnv } from "@/common/http";
 import { pathConfigMap } from "@/common/envList";
-import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
+import { getFullBaseUrl, normalizeJumpFilePath, getRouterPath } from "@/common/common";
 import {
   getImagePath,
   getServiceUrl,
@@ -340,7 +340,13 @@ function init_util() {
           authRoles = authRoles.split(",");
           let onRoles = userRoles?.filter((role) => new Set(authRoles).has(role));
           if (onRoles && onRoles.length > 0) {
-            window.location.href = url;
+            // 站内路径 SPA 无刷新跳转，外部链接整页跳转
+            const routerPath = getRouterPath(url);
+            if (routerPath) {
+              this.$router.push(routerPath);
+            } else {
+              window.location.href = url;
+            }
           } else if (onRoles && onRoles.length == 0 || !onRoles) {
             let confirmText = "刷新页面";
             const noneAuthJump = authJson.jump_json || null;
@@ -354,7 +360,13 @@ function init_util() {
             }).then(() => {});
           }
         } else {
-          window.location.href = url;
+          // 站内路径 SPA 无刷新跳转，外部链接整页跳转
+          const routerPath = getRouterPath(url);
+          if (routerPath) {
+            this.$router.push(routerPath);
+          } else {
+            window.location.href = url;
+          }
         }
       } else {
         if (jumpJson?.obj_type === "微信小程序") {
