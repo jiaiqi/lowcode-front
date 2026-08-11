@@ -11,9 +11,8 @@
     :viewBox="`0 0 ${iconData.width} ${iconData.height}`"
     fill="currentColor"
     :style="style"
-  >
-    <path :d="iconData.body"></path>
-  </svg>
+    v-html="iconData.body"
+  ></svg>
 </template>
 
 <script>
