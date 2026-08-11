@@ -54,7 +54,6 @@ export default {
   },
   created(){
    let operate_params = this.$route.query;
-   console.log('---当前组件信息',this.pageItem);
     this.initInfoDetails(operate_params?operate_params:null);
   },
   methods:{
@@ -112,7 +111,6 @@ export default {
       let condition = this.bxDeepClone(e.condition);
       if (Array.isArray(condition)) {
         for (let cond of condition) {
-          // console.log("buildRequestParams", cond.colName, cond.value);
           if (
               cond.value &&
               cond.value.startsWith("${") &&
@@ -125,7 +123,6 @@ export default {
             let params = this.bxDeepClone(this.pageParamsModel);
             if (params && Object.keys(params).length > 0) {
               for (let key in params) {
-                // console.log('key',key,par)
                 if (key === par) {
                   let mapsCol = mapsJonss.filter(
                       (item) => item.col_to === par || item.col_from === par
@@ -169,7 +166,6 @@ export default {
         }
       }
       e.condition = this.bxDeepClone(condition);
-      // console.log(e.serviceName,condition)
       return e;
     }
   }

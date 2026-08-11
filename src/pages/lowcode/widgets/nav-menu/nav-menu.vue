@@ -23,7 +23,8 @@
       <div class="catalog-list">
         <div
           :class="{ active: isActiveCatalog(item) }"
-          v-for="item in catalogInfo.children"
+          v-for="(item, index) in catalogInfo.children"
+          :key="item.no || item.id || index"
           class="catalog-item"
           @click="onTapCatalog(item)"
         >
@@ -87,6 +88,7 @@
       <div
         class="breadcrumb-item"
         v-for="(item, index) in breadcrumb"
+        :key="item.path || index"
       >
         <i
           class="breadcrumb-separator el-icon-d-arrow-right"
@@ -143,7 +145,8 @@
       <div class="child-menu-list">
         <div
           class="child-menu"
-          v-for="item in setCurrentSubMenu"
+          v-for="(item, index) in setCurrentSubMenu"
+          :key="item.nav_no || item.id || index"
         >
           <div
             class="child-menu-label"
@@ -467,9 +470,7 @@ export default {
     }
     if (this.config?.child_source === "接口请求") {
       this.fetchChildData(this.reqJson).then((res) => {
-        console.log("res", res);
         if (res.data?.state === "SUCCESS") {
-          console.log("res.data", res.data.data);
           this.subMenu = res.data.data.map((data) => {
             return {
               ...data,
@@ -491,13 +492,11 @@ export default {
   },
   methods: {
     onTapContentItem(item) {
-      console.log("item", item);
       if (this.config.jump_json) {
         this.navTo(this.config.jump_json, item);
       }
     },
     onTapCatalog(item, changeUnfold = true) {
-      console.log("item", item);
       if (
         item.children &&
         item.children.length &&
@@ -565,7 +564,6 @@ export default {
         // use_type: "treelist",
       };
       return this.$http.post(url, req).then((res) => {
-        console.log("fetchCatalogList", res.data.data);
         if (res.data?.state === "SUCCESS") {
           if (res.data.data.length) {
             this.catalogInfo = res.data.data[0];
@@ -613,7 +611,6 @@ export default {
       if (eleRect.height) {
         this.minHeight = eleRect.height;
       }
-      console.log("onMenuChange", data);
       if (this.current?.nav_no && this.current?.nav_no === current?.nav_no) {
         this.current = null;
         this.menuChildren = [];
@@ -631,7 +628,6 @@ export default {
         requestJson = JSON.parse(config);
       }
       if (requestJson?.serviceName) {
-        console.log("requestJson", requestJson);
         const req = {
           colNames: requestJson.colNames || ["*"],
           condition: requestJson.condition || [],
@@ -644,12 +640,9 @@ export default {
       }
     },
     onTap(item, event) {
-      console.log("item", item);
       if (item.child_source === "接口请求") {
         this.fetchChildData(item.request_json).then((res) => {
-          console.log("res", res);
           if (res.data?.state === "SUCCESS") {
-            console.log("res.data", res.data.data);
             this.$set(
               this.requestSubMenuMap,
               item.nav_no,

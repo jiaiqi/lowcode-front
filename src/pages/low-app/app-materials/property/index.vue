@@ -138,7 +138,6 @@ export default {
   },
   computed: {
     showPageCompForm() {
-      console.log('结果是', !!this.componentId || (!this.componentId && this.pageId && this.currentItem?._type === "component"))
       return !!this.componentId || (!this.componentId && this.pageId && (this.currentItem?._type === "component" || this.currentItem?.type === "component"));
     },
     showCompForm() {
@@ -278,7 +277,6 @@ export default {
   },
   methods: {
     onStyleColUpdate(event, type, item) {
-      console.log("onStyleColUpdate", event, type, item);
       if (event.data.resultCode === "SUCCESS") {
         const data = event.data.response?.[0]?.response?.effect_data?.[0];
         const refMap = {
@@ -301,7 +299,6 @@ export default {
             // 页面相关样式创建 更新到页面表
             const { style_no } = data || {};
             this.updatePage(item.columns, style_no).then((res) => {
-              console.log("updatePage", res);
               if (res?.effect_rows) {
                 // 参数更新到页面 通知页面刷新
                 this.$emit("refresh");
@@ -311,7 +308,6 @@ export default {
           case "page-comp-style-col-add":
             // 页面组件相关样式创建 更新到页面组件表
             this.updatePageComp(item.columns, data.style_no).then((res) => {
-              console.log("updatePageComp", res);
               if (res?.effect_rows) {
                 // 参数更新到页面 通知页面刷新
                 this.$emit("refresh");
@@ -321,7 +317,6 @@ export default {
           case "comp-style-col-add":
             // 组件相关样式创建 更新到组件表
             this.updateComp(item.columns, data.style_no).then((res) => {
-              console.log("updateComp", res);
               if (res?.effect_rows) {
                 // 参数更新到页面 通知页面刷新
                 this.$emit("refresh");
@@ -350,7 +345,6 @@ export default {
           },
         ],
       };
-      console.log("updatePage", updateObj);
       if (!val) {
         return;
       }
@@ -441,13 +435,6 @@ export default {
       this.componentCfgLoaded = true;
     },
     onValueChange(value, type) {
-      console.log(
-        "onValueChange",
-        value,
-        type,
-        this.compType,
-        this.componentId
-      );
       this.$emit("page-change", value, type, this.compType, this.componentId);
 
       // 处理样式更新
@@ -850,9 +837,6 @@ export default {
           .filter((item) => !!item)
           .map((item, index) => {
             let data = {};
-            if (!item) {
-              console.log(list);
-            }
             keys.forEach((key) => {
               if (item[key]) {
                 data[key] = item[key];
@@ -933,11 +917,9 @@ export default {
     // async handleSave(){
     //  if(Array.isArray(this.components) && this.components.length) {
     //    const subComponents = this.components.filter((item) => { return item?._editType === "add" });
-    //    console.log('---',subComponents);
     //  }
     // },
     async handleSave() {
-      console.log('保存几个组件', this.components)
       if (Array.isArray(this.components) && this.components.length) {
         const oldComponents = this.components
         let addList = oldComponents.filter((item) => { return item?._editType === "add" });
@@ -969,7 +951,6 @@ export default {
             true
           );
           // let normalChild = this.findNormalChild(addChildRes);
-          console.log(addChildRes);
         }
 
         const updateList = this.findLayoutComponentsByType(
@@ -1027,7 +1008,6 @@ export default {
       }
     },
     async onPageUpdate(event, type) {
-      console.log("onPageUpdate", event, type);
       if (event?.data?.state === "SUCCESS") {
         const response = event?.data?.response?.[0]?.response?.effect_data;
         if (Array.isArray(response) && response.length > 0) {
@@ -1084,7 +1064,6 @@ export default {
           "nav_no",
           "extp_no", //外部链接
         ];
-        console.log("componentNoKey:", componentNoKey);
         const ignoreField = [
           ...componentNoKey,
           "component",
@@ -1305,7 +1284,6 @@ export default {
       }
     },
     onComponentUpdate(event, type) {
-      console.log("onComponentUpdate", event);
       if (type === "add" && event?.data?.state === "SUCCESS") {
         // 组件创建成功
         // 编辑页面，新增组件
@@ -1322,14 +1300,11 @@ export default {
       this.compFormKey = new Date().getTime();
     },
     onLayoutUpdate(event) {
-      console.log("onLayoutUpdate", event);
     },
     onUpdateFormActionComplete(event) {
-      console.log("onUpdateFormActionComplete", event);
     },
     onUpdateFormLoaded(event) {
       this.pageLoading = false;
-      console.log("onUpdateFormLoaded", event);
     },
   },
 };

@@ -328,7 +328,7 @@ function init_util() {
           url += `&id=${id}`;
         }
       } else {
-        console.log("无效的跳转页面");
+        console.warn("无效的跳转页面");
       }
 
       if (authJson) {
@@ -423,9 +423,8 @@ function init_util() {
           }
         }
       }
-      console.log(jumpJson);
     } else {
-      console.log("jumpJson 配置错误 或 未获取到有效的 jump_json");
+      console.warn("jumpJson 配置错误 或 未获取到有效的 jump_json");
     }
   };
 }

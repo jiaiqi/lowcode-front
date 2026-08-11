@@ -149,7 +149,6 @@ export default {
     onTap() {
       if (this.isPreview || this.isView) return;
       let val = this.props;
-      console.log("onTap:", val);
       this.$emit("click", val);
     },
     onDelete() {

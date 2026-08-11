@@ -1,6 +1,6 @@
 <script setup>
 import * as echarts from "echarts";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 const props = defineProps({
   pageItem: {
     type: Object,
@@ -14,6 +14,9 @@ const props = defineProps({
 });
 
 let myChart = null;
+let resizeTimer = null;
+// ref 绑定 DOM，避免多实例下使用 document.getElementById(props.index) 的 id 冲突
+const domRef = ref(null);
 
 const setChartOption = (chartOption, chart) => {
   // 指定图表的配置项和数据
@@ -43,17 +46,29 @@ const setChartOption = (chartOption, chart) => {
 };
 
 onMounted(() => {
-  // 基于准备好的dom，初始化echarts实例
-  myChart = echarts.init(document.getElementById(props.index));
+  // 基于 ref 绑定的 dom，初始化echarts实例
+  if (!domRef.value) return;
+  myChart = echarts.init(domRef.value);
   setChartOption(props.chartOption, myChart);
-  setTimeout(() => {
-  myChart.resize();
-    
+  resizeTimer = setTimeout(() => {
+    myChart.resize();
   }, 500);
 });
 
+onUnmounted(() => {
+  // 销毁时清理定时器并释放 echarts 实例，避免内存泄漏
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
+    resizeTimer = null;
+  }
+  if (myChart) {
+    myChart.dispose();
+    myChart = null;
+  }
+});
+
 const onResize = () => {
-  myChart.resize();
+  myChart && myChart.resize();
 };
 
 defineExpose({
@@ -63,7 +78,7 @@ defineExpose({
 
 <template>
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
-  <div :id="index" style="width: 100%; height: 100%"></div>
+  <div ref="domRef" style="width: 100%; height: 100%"></div>
 </template>
 
 <style lang="scss" scoped></style>

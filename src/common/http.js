@@ -66,11 +66,6 @@ window.env = ENV;
 
 export const getEnv = () => ENV;
 
-export const getBtnType = () => {
-  // 按钮类型: basic(基础按钮) plain(朴素按钮) text(文字按钮) icon(图标按钮)
-  return pathConfigMap[ENV]?.btnType || "basic";
-};
-
 export const getHomePageNo = () => {
   return pathConfigMap[ENV]?.homePageNo;
 };
@@ -379,32 +374,6 @@ export const getImagePath = (no, notThumb) => {
   } else {
     return "";
   }
-};
-
-export const getFilePathByUrl = (url, isThumb) => {
-  // 如果url全是数字，则认为是文件编号，调用getImagePath
-  if (url && typeof url === "string" && /^[0-9]+$/.test(url)) {
-    return getImagePath(url, isThumb);
-  } else {
-    if (url?.indexOf("http") === 0) {
-      return url;
-    } else if (url?.indexOf("data:image") === 0) {
-      return url;
-    } else if (url?.split("/").length > 4) {
-      // 如果url中含有超过四个'/'则认为是filePath
-      let resultUrl = `${backendIpAddr}/file/download?filePath=${url}`;
-      if (isThumb) {
-        resultUrl += `&thumbnailType=fwsu_${typeof isThumb === "number" ? isThumb : 100
-          }`;
-      }
-      if (!url.includes("bx_auth_ticket")) {
-        resultUrl += `&bx_auth_ticket=${bx_auth_ticket || sessionStorage.getItem("bx_auth_ticket")
-          }`;
-      }
-      return resultUrl;
-    }
-  }
-  return url;
 };
 
 /**

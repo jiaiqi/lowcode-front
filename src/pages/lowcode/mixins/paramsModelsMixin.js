@@ -205,7 +205,6 @@ export default {
             // obj['idCol'] = 'id'
             obj['srvApp'] = this.srvReq?.mapp
             obj['success'] = function(success) {
-              console.log('success', success)
             }
             obj = {
               ...obj,
@@ -218,7 +217,6 @@ export default {
             obj['serviceName'] = this.srvReq?.serviceName
             obj['srvApp'] = this.srvReq?.mapp
             obj['success'] = function(success) {
-              console.log('success', success)
             }
             obj['optionsDatas'] = []
 
@@ -239,7 +237,6 @@ export default {
             obj['serviceName'] = this.srvReq?.serviceName
             obj['srvApp'] = this.srvReq?.mapp
             obj['success'] = function(success) {
-              console.log('success', success)
             }
             obj = {
               ...obj,
@@ -259,7 +256,6 @@ export default {
         paramsObj = {}
         if (params && params.length > 0 && this.pageParamsModel) {
           for (let key of params) {
-            console.log('srcs', key)
             paramsObj[key.para] = {
               "type": key.p_type,
               "value": key.value || key.default_val,
@@ -270,7 +266,6 @@ export default {
             let srcs = key.src_map
             if (srcs.length > 0) {
               for (let sItem of srcs) {
-                console.log('srcs', srcs, sItem)
                 if (sItem.from_type == '页面' && sItem.trigger_time == '联动' && this.pageParamsModel[sItem.col_from]) {
                   paramsObj[key.para]['value'] = this.pageParamsModel[sItem.col_from] ? this.pageParamsModel[sItem
                     .col_from].value : ''
@@ -287,7 +282,6 @@ export default {
             obj['idCol'] = 'id'
             obj['srvApp'] = this.srvReq?.mapp
             obj['success'] = function(success) {
-              console.log('success', success)
             }
             break;
           case 'currentInfo':
@@ -296,7 +290,6 @@ export default {
             obj['serviceName'] = this.srvReq?.serviceName
             obj['srvApp'] = this.srvReq?.mapp
             obj['success'] = function(success) {
-              console.log('success', success)
             }
             obj['optionsDatas'] = []
 
@@ -316,7 +309,6 @@ export default {
             obj['serviceName'] = this.srvReq?.serviceName
             obj['srvApp'] = this.srvReq?.mapp
             obj['success'] = function(success) {
-              console.log('success', success)
             }
             obj = {
               ...obj,
@@ -345,7 +337,6 @@ export default {
           if (dest.hasOwnProperty('dest_map') && dest.dest_map.length > 0) {
             for (let d of dest.dest_map) {
               if (d.to_type == type && d.trigger_time == '联动') {
-                // console.log('getParamsDestKey', d.col_to)
                 toKey = d.col_to
                 return toKey
                 break
@@ -406,15 +397,12 @@ export default {
       deep: true,
       immediate: true,
       handler: function(newVal, oldVal) {
-        // console.log('componentParamsModelsRun',this.deepClone(newVal).current_value,this.deepClone(oldVal).current_value)
         for (let o in oldVal) {
           for (let n in newVal) {
             if (o == n && newVal[n] != oldVal[o]) {
               let key = this.getParamsDestKey(n, '页面')
 
-              // console.log('value updateed :',key,n,newVal[n])
               if (key) {
-                console.log('value updateed set $emit:', key, n, newVal[n])
                 this.$emit('setPageParams', key, newVal[n])
               }
 
@@ -436,7 +424,6 @@ export default {
       deep: true,
       immediate: true,
       handler: function(newVal, oldVal) {
-        // console.log('page params updated!')
         if (this.hasOwnProperty('itemParamsBuild')) {
           this.itemParamsBuild()
         }

@@ -83,6 +83,7 @@
               class="content-item style-1"
               @click="onTap(item)"
               v-for="(item, index) in contentList"
+              :key="item.id || index"
             >
               <div class="date-box">
                 <div class="year">
@@ -106,6 +107,7 @@
               class="content-item style-2"
               @click="onTap(item)"
               v-for="(item, index) in contentList"
+              :key="item.id || index"
             >
               <img
                 class="img"

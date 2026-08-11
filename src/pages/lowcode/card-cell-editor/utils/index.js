@@ -2,6 +2,7 @@
  * 纯工具函数集合
  * 与 Vue 响应式无关，可在任何上下文中调用
  */
+import cloneDeep from "lodash/cloneDeep";
 
 /**
  * 深拷贝对象
@@ -9,7 +10,7 @@
  * @returns {Object} 拷贝后的新对象
  */
 export function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
+  return cloneDeep(obj);
 }
 
 /**

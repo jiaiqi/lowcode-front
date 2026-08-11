@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="statistic-box">
-            <div class="statistic-item" v-for="item in stasticData">
+            <div class="statistic-item" v-for="(item, index) in stasticData" :key="index">
                 <div class="label">{{ item.label }}</div>
                 <div class="value">{{ item.value || '0' }}
                     <span
@@ -11,12 +11,12 @@
         </div>
         <div class="bx-table">
             <div class="table-head">
-                <div class="table-column" v-for="col in tableColumn">
+                <div class="table-column" v-for="(col, index) in tableColumn" :key="index">
                     {{ col.label }}
                 </div>
             </div>
-            <div class="table-row" v-for="item in tableData" :class="{stripe:stripe}">
-                <div class="table-column" v-for="col in tableColumn">
+            <div class="table-row" v-for="(item, index) in tableData" :key="index" :class="{stripe:stripe}">
+                <div class="table-column" v-for="(col, index) in tableColumn" :key="index">
                     {{ formatValue(item, col) }}
                 </div>
             </div>
@@ -30,6 +30,22 @@
 import { ref, onMounted, computed } from "vue";
 import { $http } from "@/common/http.js";
 import { applyEncryptParam } from "@/pages/lowcode/common/index.js";
+
+/**
+ * 解析接口返回的 cfg_json 字符串为 cfgJson 对象（复用：getV2Data 等处）
+ * @param {Object} data - 接口返回的 v2 数据（含 cfg_json 字符串字段）
+ * @returns {Object} 原数据，解析成功后附带 cfgJson 字段
+ */
+const parseCfgJson = (data) => {
+    if (data?.cfg_json) {
+        try {
+            data.cfgJson = JSON.parse(data.cfg_json)
+        } catch (error) {
+            console.warn('解析 cfg_json 失败', error)
+        }
+    }
+    return data
+}
 
 const props = defineProps({
     pageItem: {
@@ -156,13 +172,7 @@ const getV2Data = async (srvCfg) => {
     };
     const res = await $http.post(url, req);
     if (res?.data?.state === "SUCCESS") {
-        if (res.data.data?.cfg_json) {
-            try {
-                res.data.data.cfgJson = JSON.parse(res.data.data.cfg_json)
-            } catch (error) {
-
-            }
-        }
+        parseCfgJson(res.data.data)
         v2Data.value = res.data.data;
     }
 };

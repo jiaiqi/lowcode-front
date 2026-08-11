@@ -725,7 +725,6 @@ export default {
       }
     },
     onLayoutResize(data) {
-      console.log('onLayoutResize',data);
       // this.$refs?.propertyRef?.saveLayoutStyle(data);
     },
     onSave: debounce(function () {
@@ -753,7 +752,6 @@ export default {
       }
     }, 500),
     async getPageConfig() {
-      console.log("initPage");
       const url = `/config/select/srvpage_cfg_page_guest_select`;
       const req = {
         serviceName: "srvpage_cfg_page_guest_select",
@@ -807,7 +805,6 @@ export default {
       if (ok) {
         if (Array.isArray(data) && data.length) {
           let list = [];
-          console.log("getPageComponents:", data);
           data.forEach((item) => {
             if (typeof item.com_json === "string") {
               try {
@@ -821,7 +818,6 @@ export default {
               }
             }
           });
-          console.log("getPageComponents", list);
           return list;
         }
       } else if (msg) {
@@ -831,7 +827,6 @@ export default {
       }
     },
     clickComponent(data) {
-      console.log(data);
       this.currentId = data.id;
       this.currentItem = data;
     },
@@ -846,7 +841,6 @@ export default {
     onPageChange(val, type, compType, compId) {
       // this.refresh();
       return;
-      console.log(val, type);
       if (!val?.fieldName?.includes("style")) {
         return;
       }
@@ -880,7 +874,6 @@ export default {
           return;
         }
         let row = val.formModel;
-        console.log("compType:", compType);
         let component = this.findComponentById(this.components, id);
         if (!component?.data) {
           return;
@@ -1149,8 +1142,6 @@ export default {
     // 键盘事件处理
     handleKeyDown(e) {
       if (e.code === "Space") {
-        console.log(e,':onSpace');
-        
         if (!this.isSpacePressed) {
           this.isSpacePressed = true;
         }

@@ -20,8 +20,8 @@
  *   from: 0,
  *   to: 100,
  *   duration: 1000,
- *   onProgress: (value) => console.log(value),
- *   onComplete: () => console.log('动画完成')
+ *   onProgress: (value) => {},
+ *   onComplete: () => {}
  * });
  * 
  * @example
@@ -443,7 +443,7 @@ export const createUnitConfig = (type = 'chinese') => {
  *   animationOptions: {
  *     delay: 1000,
  *     easing: 'easeOutStrong',
- *     onStart: () => console.log('收入动画开始'),
+ *     onStart: () => {},
  *     onProgress: (value) => {
  *       // 可以在这里添加进度相关的逻辑
  *       if (value > 250000) {
@@ -451,7 +451,6 @@ export const createUnitConfig = (type = 'chinese') => {
  *       }
  *     },
  *     onComplete: () => {
- *       console.log('收入动画完成');
  *       // 触发下一个动画或其他操作
  *     }
  *   }

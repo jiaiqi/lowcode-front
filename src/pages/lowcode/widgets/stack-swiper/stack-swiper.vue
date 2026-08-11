@@ -202,7 +202,6 @@ export default {
     },
 
     onClickCell(e) {
-      console.log('onClickCell', e)
       let url = ''
       let rowData = e.data
       if (e?.cellsLayout?.jump_json) {
@@ -240,7 +239,7 @@ export default {
 
     // 移动轮播图
     moveSlide(direction) {
-      var newList = JSON.parse(JSON.stringify(this.itemStyle));
+      var newList = cloneDeep(this.itemStyle);
 
       if (direction > 0) {
         // 向右移动（下一张）
@@ -424,7 +423,7 @@ export default {
       this.dragOffset = 0;
       this.hasDragged = false; // 重置拖动标记
       // 保存原始样式用于拖动结束后恢复
-      this.originalStyles = JSON.parse(JSON.stringify(this.itemStyle));
+      this.originalStyles = cloneDeep(this.itemStyle);
     },
 
     touchMove(e) {
@@ -441,7 +440,7 @@ export default {
       }
 
       // 更新当前元素的transform，使其跟随手指移动
-      const newStyles = JSON.parse(JSON.stringify(this.originalStyles));
+      const newStyles = cloneDeep(this.originalStyles);
 
       // 当前元素跟随拖动
       if (newStyles[this.currentIndex]) {
@@ -480,7 +479,7 @@ export default {
       this.dragOffset = 0;
       this.hasDragged = false; // 重置拖动标记
       // 保存原始样式用于拖动结束后恢复
-      this.originalStyles = JSON.parse(JSON.stringify(this.itemStyle));
+      this.originalStyles = cloneDeep(this.itemStyle);
     },
 
     mouseMove(e) {
@@ -497,7 +496,7 @@ export default {
       }
 
       // 更新当前元素的transform，使其跟随鼠标移动
-      const newStyles = JSON.parse(JSON.stringify(this.originalStyles));
+      const newStyles = cloneDeep(this.originalStyles);
 
       // 当前元素跟随拖动
       if (newStyles[this.currentIndex]) {
@@ -540,7 +539,7 @@ export default {
           await this.playOffsetFlyOutAnimation(moveDistance);
         }
         // 拖动距离超过阈值，执行切换
-        var newList = JSON.parse(JSON.stringify(this.originalStyles));
+        var newList = cloneDeep(this.originalStyles);
 
         if (moveDistance < 0) {
           // 向左滑动（从右往左），切换到下一张
@@ -563,7 +562,7 @@ export default {
         });
       } else {
         // 拖动距离不足，恢复原始位置
-        this.itemStyle = JSON.parse(JSON.stringify(this.originalStyles));
+        this.itemStyle = cloneDeep(this.originalStyles);
       }
     },
 
@@ -580,7 +579,7 @@ export default {
           flyOutIndex = 0;
         }
 
-        const newStyles = JSON.parse(JSON.stringify(this.itemStyle));
+        const newStyles = cloneDeep(this.itemStyle);
         const flyOutItem = newStyles[flyOutIndex];
 
         if (flyOutItem) {
@@ -631,7 +630,7 @@ export default {
           flyOutIndex = 0;
         }
 
-        const newStyles = JSON.parse(JSON.stringify(this.itemStyle));
+        const newStyles = cloneDeep(this.itemStyle);
         const flyOutItem = newStyles[flyOutIndex];
 
         if (flyOutItem) {

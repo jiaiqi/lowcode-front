@@ -102,7 +102,6 @@ export default {
     pageNo: String,
   },
   mounted() {
-    console.log(this.pageConfig, 6666666);
     // 如果有主题列表但没有当前主题，设置默认主题
     if (this.themeList?.length && !this.currentTheme) {
       this.setCurrentTheme(this.themeList[0].name);

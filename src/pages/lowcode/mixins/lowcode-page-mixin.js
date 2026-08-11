@@ -236,9 +236,13 @@ export default {
         ...cloneDeep(this.lowCodeJson),
         page_row_json: cloneDeep(this.lowCodeJson)
       }
-      const newData = await this.initPageConfig(this.pageConfig);
-      this.initComponents(newData);
-      this.initPageParams()
+      try {
+        const newData = await this.initPageConfig(this.pageConfig);
+        this.initComponents(newData);
+        this.initPageParams()
+      } catch (error) {
+        console.warn('初始化页面配置失败', error);
+      }
       this.setThemeVariable();
       return
     }
@@ -251,7 +255,13 @@ export default {
     }
 
     if (this.pageNo) {
-      await this.getPageConfig()
+      try {
+        await this.getPageConfig()
+      } catch (error) {
+        console.error("getPageConfig error", error);
+        // 网络异常时提示用户，避免白屏
+        this.$message?.error?.("页面加载失败");
+      }
       this.$nextTick(() => {
         let anchorName = query?.anchorName || params?.anchorName;
         if (anchorName) {
@@ -389,31 +399,41 @@ export default {
       // SWR：并行发起网络请求与本地快照读取（stale-while-revalidate），
       // 快照先到先渲染（刷新秒开），网络结果回来后后台比对指纹
       const netPromise = this.fetchPageData(this.pageNo);
-      const dbCached = await getPageSnapshot(this.pageNo);
-      if (dbCached?.data) {
-        try {
-          const prepared = await this.prepareFromData(dbCached.data, dbCached.appCfg);
-          this.applyPageData(prepared);
-          this.cacheSetPage(this.pageNo, prepared);
-          await this.applyPageRuntimeOptions(prepared.data);
-        } catch (e) {
-          console.warn("IndexedDB 快照应用失败，走网络", e);
+      try {
+        const dbCached = await getPageSnapshot(this.pageNo);
+        if (dbCached?.data) {
+          try {
+            const prepared = await this.prepareFromData(dbCached.data, dbCached.appCfg);
+            this.applyPageData(prepared);
+            this.cacheSetPage(this.pageNo, prepared);
+            await this.applyPageRuntimeOptions(prepared.data);
+          } catch (e) {
+            console.warn("IndexedDB 快照应用失败，走网络", e);
+          }
+          this.revalidateFromNetwork(netPromise, this.pageNo, dbCached.fingerprint);
+          return;
         }
-        this.revalidateFromNetwork(netPromise, this.pageNo, dbCached.fingerprint);
-        return;
+      } catch (e) {
+        console.warn("读取页面快照失败，走网络", e);
       }
-      const prepared = await netPromise;
-      if (!prepared.ok) {
-        if (prepared.msg) {
-          this.$message.error(prepared.msg);
-        } else {
-          this.$message.info("无数据！");
+      try {
+        const prepared = await netPromise;
+        if (!prepared.ok) {
+          if (prepared.msg) {
+            this.$message.error(prepared.msg);
+          } else {
+            this.$message.info("无数据！");
+          }
+          return;
         }
-        return;
+        this.applyPageData(prepared);
+        this.cacheSetPage(this.pageNo, prepared);
+        await this.applyPageRuntimeOptions(prepared.data);
+      } catch (error) {
+        console.error("getPageConfig 网络请求失败", error);
+        // 网络异常时提示用户，避免白屏
+        this.$message?.error?.("页面加载失败");
       }
-      this.applyPageData(prepared);
-      this.cacheSetPage(this.pageNo, prepared);
-      await this.applyPageRuntimeOptions(prepared.data);
     },
     /**
      * 准备页面数据（两阶段提交的"准备阶段"）
@@ -816,38 +836,20 @@ export default {
         });
       }
     },
-    // 根据配置的接口查询页面全局参数
-    async getPageInitQueryOptions() {
-      if (this.pageConfig.srv_req_json_data) {
-        const urlSearchParams = this.urlSearchParams || {}
-        const params = {
-          ...urlSearchParams
+    // 根据配置的接口查询页面全局参数。
+    // 说明：完整实现位于 page-params-mixin（注入登录用户信息、app 回退，实现更完整），
+    // 且混入顺序 [lowcode-page-mixin, page-params-mixin] 下其同名方法本就覆盖本实现，
+    // 此处删除重复定义，确保渲染链路只走一份。
+    async initComponents(data) {
+      try {
+        let list = data?.page_row_json_data?.component_json
+        if (this.getPageComponents && typeof this.getPageComponents === "function") {
+          list = await this.getPageComponents(list)
         }
-        const req = JSON.parse(this.renderStr(JSON.stringify(this.pageConfig.srv_req_json_data), params));
-        const url = `/${req.mapp}/select/${req.serviceName}`
-        const res = await this.$http.post(url, req)
-        if (res?.data?.data?.length) {
-          const data = res?.data?.data[0]
-          // 直接赋值
-          const keys = Object.keys(data)
-          if (keys.length > 0) {
-            this.pageData = data
-          }
-          if (this.pageConfig.cols_map_json_data) {
-            // 处理字段映射
-            const keys = Object.keys(this.pageConfig.cols_map_json_data)
-            if (keys.length > 0) {
-              keys.forEach(key => {
-                this.$set(this.queryOptions, key, data[this.pageConfig.cols_map_json_data[key]])
-              })
-            }
-          }
-          return data
-        }
-      } else {
-        return
+        this.components = this.buildComponentList(list) || [];
+      } catch (error) {
+        console.warn('初始化页面组件失败', error);
       }
-
     },
     // 设置页面维度
     async setPageDim(dim_no, dim_value) {
@@ -871,19 +873,6 @@ export default {
         // this.$store.commit('SET_PAGE_INSTANCE', page_instance)
         // return res
       }
-    },
-    /**
-     * 初始化页面组件
-     * @async
-     * @param {Object} data - 页面配置数据
-     * @description 处理组件配置，设置组件类型和属性，构建组件树
-     */
-    async initComponents(data) {
-      let list = data?.page_row_json_data?.component_json
-      if (this.getPageComponents && typeof this.getPageComponents === "function") {
-        list = await this.getPageComponents(list)
-      }
-      this.components = this.buildComponentList(list) || [];
     },
     /**
      * 构建组件树（纯函数，不修改组件状态）

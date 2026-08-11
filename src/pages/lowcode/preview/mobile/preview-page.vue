@@ -29,7 +29,6 @@ export default {
   methods:{
     //初始化界面信息
     async initPage() {
-      console.log("initPage");
       const url = `/config/select/srvpage_cfg_page_guest_select`;
       const req = {
         serviceName: "srvpage_cfg_page_guest_select",
@@ -105,7 +104,6 @@ export default {
       }else {
         this.components = component_json.filter(item => item.com_type !== 'layout');
       }
-      console.log('---获取到的界面信息',this.components)
     },
     //获取界面组件信息
     async getPageComponents() {
@@ -125,7 +123,6 @@ export default {
       if (ok) {
         if (Array.isArray(data) && data.length) {
           let list = [];
-          console.log("getPageComponents:", data);
 
           data.forEach((item) => {
             if (typeof item.com_json === "string") {
@@ -140,7 +137,6 @@ export default {
               }
             }
           });
-          console.log("getPageComponents", list);
           return list;
         }
       } else if (msg) {

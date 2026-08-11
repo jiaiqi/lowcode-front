@@ -127,10 +127,8 @@ export default {
   },
   methods: {
     navToPath(path) {
-      console.log(path);
     },
     onClickCell(cell) {
-      console.log(cell, "clickCell----------\r\n");
       if (cell?.cellsLayout?.jump_json?.dest_page_no) {
         // 执行自定义跳转
         this.jumpAction(cell?.cellsLayout?.jump_json, cell.data);
@@ -146,7 +144,6 @@ export default {
     },
     onDataUpdate() {
       this.refresh();
-      console.log("clear-pageInstance:onDataUpdate");
       this.$store.commit("SET_PAGE_INSTANCE", null);
     },
     refresh() {
@@ -180,7 +177,6 @@ export default {
             this.$emit("data-loaded", { count: this.cellData.length });
           } else {
             this.cellData = [];
-            console.log(res);
             this.$emit("data-loaded", { count: 0 });
           }
         } else {
@@ -258,7 +254,6 @@ export default {
                   var ereg = new RegExp("\\}", "g"); // 加'g'，删除字符串里所有的"a"
                   key = key.replace(sreg, "");
                   key = key.replace(ereg, "");
-                  console.log('--srvReq', params, key)
                   condModel.value = params && params.hasOwnProperty(key) ? params[key] : ""
                   if (condModel.value?.value) {
                     condModel.value = condModel.value.value

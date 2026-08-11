@@ -14,7 +14,6 @@ const srvApp = computed(() => {
 const pageLoading = ref(true); //表单加载中
 const emit = defineEmits(["executor-complete", "data-loaded"]);
 const executorComplete = (data) => {
-  console.log("executor-complete:", data);
   emit("executor-complete", data);
 };
 const onFormLoaded = (data) => {

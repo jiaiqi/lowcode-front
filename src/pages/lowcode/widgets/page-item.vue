@@ -754,18 +754,10 @@ export default {
     },
   },
   methods: {
-    handleWindowChannelsChange(channels) {
-       console.log('窗口通道信息变化:', data.windowChannels);
-  // 在这里保存或处理窗口通道映射信息
-  // 例如：保存到 localStorage 或发送到服务器
-
-    },
     onDelete() {
       this.$emit("delete", this.pageItem);
     },
     onTap() {
-      console.log(this.$parent.props, "OnTap");
-
       this.$emit("click", this.$parent.props);
     },
     toMore() {
@@ -831,7 +823,6 @@ export default {
       el.style.overflow = '';
     },
     onResize(i) {
-      // console.log(this.$refs);
       // this.$refs[this.pageItem.com_type].onResize?.();
     },
 

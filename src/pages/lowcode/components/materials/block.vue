@@ -228,7 +228,6 @@ export default {
  
     moreBtnStyle() {
       if (typeof this.pageItem?.more_style_json === "object") {
-        // console.log('----', formatStyleData(this.pageItem?.more_style_json))
         return formatStyleData(this.pageItem?.more_style_json);
       }
     },
@@ -431,7 +430,6 @@ export default {
     startResizeHeight(e) {
       if (this.isPreview) return;
       const rect = this.$el.getBoundingClientRect();
-      console.log(rect.height);
       if (this.blockHeight * 10 < rect.height) {
         this.blockHeight = Math.round(rect.height / 10);
       }
@@ -569,8 +567,6 @@ export default {
       const draggedType = dragStore.getDragType();
 
       if (e.currentTarget) {
-        console.log("handleDragOver-block:", draggedType);
-
         if (draggedType === "content") {
           // 只允许放置内容组件或者布局组件
           e.dataTransfer.dropEffect = "copy";

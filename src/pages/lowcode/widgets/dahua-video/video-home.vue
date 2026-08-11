@@ -188,7 +188,7 @@ const loadVideoPlayerScript = () => {
     script.async = true;
 
     script.onload = () => {
-      console.log('videoPlayer.js 动态加载成功');
+      console.debug('videoPlayer.js 动态加载成功');
       resolve();
     };
 
@@ -252,7 +252,6 @@ const setReq = () => {
         }
       }
     }
-    console.log('params', params);
 
     let req = cloneDeep(props.pageItem?.srv_req_json) || {}
     let conds = []
@@ -284,7 +283,6 @@ const setReq = () => {
             var ereg = new RegExp("\}", "g"); // 加'g'，删除字符串里所有的"a"
             key = key.replace(sreg, "");
             key = key.replace(ereg, "");
-            console.log('--srvReq', params, key)
             condModel.value = params && params.hasOwnProperty(key) ? params[key] : ""
             if (condModel.value?.value) {
               condModel.value = condModel.value.value
@@ -351,7 +349,6 @@ const isInIframe = () => {
 const $http = useHttp();
 // 保存窗口通道配置
 const saveWindowChannels = async () => {
-  console.log('保存窗口通道配置:', windowChannels.value);
   const channelList = myVideoPlayer?.setting?.channelList || [];
   console.warn('saveWindowChannels - channelList:', channelList);
   // 发送事件给父组件
@@ -405,13 +402,11 @@ const notifyParentWindowChannelsChange = () => {
   const channelList = myVideoPlayer?.setting?.channelList || [];
   console.warn('channelList:', channelList);
 
-  console.log('通知父组件窗口通道信息变化:', channelsData);
   hasChannelsChanged.value = true;
   emit('window-channels-change', channelsData);
 };
 
 const setNode = (data) => {
-  console.log('22222222', data);
 }
 // 切换收缩状态
 const toggleCollapse = () => {
@@ -421,14 +416,12 @@ const toggleCollapse = () => {
 // 添加单窗口模式下的通道切换方法
 const switchChannelInSingleWindow = (newChannelId) => {
   if (!myVideoPlayer) {
-    console.log('插件未初始化完成');
     return;
   }
 
   // 获取当前分屏数
   const currentDivision = myVideoPlayer.getDivision ? myVideoPlayer.getDivision() : 1;
   if (currentDivision !== 1) {
-    console.log('当前不是单窗口模式');
     return;
   }
 
@@ -459,7 +452,6 @@ const switchChannelInSingleWindow = (newChannelId) => {
   setTimeout(() => {
     // 更新窗口通道信息
     windowChannels.value[0] = newChannelId;
-    console.log('切换后的窗口通道信息：', windowChannels.value);
 
     // 通知父组件窗口通道信息变化
     notifyParentWindowChannelsChange();
@@ -498,7 +490,6 @@ const handleSelect = async (selectedKeys, e) => {
 
     // 记录当前窗口的通道信息
     windowChannels.value[currentWindowIndex] = videoChannel.value;
-    console.log('当前所有窗口通道信息：', windowChannels.value);
 
     // 通知父组件窗口通道信息变化
     notifyParentWindowChannelsChange();
@@ -567,7 +558,6 @@ const initPlayer = async () => {
   try {
     // 先动态加载 videoPlayer.js 脚本
     if (!isVideoPlayerScriptLoaded.value) {
-      console.log('开始动态加载 videoPlayer.js...');
       await loadVideoPlayerScript();
       isVideoPlayerScriptLoaded.value = true;
     }
@@ -602,7 +592,6 @@ const initPlayer = async () => {
         parentIframeShieldClass: shieldClass, // 有 iframe 时，top层 的 dom 元素被插件挡住了，把DOM元素的类名传入。
         // 创建播放器成功回调
         createSuccess: (versionInfo) => {
-          console.log(LoginInfo)
           // 初始化时默认显示9宫格
           myVideoPlayer.changeDivision(props.division)
           myVideoPlayer.setTabControlBtn();
@@ -784,7 +773,6 @@ const initPlayer = async () => {
 //实时流播放
 const playStartReal = (id, windowIndex = 0, node) => {
   if (!myVideoPlayer) {
-    console.log('插件未初始化完成');
     return;
   }
   // 如果当前是回放模式，先停止回放
@@ -820,28 +808,21 @@ const playStartReal = (id, windowIndex = 0, node) => {
 //历史回放
 const startPlayback = () => {
   if (!myVideoPlayer) {
-    console.log('插件未初始化完成');
     return;
   }
 
   if (!playbackStartTime.value || !playbackEndTime.value) {
-    console.log('请选择开始和结束时间');
     return;
   }
 
   // 检查时间是否有效
   if (new Date(playbackStartTime.value) > new Date(playbackEndTime.value)) {
-    console.log('开始时间不能大于结束时间');
     return;
   }
 
   if (!videoChannel.value) {
-    console.log('请选择要回放的通道');
     return;
   }
-
-  console.log('开始回放，使用窗口：', selectedWindow.value + 1);
-  console.log('回放通道：', videoChannel.value);
 
   isPlaying.value = true;
 
@@ -907,13 +888,6 @@ const stopPlayback = () => {
 
 // 处理回放模式切换
 const handlePlaybackModeChange = (checked) => {
-  console.log('切换回放模式，当前状态：', {
-    isPlaybackMode: isPlaybackMode.value,
-    checked,
-    windowChannels: windowChannels.value,
-    previousState: previousPlayerState.value
-  });
-
   if (checked) {
     // 切换到回放模式
     if (myVideoPlayer) {
@@ -932,11 +906,6 @@ const handlePlaybackModeChange = (checked) => {
         channels: currentChannels
       };
 
-      console.log('切换到回放模式，保存的实时模式通道信息：', {
-        savedChannels: currentChannels,
-        previousState: previousPlayerState.value
-      });
-
       // 切换到单窗口模式
       myVideoPlayer.changeDivision(1);
     }
@@ -947,13 +916,6 @@ const handlePlaybackModeChange = (checked) => {
 };
 //切换回实时播放时的回调业务
 const cancelPlayback = () => {
-  console.log('开始取消回放，当前状态：', {
-    isPlaybackMode: isPlaybackMode.value,
-    isPlaying: isPlaying.value,
-    windowChannels: windowChannels.value,
-    previousState: previousPlayerState.value
-  });
-
   if (myVideoPlayer) {
     try {
       if (isPlaying.value) {
@@ -970,11 +932,6 @@ const cancelPlayback = () => {
       // 保存当前播放器实例的引用和通道信息
       const currentPlayer = myVideoPlayer;
       const savedChannels = { ...previousPlayerState.value.channels };
-      console.log('切换前保存的通道信息：', {
-        savedChannels,
-        previousState: previousPlayerState.value,
-        windowChannels: windowChannels.value
-      });
 
       // 创建新的播放器实例
       myVideoPlayer = new VideoPlayer({
@@ -989,25 +946,17 @@ const cancelPlayback = () => {
         coverShieldClass: ['video_cot_area'],
         parentIframeShieldClass: shieldClass,
         createSuccess: (versionInfo) => {
-          console.log('播放器创建成功，准备恢复播放');
           // 确保切换到9宫格
           myVideoPlayer.changeDivision(props.division);
           myVideoPlayer.setTabControlBtn();
           // 增加延时确保窗口切换完成
           setTimeout(() => {
             // 使用保存的通道信息
-            console.log('准备恢复的通道信息：', {
-              savedChannels,
-              previousState: previousPlayerState.value,
-              windowChannels: windowChannels.value
-            });
-
             const playbackList = Object.entries(savedChannels)
               .filter(([_, channelId]) => channelId) // 过滤掉空值
               .map(([windowIndex, channelId]) => {
                 // 确保通道ID格式正确
                 const formattedChannelId = channelId.includes('$') ? channelId : `${channelId}$1$0$0`;
-                console.log(`处理窗口 ${windowIndex} 的通道: ${formattedChannelId}`);
                 return {
                   channelId: formattedChannelId,
                   channelName: '通道名称',
@@ -1020,7 +969,6 @@ const cancelPlayback = () => {
               });
 
             if (playbackList.length > 0) {
-              console.log('最终要恢复播放的通道列表：', playbackList);
               // 确保所有通道都停止后再开始新的播放
               if (typeof myVideoPlayer.stopReal === 'function') {
                 myVideoPlayer.stopReal();
@@ -1031,21 +979,10 @@ const cancelPlayback = () => {
                 myVideoPlayer.startReal(playbackList);
                 // 更新窗口通道信息
                 windowChannels.value = { ...savedChannels };
-                console.log('播放恢复完成，当前窗口通道信息：', {
-                  windowChannels: windowChannels.value,
-                  savedChannels,
-                  previousState: previousPlayerState.value
-                });
 
                 // 通知父组件窗口通道信息变化
                 notifyParentWindowChannelsChange();
               }, 200);
-            } else {
-              console.log('没有需要恢复的通道，当前状态：', {
-                savedChannels,
-                previousState: previousPlayerState.value,
-                windowChannels: windowChannels.value
-              });
             }
           }, 500); // 增加延时到500ms，确保窗口切换完成
         },
@@ -1054,7 +991,6 @@ const cancelPlayback = () => {
         },
         // 添加实时预览成功回调
         realSuccess: (info) => {
-          console.log('实时预览成功-back:', info);
         },
         // 添加实时预览失败回调
         realError: (info, err) => {
@@ -1115,16 +1051,12 @@ const getVideoInfo = async () => {
       treeData: true,
     }
     res = await $http.post(url, req)
-    console.log('getVideoInfo-res', res);
   } else {
     res = await Videos.getVideoListByArea()
   }
   // .then(res => {
   if (res.data.state !== 'SUCCESS') return;
-  console.log('---', processTreeData(res.data.data))
   videoTree.value = processTreeData(res.data.data);
-  console.log('--12videoTree', videoTree.value);
-  console.log(videoTree.value, 'videoTree.value');
   // }).catch(err => {
   // });
 }
@@ -1139,7 +1071,6 @@ watch(() => windowChannels.value, (newValue, oldValue) => {
   // 深度比较新值和原始值
   const isChanged = JSON.stringify(newValue) !== JSON.stringify(originalWindowChannels.value);
   hasChannelsChanged.value = isChanged;
-  console.log('窗口通道变化检测:', { isChanged, newValue, originalValue: originalWindowChannels.value });
 }, { deep: true });
 
 // 过滤节点方法

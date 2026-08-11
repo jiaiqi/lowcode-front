@@ -91,7 +91,14 @@
 import dayjs from "dayjs";
 import cloneDeep from "lodash/cloneDeep";
 
-import { computed, watch, onMounted, ref, defineAsyncComponent } from "vue";
+import {
+  computed,
+  watch,
+  onMounted,
+  onUnmounted,
+  ref,
+  defineAsyncComponent,
+} from "vue";
 import { useUtils } from "@/common/vueApi.js";
 
 // 异步加载 LiquidFillChart 组件
@@ -144,6 +151,10 @@ const mapJson = computed(() => {
 }); // 地图配置
 
 let timer = null;
+// 请求序号：每次发起请求递增，响应返回时若序号不是最新则丢弃，避免并发乱序覆盖 cellData
+let reqSeq = 0;
+// onSrvReq 防抖定时器：pageParamsModel deep watch / 日期筛选 / 联动多路径并发触发时合并为最后一次请求
+let reqDebounceTimer = null;
 const emit = defineEmits(["clickChart"]);
 
 const option = ref(null);
@@ -415,16 +426,33 @@ const calcSrvReq = computed(() => {
   return req;
 });
 const allColumns = ref([]);
-const onSrvReq = async (req = null) => {
+const onSrvReq = (req = null) => {
+  // 防抖 200ms：pageParamsModel deep watch（immediate+deep）、日期筛选、联动等多路径
+  // 可能并发触发本方法，只保留最后一次请求，避免重复请求与响应乱序
+  if (reqDebounceTimer) {
+    clearTimeout(reqDebounceTimer);
+  }
+  reqDebounceTimer = setTimeout(() => {
+    doSrvReq(req);
+  }, 200);
+};
+
+const doSrvReq = async (req = null) => {
   req = req || pageItem?.srv_req_json;
   if (req) {
     req = calcSrvReq.value;
+    const currentSeq = ++reqSeq; // 记录本次请求序号
     loading.value = true;
     let res = { ok: false, data: [] };
     try {
       res = await $select(req, req.mapp);
     } catch (error) {
       console.error("Chart data request failed", error);
+    }
+    // 请求序号保护：期间若发起了更新的请求（或组件已销毁），丢弃本次过期响应，
+    // 避免慢请求晚到覆盖新请求的数据
+    if (currentSeq !== reqSeq) {
+      return;
     }
     loading.value = false;
     loaded.value = true;
@@ -475,7 +503,8 @@ watch(
   (newVal, oldVal) => {
     // if (newVal && oldVal && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
     console.log("paramsLinkage", newVal, oldVal);
-
+    // 防抖与请求序号保护已在 onSrvReq 内统一处理（deep 监听 / 日期筛选 / 联动并发触发时
+    // 合并为最后一次请求，响应按 seq 丢弃过期结果），此处直接触发联动请求
     const reqVars = getReqConditionVars();
     if (reqVars.length > 0) {
       // const hasChanged = reqVars.some((varName) => {
@@ -591,6 +620,21 @@ const autoRefreshData = () => {
     onSrvReq(req);
   }, interval * 1000);
 };
+
+onUnmounted(() => {
+  // 清理自动刷新定时器：组件切换销毁后不再发请求
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+  // 清理防抖定时器，避免销毁后仍执行请求
+  if (reqDebounceTimer) {
+    clearTimeout(reqDebounceTimer);
+    reqDebounceTimer = null;
+  }
+  // 使未返回的请求响应全部作废，防止回写已销毁组件的数据
+  reqSeq++;
+});
 
 function buildRequestParams(e) {
   console.log("请求参数====>", e);

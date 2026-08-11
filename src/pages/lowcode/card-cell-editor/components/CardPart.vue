@@ -62,6 +62,7 @@ export default {
 
 <script setup>
 import { ref, computed, getCurrentInstance } from "vue";
+import cloneDeep from "lodash/cloneDeep";
 import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import CardCellPartWithoutCardGroup from "@/pages/lowcode/widgets/card-group-cell/card-cell-part-without-card-group.vue";
 import { formatStyleData } from "@/pages/lowcode/common";
@@ -192,7 +193,7 @@ const partsShow = computed(() => {
     }
   }
   if (!show) {
-    console.log("dispValue2", itemData.rent_type, itemData.rent_status, show);
+    // 隐藏条件不满足
   }
   return show;
 });
@@ -264,7 +265,6 @@ const isLastChild = computed(() => {
 
 function selectPart(part, event) {
   event?.stopPropagation?.();
-  console.log("选中", part?._id || part?.id);
   emit("select-part", part || props.part);
 }
 
@@ -276,7 +276,7 @@ function onDrop(event, part) {
     if (!part.children) {
       instance.proxy.$set(part, "children", []);
     }
-    const newPart = JSON.parse(JSON.stringify(partData));
+    const newPart = cloneDeep(partData);
 
     if (["row", "行容器"].includes(newPart.parts_type)) {
       newPart.children = [];
@@ -295,7 +295,6 @@ function onDrop(event, part) {
     Object.keys(newPart).forEach((key) => {
       if (key.startsWith("_default_")) {
         newPart[key.replace("_default_", "")] = newPart[key];
-        console.log("newPart", newPart);
         delete newPart[key];
       }
     });
@@ -309,7 +308,6 @@ function onDrop(event, part) {
 }
 
 function onDragOver(event) {
-  console.log("进入");
   if (["row", "行容器"].includes(props.part.parts_type)) {
     isDraggingOver.value = true;
     event.currentTarget?.classList?.add("on-drag-over");
@@ -317,7 +315,6 @@ function onDragOver(event) {
 }
 
 function onDragLeave(event) {
-  console.log("离开");
   if (["row", "行容器"].includes(props.part.parts_type)) {
     isDraggingOver.value = false;
     event?.currentTarget?.classList?.remove("on-drag-over");
@@ -326,7 +323,6 @@ function onDragLeave(event) {
 
 function deleteChildPart(part, childIndex) {
   if (part?.id || part?.card_parts_no) {
-    console.log("删除子部件", part);
     return emit("delete-part", part);
   }
   if (props.part.children) {
@@ -335,13 +331,10 @@ function deleteChildPart(part, childIndex) {
 }
 
 function handleClickCell(cell) {
-  console.log("卡片点击事件", cell);
   emit("select-part", props.part);
 }
 
 function handleContextMenuItemClick(item, context, event, el) {
-  console.log("右键菜单项点击:", item.action, context);
-
   switch (item.action) {
     case "copy":
       emit("copy-part", context);

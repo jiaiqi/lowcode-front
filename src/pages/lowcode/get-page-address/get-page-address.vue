@@ -439,7 +439,14 @@ export default {
               window.addEventListener('popstate', checkUrlChange);
               
               // 定期检查URL变化
-              setInterval(checkUrlChange, 1000);
+              const monitorInterval = setInterval(checkUrlChange, 1000);
+              
+              // 尽力而为的清理：iframe 导航离开/被移除（src 变化、v-if 卸载、组件销毁）时，
+              // 浏览器会随文档回收一并销毁其中的定时器与监听；pagehide 用于提前显式清理。
+              window.addEventListener('pagehide', function() {
+                clearInterval(monitorInterval);
+                window.removeEventListener('popstate', checkUrlChange);
+              });
             })();
           `
 

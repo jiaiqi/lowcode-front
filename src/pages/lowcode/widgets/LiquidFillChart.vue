@@ -167,7 +167,6 @@ export default {
           },
         ],
       };
-      console.log("liquidFillChartOption:", option);
 
       this.chart.setOption(option);
     },

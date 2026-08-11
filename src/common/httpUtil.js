@@ -138,7 +138,6 @@ export const doSelect = function (option = {}, vm = {}) {
   };
   let proc_page_instance = findParentHasPageInstance(vm)
   if (proc_page_instance) {
-    console.log('proc_page_instance:', proc_page_instance, query);
     query.proc_page_instance = proc_page_instance
   }
   if (!divCondition && option.divCond) {

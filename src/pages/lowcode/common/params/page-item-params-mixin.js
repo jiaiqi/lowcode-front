@@ -31,7 +31,6 @@
                     paramsObj = {}
                     if (params && params.length > 0 && this.pageParamsModel) {
                         for (let key of params) {
-                            console.log('srcs', key)
                             paramsObj[key.para] = {
                             "type": key.p_type,
                             "value": key.value || key.default_val,
@@ -42,7 +41,6 @@
                             let srcs = key.src_map
                             if (srcs.length > 0) {
                             for (let sItem of srcs) {
-                                console.log('srcs', srcs, sItem)
                                 if (sItem.from_type == '页面' && sItem.trigger_time == '联动' && this.pageParamsModel[sItem.col_from]) {
                                 paramsObj[key.para]['value'] = this.pageParamsModel[sItem.col_from] ? this.pageParamsModel[sItem
                                     .col_from].value : ''

@@ -120,7 +120,6 @@ const debounce = (func, delay) => {
 
 // 监听屏幕尺寸变化
 const handleResize = debounce(() => {
-  console.log('屏幕尺寸发生变化，重新绘制...')
   drawLines()
 }, 100) // 100ms 防抖延迟
 
@@ -150,16 +149,11 @@ const handleTransform=()=>{
   const canvasWidth = canvas.offsetWidth || canvas.clientWidth
   const canvasHeight = canvas.offsetHeight || canvas.clientHeight
 
-  console.log('Canvas尺寸:', canvasWidth, 'x', canvasHeight)
-
   // 转换起点
   const convertedStart = convertPercentageToFixed(actualStart.value, canvasWidth, canvasHeight)
 
   // 转换终点数组
   const convertedEndPoints = actualEndPoints.value.map(point => convertPercentageToFixed(point, canvasWidth, canvasHeight)).filter(point => point !== null)
-
-  console.log('转换后的起点坐标:', convertedStart)
-  console.log('转换后的终点坐标:', convertedEndPoints)
 
   return {
     start: convertedStart,
@@ -216,11 +210,9 @@ const actualCanvasStyle = computed(() => {
 })
 
 onMounted(() => {
-  console.log('info:', props.info);
-
   const canvas = document.getElementById('line_free')
   if (canvas) {
-    console.log('画布大小:', canvas.width, canvas.height)
+    // 画布就绪
   } else {
     console.warn('找不到画布元素 line_free')
   }

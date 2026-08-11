@@ -63,7 +63,6 @@ watch(saveLoading, (newVal) => {
 });
 
 async function onSave() {
-  console.log("保存");
   saveLoading.value = true;
   try {
     if (Array.isArray(props.list) && props.list.length) {
@@ -74,7 +73,6 @@ async function onSave() {
         await httpOperate("delete", deleteObj, deleteIds.toString());
       }
       const updateList = findDataByType(oldList, "update");
-      console.log("updateList", updateList);
       if (updateList?.length) {
         const updateObj = [];
         const updateKeys = ["seq", "style_no", "parent_no", "card_parts_name"];
@@ -103,7 +101,6 @@ async function onSave() {
         await httpOperate("update", updateObj);
       }
       const addList = findDataByType(oldList, "add");
-      console.log("addList", addList);
       if (addList.length) {
         const addObj = {
           serviceName: cardPartService.value.add,
@@ -115,7 +112,6 @@ async function onSave() {
           addObj.duplicate = true;
         }
         const result = await httpOperate("add", addObj, null, true, false);
-        console.log("result", result);
         if (result) {
           emit("saved");
         }
@@ -133,16 +129,13 @@ async function onSave() {
 }
 
 function onValueChange(value, type) {
-  console.log("值变化", value, type);
 }
 
 function onUnitUpdate(event) {
-  console.log("卡片单元更新完成", event);
   emit("unit-update");
 }
 
 function onPartsUpdate(event) {
-  console.log("卡片部件更新完成", event);
   emit("parts-update");
 }
 
@@ -178,9 +171,6 @@ function buildAddChildren(list) {
     return list
       .filter((item) => item && !item._is_delete)
       .map((item) => {
-        if (!item) {
-          console.log(list);
-        }
         let data = { ...item };
         ignoreField.forEach((field) => delete data[field]);
         let obj = {

@@ -627,8 +627,8 @@ export default {
       return {
         delay: (this.cellLayoutJson?.animation_delay || 0) * 1000,
         easing: this.cellLayoutJson?.animation_easing || "easeOutStrong",
-        onStart: () => console.log("动画开始"),
-        onComplete: () => console.log("动画完成"),
+        onStart: () => {},
+        onComplete: () => {},
       };
     },
     // 数字动画完整配置
@@ -873,7 +873,6 @@ export default {
             show = !!val;
           } else if (dispValue && val) {
             dispValue = dispValue.split(",");
-            // console.log('dispValue1',dispValue,val,itemData.target_name)
             if (dispValue.indexOf(val) !== -1) {
               show = true;
             }
@@ -899,15 +898,6 @@ export default {
           }
         }
       }
-      // console.log('dispValue2',itemData.rent_type,itemData.rent_status,show)
-      if (!show) {
-        console.log(
-          "dispValue2",
-          itemData.rent_type,
-          itemData.rent_status,
-          show
-        );
-      }
       return show;
     },
     getFileName() {
@@ -929,7 +919,6 @@ export default {
   },
   methods: {
     handleFormPartChange(e) {
-      console.log("handleFormPartChange", e);
       this.$emit("update:value", e);
       // 使用 vuex通知页面更新变量值
       if (this.$store && this.variableKey) {
@@ -942,7 +931,6 @@ export default {
       }
     },
     handleChartClick(params) {
-      console.log("handleChartClick", params);
       this.$emit("on-click-part", params, this.cellItem);
     },
     startNativeCountdown() {
@@ -1271,7 +1259,6 @@ export default {
       if (styleJson) {
         for (let key in styleJson) {
           style[key.replace(/_/g, "-")] = styleJson[key];
-          // console.log('styleJson',key)
         }
       }
       let bgImg =
@@ -1301,7 +1288,6 @@ export default {
     toLogin() {
       if (process.env.NODE_ENV === "development") {
         return this.$loginRef?.open((res) => {
-          console.log(res);
           if (res) {
             this.initLoginInfo(res);
           }
@@ -1388,13 +1374,8 @@ export default {
           }
           return;
         }
-        let type = "";
         let optionsType = "";
-        let text = "";
-        let item = itemData;
         if (subCol) {
-          type = subCol.parts_type;
-          text = subCol.card_parts_name;
           if (subCol.hasOwnProperty("sys_fun") && subCol.sys_fun) {
             optionsType = subCol.sys_fun;
           }
@@ -1405,7 +1386,6 @@ export default {
           case "下载":
           case "预览":
             val = this.getPartModelData(true);
-            console.log(optionsType, val);
             if (val) {
               this.getFiles(val, "原图")
                 .then((list) => {
@@ -1435,7 +1415,6 @@ export default {
           case "拨打电话":
             // val = this.setPartModelData(subCol, map, item)
             val = itemData[subCol.para_phone_col];
-            console.log("拨打电话", val);
             if (val) {
               window.location.href = `tel:${val}`;
               // this.$message.error("功能开发中...");
@@ -1446,7 +1425,6 @@ export default {
           case "发短信":
             // val = this.setPartModelData(subCol, map, item)
             val = this.setPartModelData;
-            console.log("发短信", val);
             if (val) {
               window.location.href = `sms:${val}`;
               // this.$message.error("功能开发中...");
@@ -1456,7 +1434,6 @@ export default {
             break;
           case "地图导航":
             val = this.setPartModelData;
-            console.log("地图导航", val);
             if (val && val.hasOwnProperty("lat") && val.hasOwnProperty("lgt")) {
               this.$message.error("功能开发中...");
             }
@@ -1479,7 +1456,6 @@ export default {
             this.$store.dispatch("loginInfo/logout");
             if (process.env.NODE_ENV === "development") {
               return this.$loginRef?.open((res) => {
-                console.log(res);
                 if (res) {
                   this.initLoginInfo(res);
                 }
@@ -1492,13 +1468,10 @@ export default {
             break;
           default:
             if (optionsType?.includes("刷新组件请求")) {
-              console.log("刷新组件请求：", this.cellItem);
               this.$emit("refresh-component");
             }
-            console.log("没有点击事件");
             break;
         }
-        console.log("onClickSubBlock", text, type, optionsType, item);
       },
       500,
       true

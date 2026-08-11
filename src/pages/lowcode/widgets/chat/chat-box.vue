@@ -162,7 +162,6 @@ export default{
       //   count=0;
       // }
       sockApi.onMessage((cmd, msgInfo) => {
-        console.log('----这是lc_pc获取的信息',msgInfo);
         if(msgInfo){
           count++
           let obj={
@@ -174,7 +173,6 @@ export default{
       })
     },
     closeSkt(){
-      console.log('关闭lc_sock')
       sockApi.close()
     },
     createIframe() {
@@ -189,7 +187,6 @@ export default{
       });
     },
     onIframeLoad() {
-      console.log('iframe加载完成');
     },
     closeDialog(){
       // 执行关闭时的清理逻辑

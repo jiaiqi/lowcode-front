@@ -55,6 +55,7 @@
     >
       <template v-for="(cellItemData, index) in cellDataFinal">
         <div
+          :key="index"
           :class="{
             'marquee-item':
               childAnimationConfig && childAnimationConfig.type === '跑马灯',
@@ -520,7 +521,6 @@ export default {
     comColMapRun: function () {
       let configJson = this.comColMap;
       let maps = this.paramsBuild(configJson);
-      // console.log('comColMapRun',maps)
       //  url   sys user page com srv_col srv_cond
       // let target = configJson?.dest_owner  // 目标
       // let source = configJson?.src_owner  // 源
@@ -556,7 +556,6 @@ export default {
         rows_max: 1,
         cols_num: 1,
       };
-      // console.log('config',config)
       let height =
         config.hasOwnProperty("style_json") &&
         config.style_json.hasOwnProperty("height")
@@ -718,7 +717,6 @@ export default {
     },
 
     executorComplete(data) {
-      console.log("executorComplete", data);
       this.handleDialogClose();
     },
 
@@ -755,7 +753,6 @@ export default {
             this.activeCardIndex =
               (this.activeCardIndex - 1 + listLength) % listLength;
           }
-          console.log("activeCardIndex:", this.activeCardIndex);
         }, this.childAnimationConfig?.interval || 3000);
       });
     },
@@ -782,8 +779,6 @@ export default {
       // 使用正则表达式来匹配 bx_auth_ticket 的值，并使用sessionStorage.bx_auth_ticket替换它
       const ticketStr = `bx_auth_ticket=${sessionStorage.bx_auth_ticket}`;
       val = val.replace(/(bx_auth_ticket=)[^&]+/gi, ticketStr);
-      // console.log('getPartModelData:recoverFileAddress:', val);
-
       return val;
     },
     paramsBuild(json) {
@@ -804,12 +799,10 @@ export default {
     },
     v2Loaded(e) {
       this.updateTitle = e?.service_view_name;
-      console.log(e);
     },
     onSubmitForm(e) {
       // 表单提交
       this.$emit("data-updated", e); //通知父组件数据更新完成
-      console.log("表单提交成功：：：", e);
       this.closeUpdateFormPopup();
     },
     openUpdateFormPopup(id, service) {
@@ -839,14 +832,6 @@ export default {
         return cellItemData["_buttons"][ib] === 1;
       } else {
         return false;
-        console.log(
-          cellItemData,
-          "getButtonVisible---->cellItemDatacellItemDatacellItemData"
-        );
-        return (
-          button.permission &&
-          (!button.hasOwnProperty("visible") || button?.visible === "是")
-        );
       }
     },
     onRowButton(e) {
@@ -859,7 +844,6 @@ export default {
       if (this.readOnly) {
         return;
       }
-      console.log("bx-card-cell");
       // 设置选中数据
       this.$set(this, "activeMode", item);
       this.$emit("on-click-cell", {
@@ -870,7 +854,6 @@ export default {
     toLogin() {
       if (process.env.NODE_ENV === "development") {
         return this.$loginRef?.open((res) => {
-          console.log(res);
           if (res) {
             this.initLoginInfo(res);
           }
@@ -890,7 +873,6 @@ export default {
         const y = rect.top;
         const w = rect.width;
         const h = rect.height;
-        console.log("弹框:", x, y, w, h);
         if (jumpJson.tmpl_page_json?.file_path) {
           let pagePath = normalizeJumpFilePath(jumpJson.tmpl_page_json.file_path);
           if (jumpJson.dest_page_no) {
@@ -975,7 +957,6 @@ export default {
       if (!style["overflow"]) {
         // style["overflow"] = "hidden";
       }
-      // console.log("styleJson", style);
       if (column) {
         return style[column] || "";
       }

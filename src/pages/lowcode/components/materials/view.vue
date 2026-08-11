@@ -416,8 +416,6 @@ export default {
     setOpenChat(item) {
       this.isOpenChat = true;
       this.chatItem = item;
-      console.log(this.com_name)
-      console.log('这是打开的聊天框', item)
     },
     toLogin() {
       const currentUrl = window.location.pathname + window.location.hash;

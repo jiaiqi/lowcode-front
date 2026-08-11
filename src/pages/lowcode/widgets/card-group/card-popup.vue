@@ -245,7 +245,6 @@ const popupStyle = computed(() => {
   forceUpdate.value;
 
   const clickPos = getClickPosition();
-  console.log('clickPos:', clickPos);
   
   // 如果没有任何位置信息，则居中显示
   if (!clickPos) {

@@ -68,6 +68,7 @@
       <!-- 悬浮组件渲染区域 - chat-by-mobile | float-component -->
       <template v-for="(item, index) in floatingComponents">
         <component
+          :key="'floating-comp-' + (item.id || index)"
           :is="getComponentType(item)"
           v-bind="item"
           :pageItem="item"
@@ -678,7 +679,6 @@ export default {
           isPositionChanged: false, // 初始化位置变更标识
           ...dragData,
         };
-        console.log('Adding new component:', newComponent);
         // 使用 addComponent 方法添加新组件
         this.addComponent(newComponent);
         // 清除拖拽状态

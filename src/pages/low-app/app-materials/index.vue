@@ -446,11 +446,10 @@ export default {
           delete config[key];
         }
       });
-      return JSON.parse(JSON.stringify(config));
+      return cloneDeep(config);
     },
     //
     onEnd(val) {
-      console.log("end", val);
     },
     handleDragStart(e, item) {
       // 设置拖拽数据
@@ -463,8 +462,6 @@ export default {
         layout_height: item.layout_height || 100,
         data: item.data || {}
       }
-
-      console.log('Drag data:', dragData) // 添加日志
 
       e.dataTransfer.setData("text/plain", JSON.stringify(dragData));
 

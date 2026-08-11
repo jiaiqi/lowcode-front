@@ -194,7 +194,6 @@ export default {
           { transform: 'translateY(0px)' },
           { transform: `translateY(${translateY}px)` }
         ];
-        console.log('使用 Web Animations API 执行滚动动画');
 
         const options = {
           duration,
@@ -419,7 +418,6 @@ export default {
     onVisibilityChange() {
       if (typeof document === 'undefined') return;
       const isHidden = document.visibilityState === 'hidden';
-      console.log("标签页可见性发生变化：", document.visibilityState);
 
       if (isHidden) {
         if (this.isVerticalScrolling) {

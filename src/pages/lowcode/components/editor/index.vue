@@ -131,33 +131,27 @@ export default {
   },
   methods: {
     onStart(e) {
-      // console.log("start", e);
     },
 
     onEnd(e) {
-      // console.log("onEnd", e);
     },
 
     onUpdate(val) {
-      // console.log("update",val,this.editorComponents);
       this.$nextTick(() => {
         this.$emit("change", this.editorComponents);
       });
     },
     clickOutside() {
-      console.log("clickOutside");
       // this.currentId = null;
       this.$emit("select", null, null);
     },
     onTap(val) {
-      console.log("onTap", val);
       // this.currentId = val.id;
       this.$emit("select", val.id, val);
     },
 
     // 处理组件交换
     swapComponents(data) {
-      console.log("swapComponents", data);
       const {
         sourceContentId,
         targetContentId,
@@ -232,7 +226,6 @@ export default {
 
     // 处理组件移动
     moveComponent(data) {
-      console.log("moveComponent", data);
       const { sourceContentId, targetContentId, component } = data;
 
       // 查找源容器和目标容器
@@ -317,7 +310,6 @@ export default {
       this.$emit("resize", val || {});
     },
     addComponent(val) {
-      console.log("addComponent", val);
       if (val?.parentId) {
         this.findComponentById(val.parentId, this.editorComponents, val);
         // 触发更新
@@ -327,12 +319,10 @@ export default {
       }
     },
     deleteComponent(val) {
-      console.log("deleteComponent", val);
       this.$emit("delete", val);
     },
     // 移动端组件排序处理
     handleSortChange(data) {
-      console.log("handleSortChange", data);
       const { fromIndex, toIndex } = data;
       
       if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) {
@@ -376,11 +366,9 @@ export default {
     handleEditorDragOver(e) {
       // 获取拖拽元素的类型
       const draggedType = dragStore.getDragType();
-      console.log("handleEditorDragOver", draggedType);
       // 阻止默认行为以允许放置
       e.preventDefault();
       // 检查拖拽元素的类型
-      console.log("draggedType", draggedType);
       
       // 移动端模式下允许所有组件放置
       if (this.mode === "mobile") {

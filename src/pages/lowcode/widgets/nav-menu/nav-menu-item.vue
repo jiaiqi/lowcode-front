@@ -283,7 +283,7 @@ export default {
         try {
           item.sub_json = JSON.parse(item.sub_json);
         } catch (error) {
-          console.log("error", error);
+          console.error("error", error);
         }
       }
       if (
@@ -340,7 +340,6 @@ export default {
         requestJson = JSON.parse(config);
       }
       if (requestJson?.serviceName) {
-        console.log("requestJson", requestJson);
         const req = {
           colNames: requestJson.colNames || ["*"],
           condition: requestJson.condition || [],

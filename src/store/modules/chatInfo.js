@@ -22,7 +22,6 @@ const mutations = {
 
     handleSetChatList(state, payload) {
         state.chatList = payload
-        console.log('----这是目前打开过的会话',state.chatList)
     },
 
     handleClearChatList(state, payload) {
@@ -32,7 +31,6 @@ const mutations = {
     // 管理setChatList的mutations
     handleSetChatListData(state, payload) {
         state.setChatList = payload
-        console.log('----这是目前打开过的会话setChatList',state.setChatList)
     },
 
     handleClearChatListData(state, payload) {
@@ -48,7 +46,6 @@ const mutations = {
         } else {
             state.setChatList.push({ setId, groupId });
         }
-        console.log('----更新setChatList',state.setChatList)
     },
 
 }

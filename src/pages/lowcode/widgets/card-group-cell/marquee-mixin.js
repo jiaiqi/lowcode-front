@@ -11,8 +11,14 @@ export default {
     };
   },
 
+  mounted() {
+    // 记录组件已挂载，供异步流程判断组件是否仍存活
+    this._mounted = true;
+  },
+
   beforeDestroy() {
     // 清理定时器和动画
+    this._mounted = false; // 组件销毁后，异步 await 恢复时据此中断后续逻辑
     this.stopMarqueeAnimation();
   },
 
@@ -32,6 +38,9 @@ export default {
       await this.$nextTick();
       this.setMarqueeItemWidth(marqueeElement);
       await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 组件已销毁则不再继续（该 await 不可取消，销毁后仍会恢复执行，需检查标志）
+      if (!this._mounted) return;
 
       this.marqueeDelayTimer = setTimeout(() => {
         this.initCSSMarqueeLayout(config, containerRef);

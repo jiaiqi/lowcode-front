@@ -83,7 +83,7 @@ const isJSON = (str) => {
         return false;
       }
     } catch (e) {
-      console.log("error：" + str + "!" + e);
+      console.error("error：" + str + "!" + e);
       return false;
     }
   }

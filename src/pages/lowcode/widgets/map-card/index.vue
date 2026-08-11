@@ -99,7 +99,6 @@ const mapBaseSupplier = computed(() => {
  * @param {Object} item - 选中的数据项
  */
 const handleMapSelect = (item) => {
-  console.log("地图选择事件:", item);
   emit('select', item);
 };
 </script>

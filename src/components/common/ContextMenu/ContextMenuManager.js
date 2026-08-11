@@ -11,6 +11,11 @@ class ContextMenuManager {
     this.vm = null;
     this.container = null;
     this.mountElement = null; // 记录挂载的DOM元素
+    // 预先绑定全局事件处理函数（bind 每次调用都会生成新引用，
+    // 若 add/remove 分别 bind 会导致 remove 永远移除不掉，监听器每次 show/hide 累积）
+    this._boundHandleGlobalClick = this.handleGlobalClick.bind(this);
+    this._boundHandleGlobalKeydown = this.handleGlobalKeydown.bind(this);
+    this._boundHandleGlobalContextMenu = this.handleGlobalContextMenu.bind(this);
   }
 
   /**
@@ -159,18 +164,18 @@ class ContextMenuManager {
    * 添加全局事件监听
    */
   addGlobalListeners() {
-    document.addEventListener('click', this.handleGlobalClick.bind(this));
-    document.addEventListener('keydown', this.handleGlobalKeydown.bind(this));
-    document.addEventListener('contextmenu', this.handleGlobalContextMenu.bind(this));
+    document.addEventListener('click', this._boundHandleGlobalClick);
+    document.addEventListener('keydown', this._boundHandleGlobalKeydown);
+    document.addEventListener('contextmenu', this._boundHandleGlobalContextMenu);
   }
 
   /**
    * 移除全局事件监听
    */
   removeGlobalListeners() {
-    document.removeEventListener('click', this.handleGlobalClick.bind(this));
-    document.removeEventListener('keydown', this.handleGlobalKeydown.bind(this));
-    document.removeEventListener('contextmenu', this.handleGlobalContextMenu.bind(this));
+    document.removeEventListener('click', this._boundHandleGlobalClick);
+    document.removeEventListener('keydown', this._boundHandleGlobalKeydown);
+    document.removeEventListener('contextmenu', this._boundHandleGlobalContextMenu);
   }
 
   /**

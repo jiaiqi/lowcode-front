@@ -120,7 +120,7 @@ export function getV2RequestData(service_name, use_type, mainSrv, idVal) {
         requestData.condition = requestData.condition.concat(v2Params.condition);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
   return requestData;

@@ -183,7 +183,6 @@ function handleMarkerPositionChange(marker, newX, newY) {
  * @param {Object} marker - 标记点数据
  */
 function handleMarkerDragStart(marker) {
-  console.log('开始拖拽标记点:', marker)
 }
 
 /**
@@ -191,7 +190,6 @@ function handleMarkerDragStart(marker) {
  * @param {Object} marker - 标记点数据
  */
 function handleMarkerDragEnd(marker) {
-  console.log('结束拖拽标记点:', marker)
 }
 
 

@@ -42,6 +42,10 @@ const emit = defineEmits(['click-chart']);
 const domRef = ref(null);
 let chartObj = null;
 let objResizeObserver = null;
+// 各类定时器句柄：组件销毁时统一取消，避免销毁后仍执行 setOption / resize / drawChart
+let drawTimer = null; // watch 触发 drawChart 的防抖定时器
+let setOptionTimer = null; // drawChart 内延迟 setOption 的定时器
+let resizeTimer = null; // 初始化后延迟 resize 的定时器
 
 
 
@@ -280,7 +284,7 @@ const initChart = () => {
 
   objResizeObserver.observe(domRef.value);
 
-  setTimeout(() => {
+  resizeTimer = setTimeout(() => {
     chartObj && chartObj.resize();
   }, 1000);
 };
@@ -309,7 +313,7 @@ const drawChart = () => {
   const chartJson = props.pageItem?.chart_json;
   const option = buildSankeyOption(dataToUse, chartJson?.config_sankey);
 
-  setTimeout(() => {
+  setOptionTimer = setTimeout(() => {
     nextTick(() => {
       chartObj.setOption(option);
       chartObj.hideLoading();
@@ -321,7 +325,11 @@ const drawChart = () => {
 watch(
   () => [props.cellData, props.pageItem],
   () => {
-    setTimeout(() => {
+    // 深监听 + 防抖 100ms：数据/配置变化后延迟绘制
+    if (drawTimer) {
+      clearTimeout(drawTimer);
+    }
+    drawTimer = setTimeout(() => {
       drawChart();
     }, 100);
   },
@@ -335,6 +343,20 @@ onMounted(() => {
 
 // 组件卸载
 onUnmounted(() => {
+  // 取消所有挂起的定时器（watch 防抖 / setOption 延迟 / resize 延迟），
+  // 避免组件销毁后定时器回调仍执行 setOption / resize / drawChart
+  if (drawTimer) {
+    clearTimeout(drawTimer);
+    drawTimer = null;
+  }
+  if (setOptionTimer) {
+    clearTimeout(setOptionTimer);
+    setOptionTimer = null;
+  }
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
+    resizeTimer = null;
+  }
   if (chartObj) {
     chartObj.dispose();
     chartObj = null;

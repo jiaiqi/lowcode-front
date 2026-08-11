@@ -80,28 +80,32 @@ export default {
           userInfo,
           user_no: userInfo?.user_no || '',
         };
-        const req = JSON.parse(
-          this.renderStr(
-            JSON.stringify(this.pageInfo.srv_req_json_data),
-            params
-          )
-        );
-        const app = req.mapp || sessionStorage.getItem("activeApp");
-        const url = `/${app}/select/${req.serviceName}`;
-        const res = await this.$http.post(url, req);
-        if (res?.data?.data?.length) {
-          const data = res?.data?.data[0];
-          const keys = Object.keys(this.pageInfo.cols_map_json_data);
-          if (keys.length > 0) {
-            keys.forEach((key) => {
-              this.$set(
-                this.queryOptions,
-                key,
-                data[this.pageInfo.cols_map_json_data[key]]
-              );
-            });
+        try {
+          const req = JSON.parse(
+            this.renderStr(
+              JSON.stringify(this.pageInfo.srv_req_json_data),
+              params
+            )
+          );
+          const app = req.mapp || sessionStorage.getItem("activeApp");
+          const url = `/${app}/select/${req.serviceName}`;
+          const res = await this.$http.post(url, req);
+          if (res?.data?.data?.length) {
+            const data = res?.data?.data[0];
+            const keys = Object.keys(this.pageInfo.cols_map_json_data);
+            if (keys.length > 0) {
+              keys.forEach((key) => {
+                this.$set(
+                  this.queryOptions,
+                  key,
+                  data[this.pageInfo.cols_map_json_data[key]]
+                );
+              });
+            }
+            return data;
           }
-          return data;
+        } catch (error) {
+          console.warn("获取页面全局参数失败", error);
         }
       } else {
         return;
@@ -145,6 +149,18 @@ export default {
      * @description 根据页面配置的参数定义初始化页面参数，支持V1和V2两种参数格式
      */
     async initPageParams() {
+      try {
+        return await this._doInitPageParams();
+      } catch (error) {
+        console.warn("初始化页面参数失败", error);
+      }
+    },
+
+    /**
+     * initPageParams 的实际实现（由外层 try-catch 统一捕获异常）
+     * @returns {Promise<boolean>}
+     */
+    async _doInitPageParams() {
       let self = this;
       let getInit = self.getInitParams();
       return await new Promise(function (resolve, reject) {

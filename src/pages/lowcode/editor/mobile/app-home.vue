@@ -254,8 +254,6 @@ export default {
 
     //组件被点击了
     handleComponentClick(list, val) {
-      console.log('被点击的组件是', val);
-      console.log('已经加入画布的组件列表', list)
       if(!val){
         this.currentId = '';
         this.currentItem = null;
@@ -282,7 +280,6 @@ export default {
       this.draggingComponentType = data.type;
       // 设置拖拽组件信息到dragStore
       dragStore.setDraggingElement(data);
-      console.log('当前拖拽的组件', data.type);
     },
     //组件拖拽结束
     onDragEnd() {
@@ -290,7 +287,6 @@ export default {
     },
     //初始化界面信息
     async initPage() {
-      console.log("initPage");
       const url = `/config/select/srvpage_cfg_page_guest_select`;
       const req = {
         serviceName: "srvpage_cfg_page_guest_select",
@@ -366,7 +362,6 @@ export default {
       } else {
         this.components = component_json.filter(item => item.com_type !== 'layout');
       }
-      console.log('---获取到的界面信息', this.components)
     },
     //获取界面组件信息
     async getPageComponents() {
@@ -391,7 +386,6 @@ export default {
       if (ok) {
         if (Array.isArray(data) && data.length) {
           let list = [];
-          console.log("getPageComponents:", data);
 
           data.forEach((item) => {
             if (typeof item.com_json === "string") {
@@ -406,7 +400,6 @@ export default {
               }
             }
           });
-          console.log("getPageComponents", list);
           return list;
         }
       } else if (msg) {
@@ -449,7 +442,6 @@ export default {
     },
     // 点击组件大纲中的组件
     clickComponent(data) {
-      console.log('点击组件大纲中的组件:', data);
       this.currentId = data.id;
       this.currentItem = data;
       // 关闭大纲弹窗

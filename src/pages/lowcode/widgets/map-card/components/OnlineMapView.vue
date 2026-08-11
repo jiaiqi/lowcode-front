@@ -155,7 +155,6 @@ const initMapInstance = () => {
           });
         }
         
-        console.log("在线地图初始化完成");
       }).catch(error => {
         console.error("地图数据初始化失败:", error);
       });
@@ -216,7 +215,6 @@ const initBaiduMapInstance = () => {
       map.enableScrollWheelZoom(true);
       
       mapInstance.value = map;
-      console.log("百度地图初始化完成");
     } catch (error) {
       console.error("百度地图实例初始化失败:", error);
     }
@@ -228,7 +226,6 @@ const initBaiduMapInstance = () => {
  * @param {Object} markerData - 标记点数据
  */
 const handleMarkerSelect = (markerData) => {
-  console.log("标记点被选中:", markerData);
   emit('select', markerData);
 };
 

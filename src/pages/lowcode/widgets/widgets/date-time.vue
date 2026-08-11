@@ -26,11 +26,11 @@
 import dayjs from "dayjs";
 import { getHomePageNo } from "@/common/http";
 
-let timer = "";
 export default {
   data() {
     return {
       time: "",
+      timer: null, // 实例级定时器句柄（避免多实例共享模块级变量导致互相覆盖/误清理）
     };
   },
   props: {
@@ -106,23 +106,24 @@ export default {
         timeFormat += "ss";
       }
       this.time = dayjs(new Date()).format(timeFormat || "HH:mm:ss");
-      timer = setInterval(() => {
+      this.timer = setInterval(() => {
         this.time = dayjs(new Date()).format(timeFormat || "HH:mm:ss");
       }, 1000);
     } else if (this.showSeconds) {
       this.time = dayjs(new Date()).format("HH:mm:ss");
-      timer = setInterval(() => {
+      this.timer = setInterval(() => {
         this.time = dayjs(new Date()).format("HH:mm:ss");
       }, 1000);
     } else {
       this.time = dayjs(new Date()).format("HH:mm");
-      timer = setInterval(() => {
+      this.timer = setInterval(() => {
         this.time = dayjs(new Date()).format("HH:mm");
       }, 1000);
     }
   },
   beforeDestroy() {
-    clearInterval(timer);
+    clearInterval(this.timer);
+    this.timer = null;
   },
   methods: {
     goHome() {

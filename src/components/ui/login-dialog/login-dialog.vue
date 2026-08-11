@@ -269,7 +269,6 @@ export default {
     },
     listenerStorage(event) {
       if (event.key === "bx_auth_ticket") {
-        console.log("bx_auth_ticket变化了");
         if (this.cb && typeof this.cb === "function") {
           this.cb();
           window.removeEventListener("storage", this.listenerStorage);
@@ -400,7 +399,6 @@ export default {
         if (tenantInfo) {
           data.tenant = tenantInfo.tenant;
           data.application = tenantInfo.application;
-          console.log("登录时使用租户信息:", tenantInfo);
         }
         const req = [{ serviceName: "srvuser_login", data: [data] }];
         const res = await $http.post(url, req);
@@ -553,13 +551,13 @@ export default {
           }
         })
         .catch(error => {
-          console.log("error", error);
+          console.error("error", error);
           if (error.response && error.response.status === 429) {
             if (window.top.limitingTips) {
               window.top.limitingTips();
             }
           }
-          console.log("请求失败:请检查后台服务器地址是否正确。", error);
+          console.error("请求失败:请检查后台服务器地址是否正确。", error);
         });
     },
   },

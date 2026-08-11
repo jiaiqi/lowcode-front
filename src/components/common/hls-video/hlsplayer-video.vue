@@ -87,32 +87,44 @@ export default {
         colNames: ["*"],
         condition: [{ colName: "chnl_no", ruleType: "like", value: chnl_no }]
       }
-      const res = await $http.post(url, req);
-      if (res.data.state !== 'SUCCESS') return;
-      let rows = res.data.data[0]
-      this.playHls(rows.url)
+      try {
+        const res = await $http.post(url, req);
+        if (res?.data?.state !== 'SUCCESS') return;
+        let rows = res?.data?.data?.[0]
+        if (rows?.url) {
+          this.playHls(rows.url)
+        }
+      } catch (error) {
+        console.warn('获取视频通道信息失败', error);
+      }
     },
     //获取视频数据通道接口
     async getVideoInfoById() {
       if (this.setDataInfo) {
-        let req = typeof this.pageItem.srv_req_json === 'string' ? JSON.parse(this.pageItem.srv_req_json) : this.pageItem.srv_req_json
-        let setParams = {
-          page: req.page,
-          serviceName: req.serviceName,
-          colNames: ['*'],
-          condition: this.chnols ? [
-            {
-              "colName": "chnl_no",
-              "ruleType": "eq",
-              "value": this.chnol
-            }
-          ] : req.condition,  //通道参数在接口配置时直接填入
+        try {
+          let req = typeof this.pageItem.srv_req_json === 'string' ? JSON.parse(this.pageItem.srv_req_json) : this.pageItem.srv_req_json
+          let setParams = {
+            page: req.page,
+            serviceName: req.serviceName,
+            colNames: ['*'],
+            condition: this.chnols ? [
+              {
+                "colName": "chnl_no",
+                "ruleType": "eq",
+                "value": this.chnol
+              }
+            ] : req.condition,  //通道参数在接口配置时直接填入
+          }
+          const url = `/${req.mapp}/select/${req.serviceName}`;
+          const res = await $http.post(url, setParams);
+          if (res?.data?.state !== 'SUCCESS') return;
+          let rows = res?.data?.data?.[0]
+          if (rows?.url) {
+            this.playHls(rows.url)
+          }
+        } catch (error) {
+          console.warn('获取视频信息失败', error);
         }
-        const url = `/${req.mapp}/select/${req.serviceName}`;
-        const res = await $http.post(url, setParams);
-        if (res.data.state !== 'SUCCESS') return;
-        let rows = res.data.data[0]
-        this.playHls(rows.url)
       }
     },
     //自动检测是否支持播放

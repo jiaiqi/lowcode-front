@@ -68,7 +68,6 @@ export default {
     toLogin() {
       if (process.env.NODE_ENV === "development") {
         return this.$loginRef?.open((res) => {
-          console.log(res);
           if (res) {
             this.initLoginInfo(res);
           }

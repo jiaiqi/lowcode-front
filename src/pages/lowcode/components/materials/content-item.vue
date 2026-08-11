@@ -361,7 +361,7 @@ export default {
                 }
               });
             } catch (error) {
-              console.log(error);
+              console.error(error);
             }
           });
         }
@@ -754,10 +754,6 @@ export default {
         (entries) => {
           // 如果组件进入可视区域，则设置isVisible为true
           if (entries[0].isIntersecting) {
-            // console.log(
-            //   "组件进入可视区域,即将进行渲染",
-            //   this.props.children[0]?.com_name
-            // );
             this.isVisible = true;
             // 一旦组件被渲染，可以停止观察
             this.observer.disconnect();
@@ -1390,7 +1386,6 @@ export default {
       }
       e.dataTransfer.setData("text/plain", JSON.stringify(dragData));
       dragStore.setDraggingElement(dragData);
-      console.log("draggingElement:", { ...dragData });
 
       // 设置组件类型到全局状态
       dragStore.setDragType(dragData.type);
@@ -1438,7 +1433,6 @@ export default {
       e.preventDefault();
       // 获取拖拽元素的类型
       const draggedType = dragStore.getDragType();
-      // console.log('handleDragOver-draggedType:',draggedType);
       const data = dragStore.getDraggingElement();
       if (this.children && this.children.length) {
         const existingComponent = this.children[0];
@@ -1470,7 +1464,6 @@ export default {
 
       // 处理其他类型组件
       if (e.target && this.allowDrop && draggedType) {
-        console.log("draggedType:", draggedType);
         if (
           draggedType === "component" ||
           draggedType === "cardPart" ||
@@ -1490,9 +1483,6 @@ export default {
     },
     handleDrop(e) {
       if (this.isPreview || this.isView) return;
-      console.log("handleDrop");
-      console.log("e.target:", e.target);
-      console.log("this.children:", this.children);
       // 阻止事件冒泡
       e.stopPropagation();
       e.preventDefault();

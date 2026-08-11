@@ -89,7 +89,7 @@ export default {
           break;
       }
       if (loading) {
-        console.log('comloading SUCCESS:', this.pageItem.com_name, params)
+        console.debug('comloading SUCCESS:', this.pageItem.com_name, params)
       } else {
         console.error('comloading ERROR:', this.pageItem.com_name, params)
       }
@@ -144,7 +144,6 @@ export default {
       }
 
       //  组件事件映射
-      console.log('comColMapRun:', maps)
       if (this.pageCompVarMap && Object.keys(this.pageCompVarMap).length > 0) {
         for (let key of Object.keys(this.pageCompVarMap)) {
           maps[this.pageCompVarMap[key]] = key
@@ -279,7 +278,6 @@ export default {
                   var ereg = new RegExp("\\}", "g"); // 加'g'，删除字符串里所有的"a"
                   key = key.replace(sreg, "");
                   key = key.replace(ereg, "");
-                  console.log('--srvReq', params, key)
                   condModel.value = params && params.hasOwnProperty(key) ? params[key] : ""
                   if (condModel.value?.value) {
                     condModel.value = condModel.value.value
@@ -351,7 +349,6 @@ export default {
 
     },
     refreshComponent() {
-      // console.log('page item component srvReq updated! refresh component:',this.pageItem.com_type,this.pageItem.com_name)
       let type = this.compType
       if ((type == 'list' || type == 'form' || type == 'cardGroup') && this.hasOwnProperty('refresh')) {
         this.refresh()
@@ -372,7 +369,6 @@ export default {
       // 			item.value = item.default_val || ''
       // 		})
       // 	} else if(this.pageParams){
-      // console.log(this.pageParams,this.urlSearchParams)
       // for(let param of this.pageParams){
       // 	for (let key in this.urlSearchParams) {
       // 		if (key == param.para_name && this.urlSearchParams[key]) {
@@ -391,11 +387,9 @@ export default {
   },
   mounted() {
     this.$on('refresh-component', (data) => {
-      console.log('on page item params update')
       this.refreshComponent()
     });
     this.$on('pageItemParamsComponent', (data) => {
-      console.log('on page item params update')
     });
   },
 
@@ -403,7 +397,6 @@ export default {
     "srvReq": {
       deep: true,
       handler: function (newVal, oldVal) {
-        console.log('page item component srvReq updated!', JSON.stringify(newVal.condition))
         if (!this.isisIndexedList && JSON.stringify(newVal.condition) !== JSON.stringify(oldVal.condition)) {
 
           this.refreshComponent()

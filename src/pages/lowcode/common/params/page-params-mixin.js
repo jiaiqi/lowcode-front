@@ -122,7 +122,6 @@ export default {
         let paraJson =
             pageInfo?.interface_json_data || pageInfo?.para_json;
         let paraJsonV2 = pageInfo?.para_with_map_json_data || null;
-        console.log("new Promise( paraJson", paraJson);
         self.pageParams = {};
         if (
           (!self.urlSearchParams ||
@@ -148,8 +147,6 @@ export default {
           }
           self.$set(self, "pageParamsModel", self.bxDeepClone(self.pageParams));
         } else if (Array.isArray(paraJson) && paraJson && paraJson.length > 0) {
-          console.log("-- page paraJson  init SUCCESS --");
-          console.log(paraJson, self.urlSearchParams);
           for (let param of paraJson) {
             let keyName = param.para_name || param.para;
             let urlParamsKeys = self.urlSearchParams
@@ -165,7 +162,6 @@ export default {
           self.$set(self, "pageParamsModel", self.bxDeepClone(self.pageParams));
         }
         if (paraJsonV2 && paraJsonV2.length > 0) {
-          console.log("-- page paraJson V2  init SUCCESS --");
           let Model = {};
           for (let param of paraJsonV2) {
             for (let key in self.urlSearchParams) {
@@ -192,11 +188,9 @@ export default {
       // 组件输入页面的参数
       let self = this;
       // this.pageParams[key] = val
-      console.log("接受参数", key, val);
       if (self.pageParamsModel && key) {
         for (let p in self.pageParamsModel) {
           if (p == key && self.pageParamsModel[key]) {
-            console.log("--", val);
             let item = self.bxDeepClone(self.pageParamsModel[key]);
             item.value = val;
             self.$set(self.pageParamsModel, key, item);

@@ -787,6 +787,8 @@ export default {
 
       try {
         const res = await $http.post(url, req);
+        // 组件已销毁，响应不再写入 state
+        if (this._isDestroyed) return;
         this.loading = false;
         this.loaded = true;
 
@@ -815,6 +817,7 @@ export default {
         }
       } catch (error) {
         console.error("list getListData error:", error);
+        if (this._isDestroyed) return;
         this.loading = false;
         this.loaded = true;
         this.tableData = [];
@@ -824,66 +827,76 @@ export default {
       }
     },
     async getV2Data(srvCfg) {
-      const url = `/${srvCfg.mapp}/select/srvsys_service_columnex_v2_select?colsel_v2=${srvCfg.serviceName}`;
-      const req = {
-        serviceName: "srvsys_service_columnex_v2_select",
-        colNames: ["*"],
-        condition: [
-          {
-            colName: "service_name",
-            ruleType: "eq",
-            value: srvCfg.serviceName,
-          },
-          { colName: "use_type", ruleType: "eq", value: "list" },
-        ],
-        order: [{ colName: "seq", orderType: "asc" }],
-      };
-      const res = await $http.post(url, req);
-      if (res?.data?.state === "SUCCESS") {
-        if (res.data.data?.cfg_json) {
-          try {
-            res.data.data.cfgJson = JSON.parse(res.data.data.cfg_json);
-          } catch (error) { }
+      try {
+        const url = `/${srvCfg.mapp}/select/srvsys_service_columnex_v2_select?colsel_v2=${srvCfg.serviceName}`;
+        const req = {
+          serviceName: "srvsys_service_columnex_v2_select",
+          colNames: ["*"],
+          condition: [
+            {
+              colName: "service_name",
+              ruleType: "eq",
+              value: srvCfg.serviceName,
+            },
+            { colName: "use_type", ruleType: "eq", value: "list" },
+          ],
+          order: [{ colName: "seq", orderType: "asc" }],
+        };
+        const res = await $http.post(url, req);
+        if (res?.data?.state === "SUCCESS" && res?.data?.data) {
+          if (res.data.data.cfg_json) {
+            try {
+              res.data.data.cfgJson = JSON.parse(res.data.data.cfg_json);
+            } catch (error) { }
+          }
+          if (this._isDestroyed) return;
+          this.v2Data = res.data.data;
         }
-        this.v2Data = res.data.data;
+      } catch (error) {
+        console.warn("list getV2Data error:", error);
       }
     },
     async getStatisticData(req) {
-      const colName = this.v2Data?.cfgJson?.statistics_card_col;
-      const col = this.v2Data?.srv_cols.find(
-        (item) => item.columns === colName
-      );
-      if (col && col.col_type === "Enum") {
-        const group = [
-          {
-            colName: colName,
-            type: "by",
-          },
-          {
-            colName: colName,
-            type: "count",
-            aliasName: "count",
-          },
-        ];
-        req.condition = req.condition || [];
-        req.condition.push({
-          colName,
-          ruleType: "notnull",
-          value: null,
-        });
-        const url = `/${req.mapp}/select/${req.serviceName}`;
-        req.group = group;
-        const res = await $http.post(url, req);
-        if (res.data.state === "SUCCESS") {
-          if (Array.isArray(res.data.data) && res.data.data.length > 0) {
-            this.stasticData = [];
-            res.data.data.forEach((item) => {
-              item.label = applyEncryptParam(item, colName, item[colName]);
-              item.value = item.count;
-              this.stasticData.push(item);
-            });
+      try {
+        const colName = this.v2Data?.cfgJson?.statistics_card_col;
+        const col = this.v2Data?.srv_cols?.find(
+          (item) => item.columns === colName
+        );
+        if (col && col.col_type === "Enum") {
+          const group = [
+            {
+              colName: colName,
+              type: "by",
+            },
+            {
+              colName: colName,
+              type: "count",
+              aliasName: "count",
+            },
+          ];
+          req.condition = req.condition || [];
+          req.condition.push({
+            colName,
+            ruleType: "notnull",
+            value: null,
+          });
+          const url = `/${req.mapp}/select/${req.serviceName}`;
+          req.group = group;
+          const res = await $http.post(url, req);
+          if (res?.data?.state === "SUCCESS") {
+            if (Array.isArray(res.data.data) && res.data.data.length > 0) {
+              if (this._isDestroyed) return;
+              this.stasticData = [];
+              res.data.data.forEach((item) => {
+                item.label = applyEncryptParam(item, colName, item[colName]);
+                item.value = item.count;
+                this.stasticData.push(item);
+              });
+            }
           }
         }
+      } catch (error) {
+        console.warn("list getStatisticData error:", error);
       }
     },
     applyEncryptParam(row, colName, val) {
@@ -1103,6 +1116,8 @@ export default {
       } else {
         this.getV2Data(req).then((_) => {
           this.getStatisticData(req);
+        }).catch((error) => {
+          console.warn("list v2数据加载失败:", error);
         });
       }
     }
@@ -1110,6 +1125,11 @@ export default {
     //   this.tableData = this.pageItem.list_json?.mock_data_json;
     // }
 
+  },
+
+  beforeDestroy() {
+    // 标记组件已销毁，异步回调不再写入 state
+    this._isDestroyed = true;
   },
 
   watch: {

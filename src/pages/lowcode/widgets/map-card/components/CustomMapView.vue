@@ -549,7 +549,6 @@ async function handleImageTransition(newImageSrc) {
  * @returns {Promise<Array>} 标记点数据列表
  */
 async function initCustomMap() {
-  console.log("自定义底图初始化开始");
   let list = [];
   try {
     // 处理请求数据类型
@@ -561,12 +560,10 @@ async function initCustomMap() {
       const req = props.pageItem.srv_req_json;
       const url = `/${reqJson.mapp}/select/${reqJson.serviceName}`;
 
-      console.log("发起API请求:", url, req);
       const res = await $selectList(url, req); // 发起 API 请求
 
       if (res.ok) {
         list = res.data || []; // 获取响应数据，确保返回数组
-        console.log("API请求成功，获取数据:", list.length, "条");
       } else {
         console.warn("API请求失败:", res.message || "未知错误");
         list = []; // 请求失败时返回空数组
@@ -575,7 +572,6 @@ async function initCustomMap() {
     // 处理模拟数据类型
     else if (props.pageItem.srv_req_type === "模拟数据") {
       list = props.pageItem.mock_data_json || []; // 使用模拟数据，确保返回数组
-      console.log("使用模拟数据:", list.length, "条");
     } else {
       console.warn("未配置有效的数据源类型:", props.pageItem.srv_req_type);
     }
@@ -584,7 +580,6 @@ async function initCustomMap() {
     list = []; // 发生错误时返回空数组
   }
 
-  console.log("自定义底图初始化完成，返回数据:", list.length, "条");
   return list;
 }
 
@@ -607,7 +602,6 @@ function setActiveMarker(marker, event) {
     activeMarker.value = marker; // 设置新的激活标记点
     // 记录标记点元素引用
     if (event && event.currentTarget) {
-      console.log('标记点元素:', event.currentTarget);
       activeMarkerElement.value = event.currentTarget; // 保存元素引用
     }
   }
@@ -622,7 +616,6 @@ function setActiveMarker(marker, event) {
  * @param {Event} event - 点击事件对象
  */
 function handleMarkerClick(marker, event) {
-  console.log('点击标记点', marker, mapJson.value.onclick);
   if (marker?._poi_info?.onclick) {
     // 多标记物点击事件处理
     switch (marker._poi_info.onclick) {
@@ -733,7 +726,6 @@ async function getMapBaseImageWithReq(reqJson, data) {
  * @param {boolean} editMode - 是否进入编辑模式
  */
 function handleEditModeChange(editMode) {
-  console.log('编辑模式切换:', editMode)
   isEditMode.value = editMode
   // 可以在这里添加编辑模式切换时的额外逻辑
 }
@@ -745,7 +737,6 @@ function handleEditModeChange(editMode) {
  * @param {number} newY - 新的Y坐标
  */
 function handleMarkerPositionChange(marker, newX, newY) {
-  console.log('标记点位置变更:', marker.id, newX, newY)
   // 直接记录到编辑模式组件
   if (editModeRef.value && typeof editModeRef.value.recordMarkerChange === 'function') {
     editModeRef.value.recordMarkerChange(marker, newX, newY)
@@ -757,8 +748,6 @@ const multiSourceMarkersRef = ref(null)
  * @param {Array} changesArray - 按update_request_no分组的更改数据
  */
 function handleSaveChanges(changesArray) {
-  console.log('保存标记点位置更改:', changesArray)
-
   // 调用API保存更改到后端
   let successCount = 0
   changesArray.forEach(async (group) => {
@@ -798,7 +787,6 @@ function handleSaveChanges(changesArray) {
           const res = await $http.post(url, reqs)
           // 更新点位
           if (res.data.state === 'SUCCESS') {
-            console.log('更新点位');
             multiSourceMarkersRef.value.fetchAllMarkers()
             successCount++
           }
@@ -819,7 +807,6 @@ function handleSaveChanges(changesArray) {
  * 取消标记点位置更改
  */
 function handleCancelChanges() {
-  console.log('取消标记点位置更改')
   // 标记点位置已在MapEditMode组件中恢复
 }
 
@@ -933,13 +920,10 @@ function closePopup() {
  * @param {Object} item - 树形数据项
  */
 async function toggleExpand(item) {
-  console.log("toggleExpand", item);
   if (!item || !item.id) return; // 检查参数有效性
 
   // 切换展开状态
   set(expandedNodes.value, item.id, !expandedNodes.value[item.id]);
-
-  console.log("expandedNodes", expandedNodes.value);
 
   // if (mapJson.value?.map_option?.includes('多来源标记物')) {
   //   return
@@ -973,7 +957,6 @@ function getTreeItemLabel(item) {
 watch(
   () => selectedTreeData.value,
   (newVal) => {
-    console.log(newVal);
     // 如果选中项有子节点且配置了坐标字段，过滤出有坐标的子项作为标记点
     if (mapJson.value?.map_option?.includes('多来源标记物')) {
 
@@ -1020,7 +1003,6 @@ async function tapTreeData(item) {
 async function initMapTreeData() {
   const req = setTreeReq.value; // 获取请求配置
   if (!req) {
-    console.log("没有配置请求");
     return;
   }
 
@@ -1040,7 +1022,6 @@ async function initMapTreeData() {
 async function getChildrenData(parent_no) {
   const req = cloneDeep(props.treeReq || mapJson.value?.map_tree_req_json); // 获取请求配置
   if (!req) {
-    console.log("没有配置请求");
     return;
   }
   if (!parent_no) {

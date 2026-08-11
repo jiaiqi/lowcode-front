@@ -65,7 +65,6 @@ export default {
   },
   methods: {
     onClickCell(cell) {
-      // console.log(cell, "clickCell----------\r\n");
       // if (cell?.cellsLayout?.jump_json?.page_auth_json) {
       //   // 执行自定义跳转
       //   this.jumpAction(cell?.cellsLayout?.jump_json, cell.data);
@@ -131,7 +130,6 @@ export default {
       //     }
       //   }
       //   if (pageNo) {
-      //     console.log(path);
       //     this.navToPath(path);
       //   }
       // }
@@ -170,7 +168,6 @@ export default {
               var ereg = new RegExp("\}", "g"); // 加'g'，删除字符串里所有的"a"
               key = key.replace(sreg, "");
               key = key.replace(ereg, "");
-              console.log("--srvReq", params, key);
               condModel.value =
                 params && params.hasOwnProperty(key) ? params[key] : "";
               if (condModel.value?.value) {
@@ -192,7 +189,6 @@ export default {
           this.cellData = res.data.data[0];
           this.allCellData = res.data.data;
         } else {
-          console.log(res);
         }
       }
     },

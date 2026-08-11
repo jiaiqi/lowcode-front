@@ -321,14 +321,6 @@ function calculatePopoverPosition(element) {
   }
 
   calculatedPosition.value = position;
-
-  // 调试信息
-  console.log('弹窗位置计算:', {
-    mode: props.positionMode,
-    direction: props.positionDirection,
-    position: position,
-    element: element ? element.getBoundingClientRect() : null
-  });
 }
 
 /**

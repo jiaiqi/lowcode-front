@@ -49,7 +49,7 @@ export const isJSON = (str) => {
         return false;
       }
     } catch (e) {
-      console.log("error：" + str + "!" + e);
+      console.error("error：" + str + "!" + e);
       return false;
     }
   }
@@ -66,7 +66,7 @@ export const isJSON = (str) => {
  * // 转换Blob为Base64
  * const blob = new Blob(['Hello World'], { type: 'text/plain' });
  * blobToBase64(blob).then(base64 => {
- *   console.log(base64); // 输出: data:text/plain;base64,SGVsbG8gV29ybGQ=
+ *   // base64: data:text/plain;base64,SGVsbG8gV29ybGQ=
  * });
  * 
  * @since 1.0.0
@@ -91,7 +91,7 @@ export function blobToBase64(blob) {
  * const fileInput = document.querySelector('input[type="file"]');
  * const file = fileInput.files[0];
  * fileToBase64(file).then(base64 => {
- *   console.log(base64); // 输出Base64编码的文件内容
+ *   // base64 为 Base64 编码的文件内容
  * });
  * 
  * @since 1.0.0
@@ -115,7 +115,6 @@ export function fileToBase64(file) {
  * // 加载百度地图脚本
  * LoadScript('https://api.map.baidu.com/api?v=3.0&ak=your_ak')
  *   .then(() => {
- *     console.log('百度地图脚本加载成功');
  *     // 可以使用BMap对象
  *   })
  *   .catch(err => {
@@ -139,23 +138,18 @@ export function LoadScript(src) {
       resolve(BMapGL);
       return true;
     }
-    // // 百度地图异步加载回调处理
-    // window.onBMapCallback = function () {
-    //   console.log("百度地图脚本初始化成功...");
-    //   resolve(BMap);
-    // };
     // 插入script脚本
     let scriptNode = document.createElement("script");
     scriptNode.setAttribute("type", "text/javascript");
     scriptNode.setAttribute("src", BMap_URL);
     // 引入成功
     scriptNode.onload = function () {
-      console.log("js资源已加载成功了");
+      console.debug("js资源已加载成功了");
       resolve();
     };
     // 引入失败
     scriptNode.onerror = function (err) {
-      console.log("js资源加载失败了", err);
+      console.error("js资源加载失败了", err);
     };
     document.body.appendChild(scriptNode);
   });
@@ -175,9 +169,9 @@ export const docCookies = {
    * @returns {string|null} Cookie的值，如果不存在则返回null
    * @example
    * // 获取名为'username'的Cookie
-   * const username = docCookies.getItem('username');
-   * console.log(username); // 输出Cookie值或null
-   * 
+ * const username = docCookies.getItem('username');
+ * // username 为 Cookie 值或 null
+ * 
    * @memberof docCookies
    */
   getItem: function (sKey) {
@@ -280,9 +274,9 @@ export const docCookies = {
    * @returns {boolean} 存在返回true，不存在返回false
    * @example
    * // 检查Cookie是否存在
-   * if (docCookies.hasItem('username')) {
-   *   console.log('用户已登录');
-   * }
+ * if (docCookies.hasItem('username')) {
+ *   // 用户已登录
+ * }
    * 
    * @memberof docCookies
    */
@@ -299,8 +293,8 @@ export const docCookies = {
    * @returns {string[]} 包含所有Cookie名称的数组
    * @example
    * // 获取所有Cookie名称
-   * const cookieNames = docCookies.keys();
-   * console.log(cookieNames); // ['username', 'token', 'theme']
+ * const cookieNames = docCookies.keys();
+ * // cookieNames: ['username', 'token', 'theme']
    * 
    * @memberof docCookies
    */
@@ -319,9 +313,9 @@ export const docCookies = {
    * @returns {void}
    * @example
    * // 清除所有Cookie
-   * docCookies.clear();
-   * console.log('所有Cookie已清除');
-   * 
+ * docCookies.clear();
+ * // 所有Cookie已清除
+ * 
    * @memberof docCookies
    */
   clear: function () {
@@ -348,7 +342,7 @@ export const docCookies = {
  *   enter_animation_type: "淡入",
  *   enter_direction: "由左往右"
  * });
- * console.log(className); // "animate__animated animate__fadeInLeft"
+ * // className: "animate__animated animate__fadeInLeft"
  * 
  * @since 1.0.0
  */
@@ -379,7 +373,7 @@ export function setEnterAnimationClass(params = {}) {
  *   enter_animation_duration: 1.0,
  *   enter_animation_repeat: 2
  * });
- * console.log(style); // { "--animate-delay": "0.5s", "--animate-duration": "1.0s", "--animate-repeat": "2" }
+ * // style: { "--animate-delay": "0.5s", "--animate-duration": "1.0s", "--animate-repeat": "2" }
  * 
  * @since 1.0.0
  */
@@ -407,12 +401,12 @@ export function setEnterAnimationVariables(params = {}) {
  * @example
  * // 获取左侧进入的类名后缀
  * const suffix = buildAnimationClass("由左往右");
- * console.log(suffix); // "Left"
+ * // suffix: "Left"
  * 
  * @example
  * // 获取右上角渐显的类名后缀
  * const suffix = buildAnimationClass("右上渐显");
- * console.log(suffix); // "TopRight"
+ * // suffix: "TopRight"
  * 
  * @since 1.0.0
  */
@@ -462,14 +456,14 @@ export function buildAnimationClass(direction) {
  *   type: "淡入",
  *   direction: "由左往右"
  * });
- * console.log(className); // "animate__animated animate__fadeInLeft"
+ * // className: "animate__animated animate__fadeInLeft"
  * 
  * @example
  * // 生成弹跳动画类名
  * const className = setAnimationClass({
  *   type: "弹跳"
  * });
- * console.log(className); // "animate__animated animate__bounce"
+ * // className: "animate__animated animate__bounce"
  * 
  * @since 1.0.0
  */
@@ -562,7 +556,7 @@ export function setAnimationClass(params = {}) {
  *   duration: 2.0,
  *   repeat: 3
  * });
- * console.log(style); // { "--animate-delay": "0.5s", "--animate-duration": "2.0s", "--animate-repeat": "3" }
+ * // style: { "--animate-delay": "0.5s", "--animate-duration": "2.0s", "--animate-repeat": "3" }
  * 
  * @example
  * // 设置无限循环动画
@@ -570,7 +564,7 @@ export function setAnimationClass(params = {}) {
  *   duration: 1.0,
  *   repeat: 0
  * });
- * console.log(style); // { "--animate-duration": "1.0s", "--animate-repeat": "infinite" }
+ * // style: { "--animate-duration": "1.0s", "--animate-repeat": "infinite" }
  * 
  * @since 1.0.0
  */
@@ -748,21 +742,6 @@ export function downloadFileH5(url, fileName) {
   })
 }
 
-/**
- * 格式化文件大小
- * @param {number} bytes  文件大小，以字节为单位
- * @returns 
- */
-export function formatFileSize(bytes) {
-  if (bytes === 0) return '0B';
-  if (bytes < 1024) return bytes + 'B';
-  if (bytes < 1024 * 1024) return Number((bytes / 1024).toFixed(2)) + 'KB';
-  if (bytes < 1024 * 1024 * 1024) return Number((bytes / 1024 / 1024).toFixed(2)) + 'MB';
-  return Number((bytes / 1024 / 1024 / 1024).toFixed(2)) + 'GB';
-}
-
-const LIST_SERVICE_TITLE_FORMS = ["add", "update", "detail"];
-
 export function getAppStyleJson(vm) {
   try {
     const loginUser = JSON.parse(sessionStorage.getItem("current_login_user") || "{}");
@@ -780,27 +759,6 @@ export function getAppStyleJson(vm) {
   } catch (e) {
     return null;
   }
-}
-
-export function shouldUseServiceNameDialogTitle(vm) {
-  const formDisplayOpt = getAppStyleJson(vm)?.form_display?.form_display_opt;
-  return (
-    typeof formDisplayOpt === "string" &&
-    formDisplayOpt.includes("\u6807\u9898\u663e\u793a\u670d\u52a1\u540d")
-  );
-}
-
-export function getFormServiceViewName(formVm) {
-  return (
-    formVm?.serviceViewName ||
-    formVm?.getBasicForm?.()?.formV2?.service_view_name ||
-    formVm?.formV2?.service_view_name ||
-    ""
-  );
-}
-
-export function isListServiceTitleForm(activeForm) {
-  return LIST_SERVICE_TITLE_FORMS.includes(activeForm);
 }
 
 /**

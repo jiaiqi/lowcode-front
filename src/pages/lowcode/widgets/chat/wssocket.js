@@ -1,5 +1,6 @@
 var websock = null;
 let rec; //断线重连后，延迟5秒重新创建WebSocket连接  rec用来存储延迟请求的代码
+let closed = false; //手动关闭标记：close() 置 true，阻止关闭后残留的重连/心跳定时器继续 connect/send
 let isConnect = false; //连接标识 避免重复连接
 let connectCallBack= null;
 let messageCallBack = null;
@@ -11,6 +12,7 @@ let connect = (wsurl,accessToken) => {
 		if (isConnect) {
 			return;
 		}
+		closed = false; //重新发起连接时清除手动关闭标记
 		console.log("连接WebSocket");
 		websock = new WebSocket(wsurl); 
 		websock.onmessage = function(e) {
@@ -68,11 +70,17 @@ let reconnect = (wsurl,accessToken) => {
 	}
 	rec && clearTimeout(rec);
 	rec = setTimeout(function() { // 延迟5秒重连  避免过多次过频繁请求重连
+		if (closed) return; // 已手动关闭，不再重连
 		connect(wsurl,accessToken);
 	}, 15000);
 };
 //设置关闭连接
 let close = (code) => {
+	closed = true; //置关闭标记，阻止残留定时器回调继续 connect/send
+	rec && clearTimeout(rec);
+	rec = null;
+	clearTimeout(heartCheck.timeoutObj);
+	heartCheck.timeoutObj = null;
 	websock && websock.close(code);
 };
 
@@ -82,7 +90,7 @@ let heartCheck = {
 	timeout: 5000, //每段时间发送一次心跳包 这里设置为20s
 	timeoutObj: null, //延时发送消息对象（启动心跳新建这个对象，收到消息后重置对象）
 	start: function() {
-		if (isConnect) {
+		if (isConnect && !closed) { // 已手动关闭则不再发送心跳
 			console.log('----这是lc_pc获取的信息,发送WebSocket心跳')
 			let heartBeat = {
 				cmd: 1,
@@ -111,11 +119,13 @@ let sendMessage = (agentData) => {
 	} else if (websock.readyState === websock.CONNECTING) {
 		// 若是 正在开启状态，则等待1s后重新调用
 		setTimeout(function() {
+			if (closed) return; // 已手动关闭，停止重试发送
 			sendMessage(agentData)
 		}, 1000)
 	} else {
 		// 若未开启 ，则等待1s后重新调用
 		setTimeout(function() {
+			if (closed) return; // 已手动关闭，停止重试发送
 			sendMessage(agentData)
 		}, 1000)
 	}

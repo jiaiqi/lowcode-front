@@ -473,11 +473,10 @@ export default {
           delete config[key];
         }
       });
-      return JSON.parse(JSON.stringify(config));
+      return cloneDeep(config);
     },
     //
     onEnd(val) {
-      console.log("end", val);
     },
     handleDragStart(e, item) {
       // 设置拖拽数据

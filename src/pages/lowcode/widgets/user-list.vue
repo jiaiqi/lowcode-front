@@ -1,9 +1,11 @@
 <template>
   <div class="user-list">
     <div class="normal-images">
-      <div v-for="(img, index) in arrImages" v-if="index < 5">
-        <img loading="lazy" v-if="img" :src="img" :style="resImagesFn(index)" class="image" />
-      </div>
+      <template v-for="(img, index) in arrImages">
+        <div v-if="index < 5" :key="index">
+          <img loading="lazy" v-if="img" :src="img" :style="resImagesFn(index)" class="image" />
+        </div>
+      </template>
     </div>
     <span class="num-text" v-if="showUserNum"
       >{{ userNum }}+{{ pageItem.user_list_json.usercount_label }}</span

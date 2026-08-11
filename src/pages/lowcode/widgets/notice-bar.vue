@@ -66,13 +66,11 @@ export default {
       }
     },
     linkTo(index) {
-      console.log(index);
     },
   },
   methods: {
     async getNoticeBarData(p) {
       if (!p.serviceName || !p.mapp) {
-        console.log("getNoticeBarData");
         this.listData = this.pageItem?.notice_bar_json?.mock_data_json || [];
         if (!this.listData.length && this.pageItem.mock_data_json) {
           this.listData = JSON.parse(this.pageItem.mock_data_json);

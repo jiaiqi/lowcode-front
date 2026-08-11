@@ -26,7 +26,7 @@
       </div>
     </div>
 
-     <li v-for="(item,index) in chatList" class="chat_list" @click="handleChatClick(item, $event)" :style="[chatStyleJson]">
+     <li v-for="(item,index) in chatList" :key="item.code || index" class="chat_list" @click="handleChatClick(item, $event)" :style="[chatStyleJson]">
        <span><img loading="lazy" :src="chatBg" alt="" :class="{'chat_ds': true, 'blink': item.isOpen}"></span>
        <span>{{item.chat_type}}</span>
      </li>
@@ -339,32 +339,36 @@ export default {
     },
     async getChatList(){
       if(this.setDataInfo){
-        let req= typeof this.pageItem.srv_req_json==='string'?JSON.parse(this.pageItem.srv_req_json):this.pageItem.srv_req_json
-        let setParams={
-          serviceName:req.serviceName,
-          colNames:['*'],
-          condition:req.condition?req.condition:[],
-          page:req.page,
-          draft: false,
-          order: []
-        }
-        const url = `/${req.mapp}/select/${req.serviceName}`;
-        const res = await this.$http.post(url, setParams);
-        if(res.data.state!=='SUCCESS') return;
-        let ls = res.data.data
-        if(ls && ls.length>0){
-          let base={};
-          let tep =[];
-          ls.map(d=>{
-            base={
-              chat_type:d.name,
-              code:d.id,
-              groupId:null,
-              isOpen:false,
-            }
-            tep.push(base);
-          })
-          this.chatList = [...tep]
+        try{
+          let req= typeof this.pageItem.srv_req_json==='string'?JSON.parse(this.pageItem.srv_req_json):this.pageItem.srv_req_json
+          let setParams={
+            serviceName:req.serviceName,
+            colNames:['*'],
+            condition:req.condition?req.condition:[],
+            page:req.page,
+            draft: false,
+            order: []
+          }
+          const url = `/${req.mapp}/select/${req.serviceName}`;
+          const res = await this.$http.post(url, setParams);
+          if(res?.data?.state!=='SUCCESS') return;
+          let ls = res?.data?.data
+          if(ls && ls.length>0){
+            let base={};
+            let tep =[];
+            ls.map(d=>{
+              base={
+                chat_type:d.name,
+                code:d.id,
+                groupId:null,
+                isOpen:false,
+              }
+              tep.push(base);
+            })
+            this.chatList = [...tep]
+          }
+        }catch(error){
+          console.warn('获取聊天列表失败', error);
         }
       }
     },

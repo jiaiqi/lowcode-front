@@ -1,5 +1,28 @@
-import * as echarts from "echarts";
+import * as echarts from "echarts/lib/echarts";
 import "echarts-wordcloud"; // echarts-wordcloud@1.1.3
+// 说明：echarts@4.9 无 v5 的 echarts.use() API，按需注册采用 side-effect 引入最小模块集
+// （等价于 echarts.use([...])），避免全量 import * as echarts from "echarts"（约 775KB）。
+// 以下为 buildOption.js / chart.vue 实际使用到的图表与组件的最小集合：
+// 图表：line / bar / pie(含 ring) / radar / map / scatter / lines / custom(立体柱) / wordcloud(插件)；
+// 组件：tooltip / legend(含 scroll) / title / grid(含 xAxis/yAxis) / geo / visualMap / radar / markLine。
+// 注：sankey 图表由 SankeyChart.vue 独立引入（与 LiquidFillChart.vue 同属异步 vendor chunk，按需加载）。
+import "echarts/lib/chart/line";
+import "echarts/lib/chart/bar";
+import "echarts/lib/chart/pie";
+import "echarts/lib/chart/radar";
+import "echarts/lib/chart/scatter";
+import "echarts/lib/chart/lines";
+import "echarts/lib/chart/custom";
+import "echarts/lib/chart/map";
+import "echarts/lib/component/tooltip";
+import "echarts/lib/component/legend";
+import "echarts/lib/component/legendScroll";
+import "echarts/lib/component/title";
+import "echarts/lib/component/grid";
+import "echarts/lib/component/geo";
+import "echarts/lib/component/visualMap";
+import "echarts/lib/component/radar";
+import "echarts/lib/component/markLine";
 // import "echarts-gl"; //echarts-gl@1.1.2
 import { getImagePath } from "@/common/http";
 import dayjs from "dayjs";
@@ -1754,7 +1777,10 @@ export const useBuildOption = (type, pageItem, cellData = [], layout) => {
       ecOptions.series = [];
       const mapJson = pageItem?.chart_json?.map_json;
       const geoJson = pageItem?.chart_json?.map_base_geojson || chinaJson;
-      echarts.registerMap("customMap", geoJson);
+      // 同名 map 已注册则跳过，避免每次构建 option 都重复注册大体积 geoJSON
+      if (!echarts.getMap("customMap")) {
+        echarts.registerMap("customMap", geoJson);
+      }
       let datas = [];
       let scatterDatas = []
       let spiderLineDatas = []
@@ -2446,7 +2472,8 @@ export const setDefaultChartOption = (chartType, chartJson, eCharts) => {
       ];
       break;
     case "map":
-      if (echarts && eCharts) {
+      if (echarts && eCharts && !echarts.getMap("customMap")) {
+        // 同名 map 已注册则跳过，避免重复注册大体积 geoJSON
         echarts.registerMap("customMap", chartJson?.map_base_geojson || chinaJson);
       }
       option.legend = {
