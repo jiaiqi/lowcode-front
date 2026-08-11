@@ -24,7 +24,7 @@ import { formatStyleData } from "@/pages/lowcode/common/index.js";
 // import NavSubMenu from "./nav-menu-child.vue";
 // import NavMenu from "./nav-menu.vue";
 import clickoutside from "@/pages/lowcode/common/clickoutside.js";
-import { getFullBaseUrl, normalizeJumpFilePath, getRouterPath } from "@/common/common";
+import { parseJumpJson, navToJump } from "./nav-jump";
 export default {
   name: "NavMenuChild",
   components: {
@@ -144,13 +144,7 @@ export default {
       };
     },
     jumpJson() {
-      if (this.config.jump_json) {
-        try {
-          return JSON.parse(this.config.jump_json);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+      return parseJumpJson(this.config);
     },
   },
   mounted() {
@@ -173,48 +167,8 @@ export default {
       this.$emit("leave", false);
     },
     navTo(jumpConfig) {
-      if (jumpConfig?.obj_type) {
-        switch (jumpConfig.obj_type) {
-          case "外部页面":
-            if (jumpConfig.outer_url) {
-              if (jumpConfig.target_type == "原页面") {
-                window.location.href = jumpConfig.outer_url;
-              } else {
-                window.open(jumpConfig.outer_url);
-              }
-            }
-            break;
-          default:
-            if (jumpConfig.dest_page_no) {
-              this.navToPath(jumpConfig);
-            }
-            break;
-        }
-      }
-    },
-    navToPath(jump_json) {
-      let pageNo = jump_json?.dest_page_no;
-      let path = "";
-      if (jump_json?.tmpl_page_json.file_path) {
-        path = normalizeJumpFilePath(
-          jump_json?.tmpl_page_json.file_path
-        ).replace(":pageNo", pageNo);
-      } else {
-        path = `${getFullBaseUrl()}/${pageNo}?srvApp=config`;
-      }
-      if (pageNo) {
-        if (jump_json.target_type == "原页面") {
-          // 站内路径走 SPA 无刷新跳转（配合 SWR 内存缓存秒开）；外部链接保持整页跳转
-          const routerPath = getRouterPath(path);
-          if (routerPath) {
-            this.$router.push(routerPath);
-          } else {
-            window.location.href = path;
-          }
-        } else {
-          window.open(path);
-        }
-      }
+      // 统一走共享工具：登录拦截 → 外部页面 / 锚点 / 站内 SPA
+      navToJump(this, jumpConfig);
     },
     setEleSize() {
       const ele = this.$parent.$refs?.navMenu;

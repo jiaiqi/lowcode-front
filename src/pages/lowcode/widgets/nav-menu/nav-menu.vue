@@ -219,6 +219,7 @@ import catalogTabs from "./catalog/tabs.vue";
 import ContentWrap from "./catalog/content-wrap.vue";
 import catalogTree from "./catalog/tree.vue";
 import { getFullBaseUrl, normalizeJumpFilePath } from "@/common/common";
+import { parseJumpJson, requireLogin, jumpToSite } from "./nav-jump";
 export default {
   name: "NavMenu",
   components: {
@@ -441,13 +442,7 @@ export default {
       };
     },
     jumpJson() {
-      if (this.config.jump_json) {
-        try {
-          return JSON.parse(this.config.jump_json);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+      return parseJumpJson(this.config);
     },
     reqJson() {
       if (this.config.request_json) {
@@ -692,20 +687,8 @@ export default {
     navTo(jumpJson, data) {
       if (data?._url && !jumpJson) {
         if (data?.jump_option?.includes("先登录")) {
-          return this.$confirm(
-            "您还未登录,需要登录才能进入,点击确认前往登录",
-            "提示",
-            {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning",
-            }
-          ).then(() => {
-            const currentUrl = window.location.pathname + window.location.hash;
-            sessionStorage.setItem("login_redirect_url", currentUrl);
-            const loginUrl = window.location.origin + "/main/login.html";
-            window.location.href = loginUrl;
-          });
+          requireLogin(this);
+          return;
         }
         return window.open(data._url);
       }
@@ -718,25 +701,8 @@ export default {
       }
       if (jumpJson?.obj_type) {
         if (jumpJson?.click_jump_option?.includes("先登录")) {
-          if (this.$store.state?.loginInfo?.logined !== true) {
-            // 您还未登录,需要登录才能进入,点击确认前往登录
-            this.$confirm(
-              "您还未登录,需要登录才能进入,点击确认前往登录",
-              "提示",
-              {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                type: "warning",
-              }
-            ).then(() => {
-              const currentUrl =
-                window.location.pathname + window.location.hash;
-              sessionStorage.setItem("login_redirect_url", currentUrl);
-              const loginUrl = window.location.origin + "/main/login.html";
-              window.location.href = loginUrl;
-            });
-            return;
-          }
+          requireLogin(this);
+          return;
         }
         switch (jumpJson.obj_type) {
           case "外部页面":
@@ -773,53 +739,12 @@ export default {
       }
     },
     navToPath(jump_json) {
-      let pageNo = jump_json?.dest_page_no;
+      // 统一站内跳转（登录拦截 + 原页面 SPA / 新窗口），见 nav-jump.js
       if (jump_json?.click_jump_option?.includes("先登录")) {
-        if (this.$store.state?.loginInfo?.logined !== true) {
-          // 您还未登录,需要登录才能进入,点击确认前往登录
-          this.$confirm(
-            "您还未登录,需要登录才能进入,点击确认前往登录",
-            "提示",
-            {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning",
-            }
-          ).then(() => {
-            const currentUrl = window.location.pathname + window.location.hash;
-            sessionStorage.setItem("login_redirect_url", currentUrl);
-            const loginUrl = window.location.origin + "/main/login.html";
-            window.location.href = loginUrl;
-          });
-          return;
-        }
+        requireLogin(this);
+        return;
       }
-      let path = "";
-      if (jump_json?.tmpl_page_json.file_path) {
-        path = normalizeJumpFilePath(
-          jump_json?.tmpl_page_json.file_path
-        ).replace(":pageNo", pageNo);
-      } else {
-        path = `${getFullBaseUrl()}/${pageNo}?srvApp=config`;
-      }
-      if (jump_json?.obj_type?.includes("锚点") && jump_json?.anchor_com_name) {
-        if (path.includes(`/site/${pageNo}`)) {
-          path = path.replace(
-            `/site/${pageNo}`,
-            `/site/${pageNo}/${jump_json.anchor_com_name}`
-          );
-        }
-      }
-      if (pageNo) {
-        if (jump_json.target_type == "原页面") {
-          if (path.includes("#")) {
-            path = path.split("#")[1];
-          }
-          this.$router.push(path);
-        } else {
-          window.open(path);
-        }
-      }
+      jumpToSite(this, jump_json);
     },
   },
 };

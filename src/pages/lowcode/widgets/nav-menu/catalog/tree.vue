@@ -4,7 +4,6 @@
       :data="data"
       :props="defaultProps"
       @node-click="handleNodeClick"
-      ref="elTree"
       v-if="unfold"
     >
       <template #default="{ node, data }">
@@ -41,23 +40,8 @@ export default {
       default: false,
     }
   },
-  data() {
-    return {};
-  },
-  watch: {
-    unfold: {
-      immediate: false,
-      deep: true,
-      handler(newValue, oldValue) {
-        if(oldValue===true&&newValue===false){
-          
-        }
-      }
-    }
-  },
   methods: {
     handleNodeClick(data) {
-      console.log("handleNodeClick", data);
       this.$emit("node-click", data);
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <el-tabs v-model="activeName" @tab-click="handleClick">
+  <el-tabs v-model="activeName">
     <el-tab-pane :label="tab.name" :name="tab.no" v-for="tab in tabs" :key="tab.no">
       <content-wrap :data="tab"></content-wrap>
     </el-tab-pane>
@@ -21,9 +21,6 @@ export default {
       tabs: [],
       activeName: null,
     };
-  },
-  methods: {
-    handleClick() {},
   },
   created() {
     if (this.data?.children?.length) {

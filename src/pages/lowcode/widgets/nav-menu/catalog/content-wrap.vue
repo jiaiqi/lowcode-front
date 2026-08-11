@@ -20,8 +20,7 @@
         <div
           class="content rich-text-content"
           v-if="contentList && contentList.length"
-          v-html="recoverFileAddress4richText(contentList && contentList[0].content)
-            "
+          v-html="recoverFileAddress4richText(contentList && contentList[0].content)"
         ></div>
         <div v-else>
           <el-empty description="暂无数据"></el-empty>
@@ -159,21 +158,15 @@
 <script>
 import dayjs from "dayjs";
 
-import DynamicIcon from "@/pages/lowcode/widgets/common/DynamicIcon.vue";
 import catalogTabs from "./tabs.vue";
 
 import { $selectList, getImagePath } from "@/common/http";
-// import lowCodeView from "@/pages/lowcode/view.vue";
 export default {
   components: {
-    Icon: DynamicIcon,
     catalogTabs,
     lowCodeView: () => import("@/pages/lowcode/view.vue")
   },
   computed: {
-    tabs() {
-      return this.data.children || [];
-    },
     setClassByPath() {
       let path = this.data.path || "";
       if (path) {
@@ -183,25 +176,30 @@ export default {
     listStyle() {
       return this.data.list_ui?.includes("风格1") ? "style-1" : "style-2";
     },
+    currentContent() {
+      return this.contentViewMode === "详情"
+        ? this.contentList?.[0]
+        : undefined;
+    },
     showRichText() {
-      if (this.contentViewMode === "详情") {
-        const content = this.contentList?.[0];
-        if (content) {
-          return !content?.content_show_method || content?.content_show_method?.includes("富文本");
-        }
+      const content = this.currentContent;
+      if (content) {
+        return (
+          !content.content_show_method ||
+          content.content_show_method.includes("富文本")
+        );
       }
     },
     showCustomPage() {
-      if (this.contentViewMode === "详情") {
-        const content = this.contentList?.[0];
-        if (content) {
-          return content?.content_show_method?.includes("自定义页面");
-        }
+      const content = this.currentContent;
+      if (content) {
+        return content.content_show_method?.includes("自定义页面");
       }
     },
     customPageJson() {
-      if (this.showCustomPage && this.contentList?.[0].related_page_json) {
-        return JSON.parse(this.contentList?.[0].related_page_json);
+      const content = this.currentContent;
+      if (this.showCustomPage && content?.related_page_json) {
+        return JSON.parse(content.related_page_json);
       }
     },
   },
@@ -228,16 +226,13 @@ export default {
     };
   },
   methods: {
-    handleSearchChange(val) {
-      this.searchKey = val;
+    handleSearchChange() {
       this.fetchContentData(this.data.no);
     },
     dateRangeChange(value) {
-      console.log("dateRangeChange", value);
       if (value && value.length) {
         this.dateRange = value;
         this.dateType = null;
-        this.fetchContentData(this.data.no);
       } else {
         this.dateType = null;
         this.dateRange = null;
@@ -321,27 +316,15 @@ export default {
     init() {
       if (this.data?.is_leaf === "是") {
         this.contentViewMode = this.data.content_view_mode;
-        if (this.data.content_view_mode === "详情") {
-          this.fetchContentData(this.data.no);
-        } else if (this.data.content_view_mode === "列表") {
+        if (["详情", "列表"].includes(this.data.content_view_mode)) {
           this.fetchContentData(this.data.no);
         }
-      } else {
       }
     },
   },
   created() {
     this.init();
   },
-  // watch: {
-  //   data: {
-  //     immediate: true,
-  //     deep: true,
-  //     handler(newValue, oldValue) {
-  //       this.init()
-  //     }
-  //   }
-  // },
 };
 </script>
 
@@ -353,9 +336,6 @@ export default {
   &.level-2 {
     .title {
       display: none;
-      // .text{
-      //   font-size: 24px;
-      // }
     }
   }
 
@@ -627,10 +607,6 @@ export default {
     }
 
     :deep(img) {
-      // max-width: 100%;
-      // height: auto;
-      // display: initial;
-      // margin: 1em auto;
       all: revert;
       border-style: solid;
       border-color: transparent;

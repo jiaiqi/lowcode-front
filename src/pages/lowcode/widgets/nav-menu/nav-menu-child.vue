@@ -60,10 +60,9 @@ export default {
 </script>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, getCurrentInstance, onMounted, reactive, ref } from "vue";
 import { formatStyleData } from "@/pages/lowcode/common/index.js";
-import { getFullBaseUrl, normalizeJumpFilePath, getRouterPath } from "@/common/common";
-import router from "@/router";
+import { parseJumpJson, resolveInternalRoute, navToJump } from "./nav-jump";
 const props = defineProps({
   config: Object,
   parentStyle: Object,
@@ -180,13 +179,7 @@ const childPositionStyle = computed(() => {
 });
 
 const jumpJson = computed(() => {
-  if (props.config.jump_json) {
-    try {
-      return JSON.parse(props.config.jump_json);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  return parseJumpJson(props.config);
 });
 
 /**
@@ -195,100 +188,14 @@ const jumpJson = computed(() => {
  *              其余场景（外部页面/新窗口/先登录/无跳转）返回 null，保持原点击逻辑
  */
 const internalRoute = computed(() => {
-  const j = jumpJson.value;
-  if (!j || !j.dest_page_no) return null;
-  if (j.obj_type === "外部页面") return null;
-  if (j.target_type && j.target_type !== "原页面") return null;
-  if (j.click_jump_option?.includes("先登录")) return null;
-  let path = "";
-  if (j.tmpl_page_json?.file_path) {
-    path = normalizeJumpFilePath(j.tmpl_page_json.file_path).replace(
-      ":pageNo",
-      j.dest_page_no
-    );
-  } else {
-    path = `${getFullBaseUrl()}/${j.dest_page_no}?srvApp=config`;
-  }
-  return getRouterPath(path);
+  return resolveInternalRoute(jumpJson.value);
 });
 
+const proxy = getCurrentInstance().proxy;
+
 function navTo(jumpConfig) {
-  if (jumpConfig?.click_jump_option?.includes("先登录")) {
-    if (this.$store.state?.loginInfo?.logined !== true) {
-      // 您还未登录,需要登录才能进入,点击确认前往登录
-      this.$confirm("您还未登录,需要登录才能进入,点击确认前往登录", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-        .then(() => {
-          const currentUrl = window.location.pathname + window.location.hash;
-          sessionStorage.setItem("login_redirect_url", currentUrl);
-          const loginUrl = window.location.origin + "/main/login.html";
-          window.location.href = loginUrl;
-        });
-      return;
-    }
-  }
-  if (jumpConfig?.obj_type) {
-    switch (jumpConfig.obj_type) {
-      case "外部页面":
-        if (jumpConfig.outer_url) {
-          if (jumpConfig.target_type == "原页面") {
-            window.location.href = jumpConfig.outer_url;
-          } else {
-            window.open(jumpConfig.outer_url);
-          }
-        }
-        break;
-      default:
-        if (jumpConfig.dest_page_no) {
-          navToPath(jumpConfig);
-        }
-        break;
-    }
-  }
-}
-function navToPath(jump_json) {
-  let pageNo = jump_json?.dest_page_no;
-  let path = "";
-  if (jump_json?.click_jump_option?.includes("先登录")) {
-    if (this.$store.state?.loginInfo?.logined !== true) {
-      // 您还未登录,需要登录才能进入,点击确认前往登录
-      this.$confirm("您还未登录,需要登录才能进入,点击确认前往登录", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-        .then(() => {
-          const currentUrl = window.location.pathname + window.location.hash;
-          sessionStorage.setItem("login_redirect_url", currentUrl);
-          const loginUrl = window.location.origin + "/main/login.html";
-          window.location.href = loginUrl;
-        });
-      return;
-    }
-  }
-  if (jump_json?.tmpl_page_json.file_path) {
-    path = normalizeJumpFilePath(
-      jump_json?.tmpl_page_json.file_path
-    ).replace(":pageNo", pageNo);
-  } else {
-    path = `${getFullBaseUrl()}/lowcode-grid/view/${pageNo}?srvApp=config`;
-  }
-  if (pageNo) {
-    if (jump_json.target_type == "原页面") {
-      // 站内路径走 SPA 无刷新跳转；外部链接保持整页跳转
-      const routerPath = getRouterPath(path);
-      if (routerPath) {
-        router.push(routerPath);
-      } else {
-        window.location.href = path;
-      }
-    } else {
-      window.open(path);
-    }
-  }
+  // 统一走共享工具：登录拦截 → 外部页面 / 锚点 / 站内 SPA
+  navToJump(proxy, jumpConfig);
 }
 
 const navMenu = ref("");
