@@ -88,6 +88,38 @@ const pageSnapshotCache = new Map();
 const PAGE_CACHE_MAX = 15;
 
 /**
+ * 深度冻结只读配置对象（样式/主题类 *_json_data）
+ * @description 仅冻结"配置类"JSON：样式（style）、主题（theme）、
+ *              描述（description）、参数（params）等只读字段；
+ *              组件实例配置（component/page/row/cols 等）可能被编辑器修改，跳过
+ * @param {Object} obj - 待冻结对象
+ * @returns {boolean} 是否冻结
+ */
+// 可安全深度冻结的 *_json_data 字段名特征（样式/主题/描述/参数等只读配置）
+const FROZEN_JSON_KEY = /(style|theme|description|desc|param|option|icon|title|more|popup|dialog|auth|srv|event|anchor|hidden|visib|cols|app|event)/i;
+
+/**
+ * 深度冻结配置对象（Vue 2 对 frozen 对象跳过响应式代理，减少依赖收集开销）
+ * @param {Object} obj - 待冻结对象（仅处理普通对象/数组）
+ */
+function deepFreezeConfig(obj) {
+  if (!obj || typeof obj !== "object") return;
+  if (Array.isArray(obj)) {
+    obj.forEach(deepFreezeConfig);
+  } else {
+    Object.keys(obj).forEach((k) => {
+      const v = obj[k];
+      if (v && typeof v === "object") deepFreezeConfig(v);
+    });
+  }
+  try {
+    Object.freeze(obj);
+  } catch (e) {
+    /* 忽略 */
+  }
+}
+
+/**
  * 低代码页面混入器
  * @mixin LowcodePageMixin
  * @description 为低代码页面提供通用的配置管理、组件初始化、主题设置等功能
@@ -780,6 +812,13 @@ export default {
             } catch (e) {
               console.error(e);
             }
+          }
+          // 只读配置深度冻结（样式/主题/描述/参数类）：
+          // 冻结后 Vue 2 跳过响应式代理（Object.defineProperty），
+          // 减少大 JSON 的依赖收集与拦截开销
+          // 组件配置（component/page/row 等）可能被编辑器修改，不冻结
+          if (FROZEN_JSON_KEY.test(key)) {
+            deepFreezeConfig(data[`${key}_data`]);
           }
         }
       });
