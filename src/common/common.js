@@ -813,7 +813,8 @@ export const getRouterPath = (path) => {
   const p = path.trim();
   // 外部 URL（http/https/协议相对）→ 保持原跳转
   if (/^(https?:)?\/\//i.test(p)) return null;
-  // hash 路由内路径：#/site/xxx → /site/xxx（保留 query/hash）
+  // hash 路由内路径：#/site/xxx 或 /#/site/xxx → /site/xxx（保留 query）
+  if (p.startsWith("/#/")) return p.slice(2);
   if (p.startsWith("#/")) return p.slice(1);
   // 站内绝对路径（/site/xxx 等）
   if (p.startsWith("/")) return p;

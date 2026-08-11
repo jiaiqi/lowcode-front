@@ -7,7 +7,23 @@
     @mouseleave="isHovered = false"
     ref="navMenu"
   >
-    <span class="nav-menu-label" @click.stop.capture="navTo(jumpJson)">
+    <!-- 站内直达（原页面、无拦截）：router-link 渲染 a 标签（支持中键新标签/链接语义）；
+         站外/新窗口/先登录等场景保持 span@click 原逻辑 -->
+    <router-link
+      v-if="internalRoute"
+      :to="internalRoute"
+      class="nav-menu-label"
+    >
+      <img
+        class="nav-icon"
+        :src="getImagePath(calcNavIcon)"
+        alt=""
+        v-if="calcNavIcon"
+        :style="[setNavIconStyle]"
+      />
+      <span>{{ label }}</span>
+    </router-link>
+    <span v-else class="nav-menu-label" @click.stop.capture="navTo(jumpJson)">
       <img
         class="nav-icon"
         :src="getImagePath(calcNavIcon)"
@@ -171,6 +187,29 @@ const jumpJson = computed(() => {
       console.error(error);
     }
   }
+});
+
+/**
+ * 站内直达路由目标（router-link 使用）
+ * @description 仅"原页面 + 站内 + 无登录拦截"的跳转生成 router-link 目标，
+ *              其余场景（外部页面/新窗口/先登录/无跳转）返回 null，保持原点击逻辑
+ */
+const internalRoute = computed(() => {
+  const j = jumpJson.value;
+  if (!j || !j.dest_page_no) return null;
+  if (j.obj_type === "外部页面") return null;
+  if (j.target_type && j.target_type !== "原页面") return null;
+  if (j.click_jump_option?.includes("先登录")) return null;
+  let path = "";
+  if (j.tmpl_page_json?.file_path) {
+    path = normalizeJumpFilePath(j.tmpl_page_json.file_path).replace(
+      ":pageNo",
+      j.dest_page_no
+    );
+  } else {
+    path = `${getFullBaseUrl()}/${j.dest_page_no}?srvApp=config`;
+  }
+  return getRouterPath(path);
 });
 
 function navTo(jumpConfig) {
