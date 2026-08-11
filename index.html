@@ -12,7 +12,7 @@
   <script src="../js/server.js"></script>
   <title>低代码页面</title>
   <style>
-    /* ===== 首屏骨架屏（Vue 挂载后自动被替换） ===== */
+    /* ===== 首屏骨架屏（Vue 挂载后自动被替换；低调精致：柔和渐变 + 微光晕 + 浅色细字） ===== */
     html, body { margin: 0; padding: 0; }
     #app-loading {
       position: fixed;
@@ -21,24 +21,26 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #f5f7fa;
+      background: #fff;
       z-index: 9999;
     }
     #app-loading .logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #409eff, #17d57e);
-      animation: lc-pulse 1.2s ease-in-out infinite;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #7ea6f2, #6fc6b4);
+      box-shadow: 0 0 22px rgba(126, 166, 242, 0.28);
+      animation: lc-pulse 1.6s ease-in-out infinite;
     }
     #app-loading .text {
-      margin-top: 16px;
-      font-size: 14px;
-      color: #909399;
-      letter-spacing: 1px;
+      margin-top: 14px;
+      font-size: 12px;
+      font-weight: 300;
+      color: #b8bfc9;
+      letter-spacing: 3px;
     }
     @keyframes lc-pulse {
-      0%, 100% { opacity: 0.4; transform: scale(0.92); }
+      0%, 100% { opacity: 0.5; transform: scale(0.94); }
       50% { opacity: 1; transform: scale(1); }
     }
   </style>
