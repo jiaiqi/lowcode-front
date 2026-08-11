@@ -9,7 +9,11 @@
     "dev:park": "vite --mode park",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy:dev": "vite build --mode dev"
+    "deploy:dev": "vite build --mode dev",
+    "prepare": "husky",
+    "lint": "eslint src --ext .js,.vue --max-warnings=999",
+    "lint:fix": "eslint src --ext .js,.vue --fix",
+    "format": "prettier --write \"src/**/*.{js,vue,scss,json}\""
   },
   "engines": {
     "node": ">=18"
@@ -43,8 +47,16 @@
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
     "@unocss/preset-icons": "^66.7.5",
     "@vitejs/plugin-vue2": "^2.3.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^9.33.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
+    "prettier": "^3.9.6",
     "sass": "1.80.0",
     "unocss": "^66.7.5",
     "vite": "^5.4.0"
@@ -52,6 +64,15 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{scss,json,md}": [
+      "prettier --write"
     ]
   }
 }

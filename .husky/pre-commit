@@ -1,0 +1,2 @@
+# 提交前：暂存文件 lint + 格式化
+pnpm exec lint-staged
