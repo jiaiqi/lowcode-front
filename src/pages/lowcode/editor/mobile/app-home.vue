@@ -461,5 +461,5 @@ export default {
 
 
 <style scoped lang="scss">
-@import "app-home.scss";
+@use "app-home.scss";
 </style>

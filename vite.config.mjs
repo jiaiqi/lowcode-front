@@ -29,7 +29,10 @@ export default defineConfig(({ mode }) => {
     },
     css: {
       preprocessorOptions: {
-        scss: {},
+        // modern-compiler：消除 sass legacy JS API 弃用警告（Dart Sass 2.0 将移除）
+        scss: {
+          api: "modern-compiler",
+        },
       },
     },
     optimizeDeps: {
